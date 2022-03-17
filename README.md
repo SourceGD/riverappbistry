@@ -23,10 +23,10 @@ garden install:
 
 
 Install the packages in a dedicated environment. You can do that in two codes of line with Anaconda:
-'''
+```
 conda create --name riverApp python=3.8
 conda activate riverApp
 conda install --file requirements.txt -c conda-forge
-'''
+```
 
-You can also install all packages using pip, with the file 'requirementsPip.txt'.
+You can also install all packages using pip, with the file `requirementsPip.txt`.
