@@ -11,6 +11,7 @@ conda install:
   - scipy=1.5.0
   - matplotlib=3.2.2
   - opencv=4.0.1
+  
 conda install -c conda-forge:
   - kivy=1.11.0
   - kivy-garden=0.1.4
