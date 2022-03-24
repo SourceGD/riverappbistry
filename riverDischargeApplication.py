@@ -170,13 +170,13 @@ class CreateBathPopup(Popup):
             
         # we take the transpose of the points array to have the data in two columns
         points = points.T
-        # Save the result in a txt file of the name given by the user in a folder Section/Files/...
-        with open('Sections/'+'Files/'+self.nameFile.text+'.txt', 'w+') as f:
+        # Save the result in a txt file of the name given by the user in a folder section/files/...
+        with open('sections/'+'files/'+self.nameFile.text+'.txt', 'w+') as f:
             np.savetxt(f, points, fmt=['%f','%f'], delimiter=',')
         
         # we must set the variable of the bathymetry bath file to the one created
         app = App.get_running_app()
-        app.BATHFILEPATH = 'Sections/'+'Files/'+ self.nameFile.text + '.txt'
+        app.BATHFILEPATH = 'sections/'+'files/'+ self.nameFile.text + '.txt'
 
 
 ## RIVER VIDEO FLOW SCREEN

@@ -43,7 +43,7 @@ WindowManager:
         col_default_width: self.parent.width
         FileChooserListView:
             id: filechooser
-            path: os.getcwd() + '/Sections' + '/Files'
+            path: os.getcwd() + '/sections' + '/files'
         GridLayout:
             cols: 2
             size_hint_y: None
@@ -1049,7 +1049,7 @@ WindowManager:
             BoxLayout:
                 orientation: 'vertical'
                 Image:
-                    source: 'Sections/Images/rectOrig.png'
+                    source: 'sections/img/rectOrig.png'
                     size: self.parent.size
                 Button:
                     font_size: '30sp'
@@ -1058,14 +1058,14 @@ WindowManager:
                     size: self.texture_size
                     on_release: 
                         p = Factory.CreateBathPopup()
-                        p.ids.bathCreateImage.source = 'Sections/Images/rectOrig.png'
+                        p.ids.bathCreateImage.source = 'sections/img/rectOrig.png'
                         p.RectTextInput()
                         p.open()
 
             BoxLayout:
                 orientation: 'vertical'
                 Image:
-                    source: 'Sections/Images/trapOrig.png'
+                    source: 'sections/img/trapOrig.png'
                     size: self.parent.size
                 Button:
                     font_size: '30sp'
@@ -1074,7 +1074,7 @@ WindowManager:
                     size: self.texture_size
                     on_release: 
                         p = Factory.CreateBathPopup()
-                        p.ids.bathCreateImage.source = 'Sections/Images/trapOrig.png'
+                        p.ids.bathCreateImage.source = 'sections/img/trapOrig.png'
                         p.TrapTextInput()
                         p.open()
         GridLayout:
@@ -1084,7 +1084,7 @@ WindowManager:
             BoxLayout:
                 orientation: 'vertical'
                 Image:
-                    source: 'Sections/Images/parabOrig.png'
+                    source: 'sections/img/parabOrig.png'
                     size: self.parent.size
                 Button:
                     font_size: '30sp'
@@ -1094,13 +1094,13 @@ WindowManager:
                     size: self.texture_size
                     on_release: 
                         p = Factory.CreateBathPopup()
-                        p.ids.bathCreateImage.source = "Sections/Images/parabOrig.png"
+                        p.ids.bathCreateImage.source = "sections/img/parabOrig.png"
                         p.ParabTextInput()
                         p.open()
             BoxLayout:
                 orientation: 'vertical'
                 Image:
-                    source: 'Sections/Images/freeShape.png'
+                    source: 'sections/img/freeShape.png'
                     size: self.parent.size
                 Button:
                     font_size: '30sp'
@@ -1110,7 +1110,7 @@ WindowManager:
                     size: self.texture_size
                     on_release: 
                         p = Factory.CreateBathPopup()
-                        p.ids.bathCreateImage.source = 'Sections/Images/freeShape.png'
+                        p.ids.bathCreateImage.source = 'sections/img/freeShape.png'
                         p.FreeShapeTextInput()
                         p.open()
         Button:
