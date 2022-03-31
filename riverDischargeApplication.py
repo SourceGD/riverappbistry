@@ -1289,7 +1289,7 @@ class SurfaceVelocity(Screen):
                                                                      overlap=overlap,
                                                                      dt=dt,
                                                                      search_area_size=winsize,
-                                                                     corr_method='fft',
+                                                                     correlation_method='circular',
                                                                      subpixel_method='gaussian',
                                                                      sig2noise_method='peak2peak')
         
@@ -1297,7 +1297,7 @@ class SurfaceVelocity(Screen):
             # coordinates of the interrogation window nodes where the velocity 
             # is computed
             x, y = pyprocess.get_coordinates( image_size = frame1.shape,
-                                             window_size=winsize,
+                                             search_area_size=winsize,
                                              overlap=overlap )
 
             ##############Differents method of validation####################
@@ -1322,8 +1322,6 @@ class SurfaceVelocity(Screen):
             #u1, v1, mask = validation.typical_validation(u0, v0, sig2noise, settings)
             ##############################################################
             
-            
-        
             u2, v2 = filters.replace_outliers( u1,
                                                v1,
                                                method='localmean',
@@ -1502,7 +1500,7 @@ class SurfaceVelocityMultiPass(Screen):
                                                                      overlap=32,
                                                                      dt=dt,
                                                                      search_area_size=64,
-                                                                     corr_method='fft',
+                                                                     correlation_method='circular',
                                                                      subpixel_method='gaussian',
                                                                      sig2noise_method='peak2peak')
 
@@ -1510,7 +1508,7 @@ class SurfaceVelocityMultiPass(Screen):
             # coordinates of the interrogation window nodes where the velocity 
             # is computed
             x, y = pyprocess.get_coordinates( image_size = frame1.shape,
-                                             window_size=64,
+                                             search_area_size=64,
                                              overlap=32 )
 
             ##############Differents method of validation####################
