@@ -30,17 +30,12 @@ from pathlib import Path
 from functools import partial
 from scipy import optimize, stats, ndimage
 from scipy.signal import argrelextrema
-# import skimage.external.tifffile as skiTif  # needed to read .tif file (used for DEM)
 import tifffile as skiTif
-#from openpiv import pyprocess, tools, validation, filters, scaling
 import matplotlib.image as mpimg
 from matplotlib.widgets import RectangleSelector
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw
 from openpiv import filters, smoothn, pyprocess, scaling, tools, validation, windef
-#from openpiv import process
-#import openpiv.gpu_process
-#reload(openpiv.gpu_process)
 
 ## CUSTOM/CREATED functions 
 
@@ -53,14 +48,3 @@ from droneGeometryWaterLevel import *
 from meansVelocity import *
 from homography import *
 from riverFlowComputation import *
-
-
-"""
-#openpiv en local
-import filters
-import pyprocess
-import scaling
-import tools
-import validation
-import windef
-"""
