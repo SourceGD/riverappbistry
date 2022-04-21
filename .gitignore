@@ -6,6 +6,15 @@
 mov/*
 !mov/.init
 
+# Note useful output
+maskandroi.npy
+SP_u_mean.txt
+SP_v_mean.txt
+testMask.npy
+velocity.npy
+Velocity.txt
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
