@@ -4,7 +4,7 @@
 *.npy
 *.txt
 
-#Requirements
+#Requirements must be kept of course
 !requirements.txt
 !requirementsPip.txt
 
