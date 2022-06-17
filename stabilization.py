@@ -9,7 +9,7 @@ def stabilization(filepath,newName):
     frame = imutils.resize(frame, width=920)
     (H, W) = frame.shape[:2]
     fps =  round(vs.get(cv2.CAP_PROP_FPS))
-    out = cv2.VideoWriter('Video/'+newName,cv2.VideoWriter_fourcc(*'MP4V'), fps, (W,H)) 
+    out = cv2.VideoWriter('mov/'+newName,cv2.VideoWriter_fourcc(*'MP4V'), fps, (W,H)) 
     tracker1 = cv2.TrackerKCF_create()
     tracker2 = cv2.TrackerKCF_create()
     tracker3 = cv2.TrackerKCF_create()

@@ -110,7 +110,7 @@ def applyCalibrationOnVideoFrames(filepath, videoRange, calibrationFile):
     
     names = os.path.splitext(base)
     
-    nameUndistortedVideo = 'Video/' + names[0] + 'Undistorted' + '.mp4'
+    nameUndistortedVideo = 'mov/' + names[0] + 'Undistorted' + '.mp4'
     
     vs = cv2.VideoCapture(filepath)
     ret, frame = vs.read()

@@ -43,7 +43,7 @@ def applyFilterOnVideoFrames(filepath, videoRange, filters, parametersFilters):
     
     names = os.path.splitext(base)
     
-    nameFilteredVideo = 'Video/' + names[0] + 'Filtered' + '.mp4'
+    nameFilteredVideo = 'mov/' + names[0] + 'Filtered' + '.mp4'
     
     vs = cv2.VideoCapture(filepath)
     ret, frame = vs.read()

@@ -1191,6 +1191,7 @@ class SurfaceVelocity(Screen):
         self.p = PIVPopup(launchThread=self.launchThread)
         self.p.open()
         app = App.get_running_app()
+        print(app.VIDEOFILEPATH)
         vid = cv2.VideoCapture(app.VIDEOFILEPATH)
         ret, frame = vid.read()
         
@@ -1200,7 +1201,7 @@ class SurfaceVelocity(Screen):
             self.img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         else:
             self.img = frame
-        
+
         if len(app.ROI) == 4:
             self.img =  self.img[app.ROI[0]:app.ROI[1],app.ROI[2]:app.ROI[3]]
         vid.release()
