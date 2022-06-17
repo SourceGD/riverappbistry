@@ -1,4 +1,5 @@
 ## KIVY needed packages
+import kivy
 
 from kivy.uix.popup import Popup
 from kivy.app import App

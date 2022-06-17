@@ -1,6 +1,12 @@
 # other extentions
 *.zip
 *.tif
+*.npy
+*.txt
+
+#Requirements
+!requirements.txt
+!requirementsPip.txt
 
 # movies
 mov/*
