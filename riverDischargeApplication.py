@@ -18,7 +18,7 @@ class FileNotFound(Popup):
 
 class ValueNotFound(Popup):
     
-    """Screen that loads the popup when no value is written"""
+    """Screen that loads the popup when no value is writen"""
     pass
 
 ## 3.1 BATHYMETRY SCREENS
@@ -1284,14 +1284,14 @@ class SurfaceVelocity(Screen):
             
             # Using the OpenPIV function to perform the PIV analysis
             u0, v0, sig2noise = pyprocess.extended_search_area_piv( frame1.astype(np.int32),
-                                                                    frame2.astype(np.int32),
-                                                                    window_size=winsize,
-                                                                    overlap=overlap,
-                                                                    dt=dt,
-                                                                    search_area_size=winsize,
-                                                                    correlation_method='circular',
-                                                                    subpixel_method='gaussian',
-                                                                    sig2noise_method='peak2peak')
+                                                                     frame2.astype(np.int32),
+                                                                     window_size=winsize,
+                                                                     overlap=overlap,
+                                                                     dt=dt,
+                                                                     search_area_size=winsize,
+                                                                     correlation_method='circular',
+                                                                     subpixel_method='gaussian',
+                                                                     sig2noise_method='peak2peak')
         
                                                                                         
             # coordinates of the interrogation window nodes where the velocity 
@@ -1311,13 +1311,13 @@ class SurfaceVelocity(Screen):
             #using comparision to a median value   
             #u1 , v1, mask = validation.local_median_val( u0, v0, 3, 3, size=1 )
             
-            #using the standart deviation
+            #using de standart deviation
             #u1 , v1, mask = validation.global_std( u0, v0, std_threshold = 3 )
             
             #check if the velocities are between two values
             #u1, v1, mask = validation.global_val(u0, v0, (-150,150), (-150,150))
             
-            #validation using global limits and std and local median
+            #validation using gloabl limits and std and local median
             #settings=windef.Settings()
             #u1, v1, mask = validation.typical_validation(u0, v0, sig2noise, settings)
             ##############################################################
@@ -1326,11 +1326,8 @@ class SurfaceVelocity(Screen):
                                                v1,
                                                method='localmean',
                                                max_iter=10,
-                                               kernel_size=3 )
-
-            # Returns the vectors such that arrows point to the right direction.
-            # 0,0 shall be bottom left, positive rotation rate is counterclockwise
-            x, y, u2, v2 = tools.transform_coordinates(x, y, u2, v2)
+                                               kernel_size=3 ) 
+          
             
             velocity_field[i] = {'x':x,'y':y,'u':u2,'v':v2,'mask':mask}
         
@@ -1531,7 +1528,7 @@ class SurfaceVelocityMultiPass(Screen):
             #check if the velocities are between two values
             #u1, v1, mask = validation.global_val(u0, v0, (-150,150), (-150,150))
             
-            #validation using global limits and std and local median
+            #validation using gloabl limits and std and local median
             #settings=windef.Settings()
             #u1, v1, mask = validation.typical_validation(u0, v0, sig2noise, settings)
             ##############################################################
