@@ -4,9 +4,8 @@
 *.npy
 *.txt
 
-#Requirements balbalablabla fEKUQ GHVQLRZEKGH QS
-
-rements.txt
+#Requirements
+!requirements.txt
 !requirementsPip.txt
 
 # movies
