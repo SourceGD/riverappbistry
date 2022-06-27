@@ -8,11 +8,9 @@ Install the packages in a dedicated environment. To to do, there are multiple po
 
 With the conda `.yml` file:
 
-With the `requirements.txt` file and conda:
 ```
-conda create --name riverApp python=3.8
+conda env create -f environment.yml
 conda activate riverApp
-conda install --file requirements.txt -c conda-forge
 ```
 or simply with
 ```
