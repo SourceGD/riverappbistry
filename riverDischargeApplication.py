@@ -1191,7 +1191,6 @@ class SurfaceVelocity(Screen):
         self.p = PIVPopup(launchThread=self.launchThread)
         self.p.open()
         app = App.get_running_app()
-        print(app.VIDEOFILEPATH)
         vid = cv2.VideoCapture(app.VIDEOFILEPATH)
         ret, frame = vid.read()
         
