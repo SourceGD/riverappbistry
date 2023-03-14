@@ -1,12 +1,21 @@
 # This file may be used to create an environment using:
 # conda create --name <envName> python=3.8 --file <this file> -c conda-forge
+# conda  version: 4.12.0
 # python version: 3.8
 
-imutils==0.5.3
-kivy==1.11.1
-kivy-garden==0.1.4
-matplotlib==3.2.2
-numpy==1.18.5
-opencv==4.0.1
+# Edited on 14/03/22
+# 	- openpiv is forced to be an old version
+# 	- all other will install the latest available version on conda-forge channel
+
+
+imutils==0.5.4
+kivy==2.1.0
+kivy-garden== 0.1.4
+matplotlib==3.7.1
+numpy==1.24.2
+py-opencv==4.7.0
 openpiv==0.23.4
-pywin32==302
+
+# If you're installing on Linux OS, you should comment this following line with a '#'
+
+pywin32==304
