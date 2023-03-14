@@ -2,7 +2,7 @@
 
 RiverApp is a python app dedicated to estimating the debit of a river based on a video. Take a movie of your river from the top, give it some insight of the bathymetry, and here you go !
 
-## Installation procedure (recommended with Windows OS) [V]
+## Installation procedure (recommended with Windows OS)
 
 Install the packages in a dedicated environment. To to do, there are multiple possibilities:
 
@@ -15,7 +15,7 @@ garden install matplotlib
 garden install graph
 ```
 
-### With the 'requirements.txt' file:
+### With the `requirements.txt` file:
 
 ```
 conda create --name riverApp python=3.8 --file requirements.txt -c conda-forge
@@ -24,7 +24,7 @@ garden install matplotlib
 garden install graph
 ```
 
-### With pip using 'requirementsPip.txt' file:
+### With pip using `requirementsPip.txt` file:
 You can also install all packages using pip, with the file `requirementsPip.txt` (beta). 
 Note that this method is obsolete for this project and is therefore not recommended
 
@@ -41,16 +41,16 @@ garden install matplotlib
 garden install graph
 ```
 
-The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like '*/anaconda3/envs/riverApp/bin')
+The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
 ```
 chmod u=rwx garden
 garden install matplotlib
 garden install graph
 ```
 
-### With the 'requirements.txt' file:
+### With the `requirements.txt` file:
 
-In the file 'requirements.txt' , comment the line 'pywin32==304'
+In the file `requirements.txt` , comment the line `pywin32==304`
 
 ```
 conda create --name riverApp python=3.8 --file requirements.txt -c conda-forge
@@ -59,14 +59,14 @@ garden install matplotlib
 garden install graph
 ```
 
-The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like '*/anaconda3/envs/riverApp/bin')
+The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
 ```
 chmod u=rwx garden
 garden install matplotlib
 garden install graph
 ```
 
-### With pip using 'requirementsPip.txt' file:
+### With pip using `requirementsPip.txt` file:
 You can also install all packages using pip, with the file `requirementsPip.txt` (beta). 
 Note that this method is not robust since it doesn't deal with dependencies. It is therefore not recommended.
 
@@ -78,7 +78,7 @@ garden install matplotlib
 garden install graph
 ```
 
-The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like '*/anaconda3/envs/riverApp/bin')
+The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
 ```
 chmod u=rwx garden
 garden install matplotlib
