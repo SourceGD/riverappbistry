@@ -41,7 +41,7 @@ garden install matplotlib
 garden install graph
 ```
 
-The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
+The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
 ```
 chmod u=rwx garden
 garden install matplotlib
@@ -59,7 +59,7 @@ garden install matplotlib
 garden install graph
 ```
 
-The garden installation might get you an error of type 'Permission denied'. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
+The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
 ```
 chmod u=rwx garden
 garden install matplotlib
