@@ -1,0 +1,42 @@
+========================================================
+
+Step between frames: 3
+Range of videos in seconds from   5  to   15 
+
+========================================================
+
+Distances in meters: => image vue d'en haut, pas besoin d'orthorectification
+
+82.5, 46.8, 84.1, 45.5, 94.3, 96.2
+
+(L'idéal est de copier-coller la ligne)
+
+========================================================
+
+Choose a water level value:
+
+2.58
+
+========================================================
+
+Gamma value: 2
+
+========================================================
+
+Interrogation windows size in pixels: ???
+
+Overlap, generally 50% :???
+
+SNR ratio for validation : 1.05
+
+========================================================
+
+Number of subsections: 20
+
+========================================================
+
+Coefficient from surface velocity to mean velocity: 0.85
+
+========================================================
+
+
