@@ -7,7 +7,6 @@ import os
 
 
 def sift_detector(new_image, image_template,show_img=False,show_kp=False):
-    #image1 = cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)
     image1 = new_image
     image2 = image_template
     
