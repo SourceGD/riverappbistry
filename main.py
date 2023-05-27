@@ -16,8 +16,8 @@ import xarray as xr
 
 if __name__ == "__main__":
 
-    directory = "examples/data/VGC1/"
-    video_filepath = directory + "VGC1.mp4"
+    directory = "examples/data/Limelette/"
+    video_filepath = directory + "Limelette_drone.mp4"
     bathy_file = directory + "bathy_format_riverApp.txt"
     # step at which to start the process
     # 1 = cam creation, 2 = piv process, 3 = mask application, 4 = transect choice

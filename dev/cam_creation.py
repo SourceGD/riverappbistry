@@ -1,6 +1,7 @@
 import pyorc
 import math
 import cv2
+from dev.utils.GCP_detection import GCP_detect
 
 ###################
 """
@@ -52,9 +53,14 @@ def convert_dist_to_dest_points(L):
 #  (greatly influence process speed and results of PIV)
 def cam_create(video, directory):
     init_frame = video.get_frame(0, method = "rgb")
-
+    auto_detect = True
     # src points, in the image referential
-    src = [[1523, 117], [1455, 748], [203, 650], [768, 155]]
+    if auto_detect:
+        # try to detect all four GCP with function (depends on the GCP visibility of the frame)
+        src = GCP_detect(init_frame)
+    else:
+        # manual imput
+        src = [[1523, 117], [1455, 748], [203, 650], [768, 155]]
 
     # Distances between the fours points of reference ABCD (A top left corner then clockwise order)
     #  in the following order [L_AB, L_BC, L_CD, L_DA, L_AC, L_DB]
