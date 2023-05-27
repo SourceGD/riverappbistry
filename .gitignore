@@ -102,8 +102,12 @@ env/
 # mypy
 
 
-# data contained in examples folder
-examples/data/
+# data contained in examples/riverapp_examples folder except the VGC1 dataset
+examples/riverapp_examples/*
+!examples/riverapp_examples/VGC1
+!examples/riverapp_examples/data_format.md
+!examples/riverapp_examples/notebook_first_use.ipynb
+
 
 
 .mypy_cache/

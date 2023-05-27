@@ -3,32 +3,10 @@ import math
 import cv2
 from dev.utils.GCP_detection import GCP_detect
 
-###################
 """
 module where we create all the camera setup/configuration necessary 
 to compute the PIV process
 """
-
-
-###################
-
-
-# todo add interface to get start_second, the second timing of the video to get the
-#  frame used to place markers to create cam_config
-# personal suggestion: add a slider that goes from first to last frame and show the frame indicated by the slider
-# allows the user to truly see which frame will by used to point the src and corner points --> user-friendly
-# see 01_Camera_Configuration_single_video notebook in example folder to see example of plots to show
-# the user where he placed to points
-def load_init_frame(filepath):
-    # get fps of the video
-    video = cv2.VideoCapture(filepath)
-    fps = video.get(cv2.CAP_PROP_FPS)
-    frame_second = 25
-    frame = round(frame_second * fps)
-    # we just need one frame in order to place our markers
-    video = pyorc.Video(filepath, start_frame=frame, end_frame=frame + 1)
-    return video.get_frame(0, method="rgb")
-
 
 # convert distances points to the local referential
 def convert_dist_to_dest_points(L):
@@ -45,36 +23,33 @@ def convert_dist_to_dest_points(L):
     return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
 
 
-# todo add interface showing init_frame to get the four src points
-# todo add pictures to show/explain to what correspond the L array containing distances
-# todo add interface showing init_frame to get the four corner points
-# todo interface to get z_0, resolution, window_size parameters
-# todo add user input to get resolution and window_size parameters
-#  (greatly influence process speed and results of PIV)
-def cam_create(video, directory):
+
+def cam_create(video, directory, dim, water_level):
     init_frame = video.get_frame(0, method = "rgb")
-    auto_detect = True
+
+    # todo : here the user should be asked if he wants to point the tags by himself or detect them automatically with GCP_detect()
+    # if the automatic detection is chosen then a window displaying the four tags on the init_frame should be shown and the user need to validate
+    # if the validation is denied, the user need to point out by himself the four tags
+
+    # todo add interface showing init_frame to get the four tags points (i.e. scr)
+
+    auto_detect = False
     # src points, in the image referential
     if auto_detect:
         # try to detect all four GCP with function (depends on the GCP visibility of the frame)
-        src = GCP_detect(init_frame)
+        src = GCP_detect(init_frame,False)
     else:
         # manual imput
         src = [[1523, 117], [1455, 748], [203, 650], [768, 155]]
 
-    # Distances between the fours points of reference ABCD (A top left corner then clockwise order)
-    #  in the following order [L_AB, L_BC, L_CD, L_DA, L_AC, L_DB]
-    L = [6.65, 7.60, 6.69, 7.82, 10.29, 10.10]
-    dst = convert_dist_to_dest_points(L)
+
+    dst = convert_dist_to_dest_points(dim)
 
     # build the gcps dictionary
     gcps = {"src": src, "dst": dst}
-    # # if we would use this video as survey in video, the lines below are also needed,
-    # # and proper values need to be filled in. They are now commented out.
-    # gcps["h_ref"] = <your locally measured water level during survey in>
-    #gcps["h_ref"] = 0.44
+
     # water level in the local referential
-    gcps["z_0"] = 0.44
+    gcps["z_0"] = water_level
 
     # set the height and width
     height, width = init_frame.shape[0:2]
@@ -84,8 +59,9 @@ def cam_create(video, directory):
     cam_config = pyorc.CameraConfig(height=height, width=width, gcps=gcps, lens_position=[7, -2, 3])
 
     # set corners for delimitation of the area of interest
-    corners = [[1565, 83], [1461, 853], [53, 715], [783, 131]]
-    cam_config.set_bbox_from_corners(corners)
+    cam_config.set_bbox_from_corners(src)
+
+    # todo : add user input to get resolution and window_size parameters
 
     # resolution: this is the resolution in meters, in which you will get your orthoprojected frames,
     # once you have a complete CameraConfig including information on geographical coordinates and image coordinates,
@@ -102,7 +78,6 @@ def cam_create(video, directory):
     cam_config.window_size = 25
 
     # save the cam_config file to same directory
-    # speedup process if we want to other video with exact same setup
     cam_config.to_file(directory + "cam_config.json")
 
     return cam_config
