@@ -1,7 +1,8 @@
 import pyorc
 import math
 import cv2
-from dev.utils.GCP_detection import GCP_detect
+from dev.utils.GCP_detection import GCP_detect, sort_src
+import numpy as np
 
 """
 module where we create all the camera setup/configuration necessary 
@@ -22,8 +23,6 @@ def convert_dist_to_dest_points(L):
 
     return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
 
-
-
 def cam_create(video, directory, dim, water_level):
     init_frame = video.get_frame(0, method = "rgb")
 
@@ -31,7 +30,7 @@ def cam_create(video, directory, dim, water_level):
     # if the automatic detection is chosen then a window displaying the four tags on the init_frame should be shown and the user need to validate
     # if the validation is denied, the user need to point out by himself the four tags
 
-    # todo add interface showing init_frame to get the four tags points (i.e. scr)
+    # todo add interface showing init_frame to get the four tags points (i.e. scr) after they are sorted and show them with their index in the list since this index will refer to the label of the tag
 
     auto_detect = False
     # src points, in the image referential
@@ -39,9 +38,10 @@ def cam_create(video, directory, dim, water_level):
         # try to detect all four GCP with function (depends on the GCP visibility of the frame)
         src = GCP_detect(init_frame,False)
     else:
-        # manual imput
+        # manual input
         src = [[1523, 117], [1455, 748], [203, 650], [768, 155]]
 
+    src = sort_src(src)
 
     dst = convert_dist_to_dest_points(dim)
 
