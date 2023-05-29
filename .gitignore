@@ -106,8 +106,7 @@ env/
 examples/riverapp_examples/*
 !examples/riverapp_examples/VGC1
 !examples/riverapp_examples/data_format.md
-!examples/riverapp_examples/notebook_first_use.ipynb
-
+!examples/riverapp_examples/img
 
 
 .mypy_cache/

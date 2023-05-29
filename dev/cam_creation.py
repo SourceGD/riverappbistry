@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import pyorc
 import math
 import cv2
@@ -42,6 +43,15 @@ def cam_create(video, directory, dim, water_level):
         src = [[1523, 117], [1455, 748], [203, 650], [768, 155]]
 
     src = sort_src(src)
+
+    if False:
+        plt.figure()
+        plt.imshow(init_frame)
+        label = 1
+        for [x_src,y_src] in src:
+            plt.text(x_src,y_src,'P%s'%label,fontsize='x-large',color='red')
+            label+=1
+        plt.show()
 
     dst = convert_dist_to_dest_points(dim)
 

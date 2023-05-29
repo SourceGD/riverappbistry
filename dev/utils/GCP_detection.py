@@ -54,14 +54,15 @@ def GCP_detect(frame, verbose=False):
 
     return GCPs.tolist()
 
-# Function to get the polar angle between with respect to the firts point
+# Function to get the polar angle
+# with respect to the firts point
 # Note that since the y-axis is reverted, the y-coord are multiplied by -1
 def get_polar_angle_wrt_first_pt(x, y, x_cent, y_cent, x_first, y_first):
     # Calculate the polar angle of the point (x, y) with respect to the centroid (x_cent, y_cent)
     angle = math.atan2(-1*(y - y_cent), x - x_cent)
     # Calculate the polar angle of the point (x_first, y_first) with respect to the centroid (x_cent, y_cent)
     angle_first = math.atan2(-1*(y_first - y_cent), x_first - x_cent)
-    # set the angle to be zero for the first elem
+    # Set the angle to be zero for the first elem
     angle = angle - angle_first
     # Adjust the angle to be positive and in the range [0, 2*pi)
     if angle < 0:
@@ -69,32 +70,53 @@ def get_polar_angle_wrt_first_pt(x, y, x_cent, y_cent, x_first, y_first):
     return angle
 
 def sort_src(src):
+    '''
+        Function to sort the GCP found automatically.
+
+        The function first find the top left point to be the first one,
+            then sort the remaining in clockwise order
+
+        The finding of the first point follow these rules based on the quadrant
+            around the centroid of the polygon delimited by the four points
+        1. If one point in the top left quadrant it is P1
+        2. If two points in the first left quadrant
+            a. If they are vertically aligned, P1 is the uppermost
+            b. Otherwise P1 is the most left
+        3. If no point in top left quadrant then P1 is the uppermost of the
+            bottom left quadrant.
+    '''
+
     src=np.array(src)
 
     # find the centroid
-    x_cent = np.sum(src[:,0])/src.shape[0]
-    y_cent = np.sum(src[:, 1])/src.shape[0]
+    x_cent = int(np.sum(src[:,0])/len(src))
+    y_cent = int(np.sum(src[:,1])/len(src))
 
-    # find the points in the first quadrant
-    first_quad = []
+    # find the points in the second quadrant
+    second_quad = []
     for [x,y] in src:
-        if x>x_cent and y < y_cent:
-            first_quad += [[x,y]]
+        if x < x_cent and y < y_cent:
+            second_quad += [[x,y]]
 
     # find the first GCP
     first = []
-    if len(first_quad) == 1:
-        first = first_quad
-    elif len(first_quad) == 2:
-        # take the rightest one
-        first = first_quad[np.argsort(first_quad[:][0])[0],:]
+    if len(second_quad) == 1:
+        first = second_quad
+    elif len(second_quad) == 2:
+        # if they are vertically aligned, take the uppermost point (i.e. the lowest y-coord)
+        if np.abs(second_quad[0][0]-second_quad[1][0]) < 0.25 * np.abs( 0.5*(second_quad[0][0]+second_quad[1][0]) - x_cent):
+            first = [second_quad[np.argsort(np.array(second_quad)[:,1])[0]][:]]
+        # take the leftest one (i.e. the lowest x-coord)
+        else:
+            first = [second_quad[np.argsort(np.array(second_quad)[:,0])[0]][:]]
     else:
-        # take the uppermost of the second quadrant
-        second_quad = []
+        # take the uppermost point of the third quadrant (i.e. the lowest y-coord)
+        third_quad = []
         for [x, y] in src:
-            if x > x_cent and y > y_cent:
-                second_quad += [[x, y]]
-        first = second_quad[np.argsort(second_quad[:][1])[len(second_quad)-1], :]
+            if x < x_cent and y > y_cent:
+                third_quad += [[x, y]]
+        print(third_quad)
+        first = [third_quad[np.argsort(np.array(third_quad)[:,1])[0]][:]]
 
     # find the polar angle of each point wrt the first GCP
     pol_angles = []

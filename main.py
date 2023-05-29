@@ -3,7 +3,7 @@ import dev.cam_creation as cam_creation
 import dev.stab_and_piv as stab_and_piv
 import dev.mask_and_plot_piv as mask_and_plot_piv
 import dev.transect as transect
-import pyorc
+import pyorc.api as pyorc
 import cv2
 import xarray as xr
 import os.path
