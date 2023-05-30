@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import pyorc
+import pyorc.api as pyorc
 import math
 import cv2
 from dev.utils.GCP_detection import GCP_detect, sort_src
@@ -66,7 +66,9 @@ def cam_create(video, directory, dim, water_level):
 
     # now we use everything to make a camera configuration note that the lens_position does not seem to be used for
     # the process but has to be indicated to avoid error/warnings
-    cam_config = pyorc.CameraConfig(height=height, width=width, gcps=gcps, lens_position=[7, -2, 3])
+    cam_config = pyorc.CameraConfig(height=height, width=width, gcps=gcps, lens_position=[7, -2
+
+        , 3])
 
     # set corners for delimitation of the area of interest
     cam_config.set_bbox_from_corners(src)
