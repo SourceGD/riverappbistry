@@ -44,7 +44,9 @@ def cam_create(video, directory, dim, water_level):
 
     src = sort_src(src)
 
-    if False:
+    # flag to print id of GCPs detected in original RGB frame
+    flag_print_GCP_id = True
+    if flag_print_GCP_id:
         plt.figure()
         plt.imshow(init_frame)
         label = 1
