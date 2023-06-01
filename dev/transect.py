@@ -7,7 +7,7 @@ from matplotlib.colors import Normalize
 # todo add user input interface to get the two points, defining the edge points of the transect,
 #  one on each side of the river
 def delimiter_points_bathy(cam_config):
-    # two points that delimit the transect
+    # two points that delimit the transect for the VGC1 example
     local_points = [[494, 427], [1391, 465]]
 
     # convert local_points to the orthorectified referential
