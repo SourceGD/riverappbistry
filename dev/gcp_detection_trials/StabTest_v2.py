@@ -56,13 +56,13 @@ for idx in range(0, 4):
         scores[j+1] = cv2.matchShapes(binary_win, GCP_ref, cv2.CONTOURS_MATCH_I2, 0)
 
     # sort the dictionary and take the 4 best (i.e. lowest) score label
-    scores = {k: v for k, v in sorted(scores.items(), key = lambda item: item[1])[:4]}
+    scores = {k: v for k, v in sorted(scores.items(), key = lambda item: item[1])[:6]}
 
     # take the GCP as the objects corresponding to the highest scores
     GCPs = np.flip([(np.mean(np.argwhere(objects==i), axis=0)).astype(int) for i in scores.keys()])
 
     src = GCPs.tolist()
-    src_sorted = gcp.sort_src(GCPs.tolist())
+    src_sorted = gcp.sort_src(GCPs.tolist()[-4:])
 
     # flag to print id of GCPs detected in original RGB frame
     flag_print_GCP_id_sorted = False
@@ -81,14 +81,14 @@ for idx in range(0, 4):
     flag_print_GCP_id_scored = True
     if flag_print_GCP_id_scored:
         f, ax = plt.subplots(1, 3,figsize=(12, 4))
-        ax[0].imshow(dilation,cmap='gray', vmin=0, vmax=255)
+        ax[0].imshow(opening,cmap='gray', vmin=0, vmax=255)
         ax[0].set_axis_off()
         ax[0].set_title('Post-processed image')
         ax[1].imshow(frame)
-        label = 1
+        label_tag = 1
         for [x_src, y_src] in src:
-            ax[1].text(x_src, y_src, 'T%s' % (-label+5), fontsize='x-large', color='darkblue')
-            label += 1
+            ax[1].text(x_src, y_src, 'T%s' % (-label_tag+len(scores)+1), fontsize='x-large', color='darkblue')
+            label_tag += 1
         ax[1].plot(*zip(*GCPs), "rx", markersize=5, label="Control points ")
         ax[1].set_axis_off()
         ax[1].set_title('Tags ranked by shape similarity')
@@ -97,11 +97,11 @@ for idx in range(0, 4):
         for [x_src, y_src] in src_sorted:
             ax[2].text(x_src, y_src, 'P%s' % label, fontsize='x-large', color='chartreuse')
             label += 1
-        ax[2].plot(*zip(*GCPs), "rx", markersize=5, label="Control points")
+        ax[2].plot(*zip(*src_sorted), "rx", markersize=5, label="Control points")
         ax[2].set_axis_off()
         ax[2].set_title('Tags ranked by the sorting routine')
         #plt.savefig("../../Rapport Final/pres_teams/example_" + str(idx))
-        plt.savefig(filedir+'GCP_result.png')
+        #plt.savefig(filedir+'GCP_result.png')
         plt.show()
 
     print("video " + str(idx))
@@ -111,4 +111,17 @@ for idx in range(0, 4):
     #bestscoreKey = [k for k, v in scores.items() if v==min(scores.values())][0]
     #plt.imshow(frame[ndimage.find_objects(objects==bestscoreKey)[0]])
     #plt.show()
+
+    # plot the pixel used for the shape matching on the opened image
+    #lab = (objects==bestscoreKey)
+    #for i in range(dilation.shape[0]):
+    #    for j in range(dilation.shape[1]):
+    #        if not lab[i,j]:
+    #            opening[i,j]= 0
+
+    #plt.imshow(opening, cmap='gray')
+    #plt.axis('off')
+    #plt.savefig(filedir+'lim_best_tag.png')
+    #plt.show()
+
 
