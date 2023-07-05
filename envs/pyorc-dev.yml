@@ -29,8 +29,8 @@ dependencies:
   - xarray
   - typeguard
   - yaml
-  - kivy
-  - kivymd
   - pip:
     - openpiv
+    - kivy
+    - kivymd
 
