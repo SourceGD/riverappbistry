@@ -1,0 +1,15 @@
+
+{
+    "Teal": {
+        "200": "26474E",
+        "500": "26474E",
+        "700": "26474E"
+    },
+    "Light": {
+        "StatusBar": "E0E0E0",
+        "AppBar": "26474E",
+        "Background": "FAFAFA",
+        "CardsDialogs": "FFFFFF",
+        "FlatButtonDown": "cccccc"
+    }
+}

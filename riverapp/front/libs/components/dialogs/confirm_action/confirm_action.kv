@@ -1,0 +1,18 @@
+#:kivy 2.2.0
+#:import Factory kivy.factory.Factory
+
+<ConfirmAction>:
+    title: root.title
+    text: root.text
+    text_color: app.theme_cls.opposite_text_color
+    buttons: 
+        [ \
+        Factory.MDRoundFlatButton(text=root.cancel_text, on_release=root.dismiss, text_color=app.theme_cls.opposite_text_color), \
+        Factory.MDFillRoundFlatButton(text=root.confirm_text, on_release=root.confirm_callback,md_bg_color=app.theme_cls.opposite_text_color, text_color=app.theme_cls.text_color) \
+        ]
+
+                    
+    
+        
+        
+    
