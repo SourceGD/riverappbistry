@@ -29,6 +29,7 @@ dependencies:
   - xarray
   - typeguard
   - yaml
+  - pylint==2.16.*
   - pip:
     - openpiv
     - kivy
