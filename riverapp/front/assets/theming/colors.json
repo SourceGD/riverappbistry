@@ -5,11 +5,16 @@
         "500": "26474E",
         "700": "26474E"
     },
+    "Orange": {
+        "200": "F27438",
+        "500": "F27438",
+        "700": "F27438"
+    },
     "Light": {
         "StatusBar": "E0E0E0",
         "AppBar": "26474E",
-        "Background": "FAFAFA",
-        "CardsDialogs": "FFFFFF",
+        "Background": "FFFFFF",
+        "CardsDialogs": "26474E",
         "FlatButtonDown": "cccccc"
     }
 }

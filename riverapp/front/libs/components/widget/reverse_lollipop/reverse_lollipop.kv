@@ -1,0 +1,38 @@
+#:kivy 2.2.0
+
+<ReverseLollipop>:
+    canvas.before:
+        Color:
+            rgba: root.lollipop_color
+
+        Line:
+            width: 2
+            circle: 
+                self.x + self.width / 2, \
+                self.y + self.width / 2 + self.height * (root.order - 1), \
+                self.width / 2, \
+                0, \
+                360
+
+        Line:
+            width: 2
+            points: 
+                self.x + self.width / 2, \
+                self.y + self.width + self.height * (root.order - 1), \
+                self.x + self.width / 2, \
+                self.y + self.height * root.order
+
+<LabelledReverseLollipop@MDWidget>:
+    text: "" 
+    MDBoxLayout:
+        ReverseLollipop:
+            order: self.order
+            lollipop_color: self.lollipop_color
+
+        MDBoxLayout:
+            pos_hint: {"y": root.width * 0.25 / root.height }
+            adaptive_height: True
+            padding: dp(10),0,0,0
+            MDLabel:
+                adaptive_size: True
+                text: root.text
