@@ -1,9 +1,11 @@
+from os import path
+
 from kivymd.uix.navigationdrawer.navigationdrawer import MDNavigationLayout
 from kivy.lang import Builder
-
-from os import path
 
 Builder.load_file(path.join(path.dirname(__file__),"screens_navigation.kv"))
 
 class ScreensNavigation(MDNavigationLayout):
-    pass
+    """
+        This class may be deleted in the future if no special methods is needed
+    """

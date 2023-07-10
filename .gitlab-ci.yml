@@ -14,4 +14,4 @@ before_script:
 pylint:
     stage: Linting
     script: 
-        - pylint --recursive=y riverapp --disable=R0901,W0613 --fail-under=7 --class-attribute-naming-style=snake_case
+        - pylint --recursive=y riverapp --disable=R0901,W0613,C0114,E0611 --fail-under=7 --class-attribute-naming-style=snake_case

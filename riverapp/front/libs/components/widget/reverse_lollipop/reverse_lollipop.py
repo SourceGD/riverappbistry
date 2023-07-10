@@ -1,13 +1,17 @@
+from os import path
+
 from kivymd.uix.widget import MDWidget
 from kivy.properties import NumericProperty, ColorProperty, BooleanProperty
 from kivy.lang import Builder
 from kivy.graphics import Color, Ellipse
 
-from os import path
-
 Builder.load_file(path.join(path.dirname(__file__),"reverse_lollipop.kv"))
 
 class ReverseLollipop(MDWidget):
+    """
+        Widget containing an inverted lollipop graphic design. 
+        You can make a ball appear inside the lollipop.
+    """
     order = NumericProperty(1)
     lollipop_color = ColorProperty("#FFFFFF")
     active_color = ColorProperty("#F27438")
@@ -21,9 +25,12 @@ class ReverseLollipop(MDWidget):
             raise ValueError(f"order must be an int: {value}")
 
     def on_active(self, instance, value: bool) -> None:
+        """
+            Make a ball appear or not when the active attribute changes
+        """
         if not self.canvas:
-            return None
-        
+            return
+
         if value:
             with self.canvas.after:
                 Color(rgba=self.active_color)
@@ -37,5 +44,5 @@ class ReverseLollipop(MDWidget):
 
         else:
             self.canvas.after.clear()
-            
+
         self.canvas.ask_update()
