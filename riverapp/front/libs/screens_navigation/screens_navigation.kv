@@ -1,10 +1,15 @@
 #:kivy 2.2.0
 
 #:import ReverseLollipopProgressBar libs.components.widget.reverse_lollipop_progress_bar.reverse_lollipop_progress_bar.ReverseLollipopProgressBar
+#:import DummyScreen libs.screens.dummy_screen.dummy_screen.DummyScreen
+#:import VideoConfiguration libs.screens.video_configuration.video_configuration.VideoConfiguration
 
 <ScreensNavigation>:
     MDScreenManager:
-    
+        id: screen_manager
+        DummyScreen:
+        VideoConfiguration:
+
     MDNavigationDrawer:
         id: nav_drawer
         radius: (0, 0, 0, 0)
@@ -21,6 +26,13 @@
                     title: "RiverApp"
                     title_color: app.theme_cls.opposite_text_color
                     title_halign: "center"
+
+                    MDIconButton:
+                        icon: "close"
+                        theme_icon_color: "Custom"
+                        icon_color: app.theme_cls.opposite_text_color
+                        ripple_scale: 0
+                        on_release: nav_drawer.set_state("close")
                     
             MDBoxLayout:
          

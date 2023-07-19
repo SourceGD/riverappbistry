@@ -21,6 +21,14 @@
                 self.y + self.width + self.height * (root.order - 1), \
                 self.x + self.width / 2, \
                 self.y + self.height * root.order
+    canvas:
+        Color:
+            rgba: root.active_color if root.active else (0,0,0,0)
+        Ellipse:
+            pos: 
+                self.x + self.width / 2 * 0.3375, \
+                self.y + self.width / 2 * 0.3375 + self.height * (self.order - 1)
+            size: self.width / 2 * 1.35, self.width / 2 * 1.35
 
 <LabelledReverseLollipop@MDWidget>:
     text: "" 

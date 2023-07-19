@@ -1,3 +1,7 @@
+from os import environ
+environ["KIVY_VIDEO"] = "ffpyplayer"
+environ["KIVY_AUDIO"] = "ffpyplayer"
+
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.config import Config

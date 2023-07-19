@@ -1,0 +1,14 @@
+#:kivy 2.2.0
+
+<TextUnderIconButton>:
+    rounded_button: False
+    size_hint: 1,1
+    md_bg_color: app.theme_cls.bg_darkest
+    line_color: app.theme_cls.primary_color
+    line_width: 2
+
+    MDLabel:
+        text_size: self.size
+        text: root.text
+        valign: "bottom"
+        halign: "center"
