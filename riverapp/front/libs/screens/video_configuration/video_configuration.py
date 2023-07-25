@@ -12,7 +12,7 @@ from kivy.lang import Builder
 
 
 from libs.components.dialogs.confirm_action.confirm_action import ConfirmAction
-from libs.components.widget.video_reader.video_player import RiverAppVideoPlayer
+from libs.components.widget.video_player.video_player import RiverAppVideoPlayer
 
 Builder.load_file(path.join(path.dirname(__file__),"video_configuration.kv"))
 
