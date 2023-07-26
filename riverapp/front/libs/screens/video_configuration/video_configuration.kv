@@ -4,8 +4,8 @@
 #:include libs/components/app_bar/screen_title/screen_title.kv
 #:import TextUnderIconButton libs.components.widget.text_under_icon_button.text_under_icon_button.TextUnderIconButton
 
-<MobileView>:
-    name: "mobile_view"
+<VideoConfigurationMobileView>:
+    name: "video_configuration_mobile_view"
 
     MDBoxLayout:
         orientation: "vertical"
@@ -94,8 +94,8 @@
                             font_style: "Button"
                             on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
 
-<TabletView>:
-    name: "tablet_view"
+<VideoConfigurationTabletView>:
+    name: "video_configuration_tablet_view"
 
     MDBoxLayout:
         orientation: "vertical"
@@ -175,8 +175,8 @@
                         on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
                         
 
-<DesktopView>:
-    name: "desktop_view"
+<VideoConfigurationDesktopView>:
+    name: "video_configuration_desktop_view"
 
     MDBoxLayout:
         orientation: "vertical"

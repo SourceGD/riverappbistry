@@ -1,0 +1,14 @@
+#:kivy 2.2.0
+
+#:include libs/components/app_bar/main_app_bar/main_app_bar.kv
+#:include libs/components/app_bar/screen_title/screen_title.kv
+#:import TextUnderIconButton libs.components.widget.text_under_icon_button.text_under_icon_button.TextUnderIconButton
+
+<BathymetryMobileView>:
+    name: "bathymetry_mobile_view"
+
+<BathymetryTabletView>:
+    name: "bathymetry_tablet_view"
+
+<BathymetryDesktopView>:
+    name: "bathymetry_desktop_view"

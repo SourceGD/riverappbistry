@@ -16,21 +16,21 @@ from libs.components.widget.video_player.video_player import RiverAppVideoPlayer
 
 Builder.load_file(path.join(path.dirname(__file__),"video_configuration.kv"))
 
-class MobileView(MDScreen):
+class VideoConfigurationMobileView(MDScreen):
     """
         Class containing the mobile view of this screen.
         The class is empty because it is not possible to do otherwise
         to use the MDResponsiveLayout.
     """
 
-class TabletView(MDScreen):
+class VideoConfigurationTabletView(MDScreen):
     """
         Class containing the tablet view of this screen.
         The class is empty because it is not possible to do otherwise
         to use the MDResponsiveLayout.
     """
 
-class DesktopView(MDScreen):
+class VideoConfigurationDesktopView(MDScreen):
     """
         Class containing the desktop view of this screen.
         The class is empty because it is not possible to do otherwise
@@ -54,9 +54,9 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
     def __init__(self, **kw) -> None:
         super().__init__(**kw)
         self.name: str = "video_configuration"
-        self.mobile_view: MobileView = MobileView()
-        self.tablet_view: TabletView = TabletView()
-        self.desktop_view: DesktopView = DesktopView()
+        self.mobile_view: VideoConfigurationMobileView = VideoConfigurationMobileView()
+        self.tablet_view: VideoConfigurationTabletView = VideoConfigurationTabletView()
+        self.desktop_view: VideoConfigurationDesktopView = VideoConfigurationDesktopView()
         self.file_manager: MDFileManager = MDFileManager(
             exit_manager=self.exit_file_manager, 
             select_path=self.select_path,
