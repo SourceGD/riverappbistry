@@ -85,18 +85,16 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
                     title="Wrong File Format",
                     text="The bathymetry file has a specific format !\nMore information in the documentation.",
                     confirm_text="I understand"
-                )
-
-                return self.dialog.open()
+                ).open()
 
         else:
             ConfirmAction(
                 title="Wrong File",
                 text="The bathymetry file can only be a csv, a txt or a dat !",
                 confirm_text="I understand"
-            )
+            ).open()
 
-            self.dialog.open()
+            
 
     def exit_file_manager(self, *args) -> None:
         """
