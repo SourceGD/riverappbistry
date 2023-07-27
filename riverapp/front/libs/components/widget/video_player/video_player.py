@@ -16,6 +16,7 @@ class RiverAppVideoPlayer(MDRelativeLayout):
     
     hide = BooleanProperty(False)
     source = StringProperty()
+    state = StringProperty("play")
 
     def __init__(self, source: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,7 +37,20 @@ class RiverAppVideoPlayer(MDRelativeLayout):
         
         if not path.exists(value):
             raise FileNotFoundError(f"the file {value} was not found")
-                
+
+    def on_state(self, instance, value:str) -> None:
+        if value not in ["play", "pause", "stop"]:
+            raise ValueError(f"Unknown state. Available states are [play, pause, stop] : {value}")
+        
+        if value == "play":
+            self.ids.video.state = "play"
+        
+        if value == "pause":
+            self.ids.video.state = "pause"
+
+        if value == "stop":
+            self.ids.video.state = "stop"
+
     def change_slider_value(self, instance, value) -> None:
         position = (value / self._duration) * 100
         self.ids.slider.value = position
@@ -47,11 +61,11 @@ class RiverAppVideoPlayer(MDRelativeLayout):
         if button.icon != "replay":
             if button.icon == "play":
                 button.icon = "pause"
-                self.ids.video.state = "play"
+                self.state = "play"
 
             else:
                 button.icon = "play"
-                self.ids.video.state = "pause"
+                self.state = "pause"
 
         else:
             button.icon = "pause"

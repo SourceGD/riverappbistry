@@ -75,9 +75,10 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
     def on_pre_leave(self, *args) -> None:
         """
             Called just before the user leave the screen.
-            Clear the video_box widget in case there is a video to free some space.
         """
-        
+        if self._video_reader is not None:
+            self._video_reader.state = "pause"
+            
     def open_file_manager(self) -> None:
         """
             Called to open the file manager
@@ -236,4 +237,6 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
                 freq : {self.frequency}\n
                 video : {self.video_path}
                 """)
+            
+            self.manager.current = "bathymetry"
         
