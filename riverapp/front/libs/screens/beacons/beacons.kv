@@ -1,0 +1,27 @@
+#:kivy 2.2.0
+
+#:include libs/components/app_bar/main_app_bar/main_app_bar.kv
+#:include libs/components/app_bar/screen_title/screen_title.kv
+
+<BeaconsMobileView>:
+    name: "beacons_mobile_view"
+
+<BeaconsTabletView>:
+    name: "beacons_tablet_view"
+
+     MDBoxLayout:
+        orientation: "vertical"
+
+        MainAppBar:
+
+        ScreenTitle:
+            title: "Beacons - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("beacons").go_back()]]
+            
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: root.height - 2 * dp(64) #dp(64) = MDTopAppBar height
+
+<BeaconsDesktopView>:
+    name: "beacons_desktop_view"
