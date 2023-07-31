@@ -187,3 +187,8 @@
                     font_style: "Button"
                     disabled: root.disabled
                     on_release: app.root.ids.screen_manager.get_screen("bathymetry").send_bathymetry()
+
+<Input@MDTextField>:
+    mode: "rectangle"
+    line_color_normal: app.theme_cls.primary_color
+    text_color_normal: app.theme_cls.primary_color
