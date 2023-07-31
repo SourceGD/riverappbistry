@@ -107,4 +107,7 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         self.children[0].ids.control_button.disabled = True
         self.children[0].ids.content.clear_widgets()
         self.children[0].ids.content.add_widget(self.children[0].ids.upload_button)
+
+    def send_bathymetry(self) -> None:
+        self.manager.current = "beacons"
     

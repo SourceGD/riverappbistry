@@ -43,7 +43,7 @@ class Beacons(MDResponsiveLayout,MDScreen):
             Called just before the screen appear to the user.
             Update the left progress bar to Video.
         """
-        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(6)
+        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(5)
 
     def go_back(self) -> None:
         self.manager.current = "bathymetry"

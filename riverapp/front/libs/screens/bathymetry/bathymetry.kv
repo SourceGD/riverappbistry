@@ -63,7 +63,7 @@
                     text: "Validate"
                     font_style: "Button"
                     disabled: root.disabled
-
+                    on_release: app.root.ids.screen_manager.get_screen("bathymetry").send_bathymetry()
 
 <BathymetryTabletView>:
     name: "bathymetry_tablet_view"
@@ -124,6 +124,7 @@
                     text: "Validate"
                     font_style: "Button"
                     disabled: root.disabled
+                    on_release: app.root.ids.screen_manager.get_screen("bathymetry").send_bathymetry()
 
 
 <BathymetryDesktopView>:
@@ -185,3 +186,4 @@
                     text: "Validate"
                     font_style: "Button"
                     disabled: root.disabled
+                    on_release: app.root.ids.screen_manager.get_screen("bathymetry").send_bathymetry()
