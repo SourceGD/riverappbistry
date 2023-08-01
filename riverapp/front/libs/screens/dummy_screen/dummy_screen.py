@@ -21,4 +21,4 @@ class DummyScreen(MDScreen):
             transistion.
         """
         self.manager.transition = NoTransition()
-        self.manager.current = "video_configuration"
+        self.manager.current = "beacons"
