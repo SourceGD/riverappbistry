@@ -1,0 +1,144 @@
+#:kivy 2.2.0
+
+#:import DummyScreen src.front.screens.DummyScreen
+#:import VideoConfiguration src.front
+#:import Bathymetry src.front
+#:import Beacons src.front
+#:import ReverseLollipopProgressBar src.front.components.widget
+
+<RiverappController>:
+    MDScreenManager:
+        id: screen_manager
+        DummyScreen:
+        VideoConfiguration:
+        Bathymetry:
+        Beacons:
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        radius: (0, 0, 0, 0)
+
+        MDBoxLayout:
+            orientation: "vertical"
+            pos_hint: {"top": 1}
+
+            MDBoxLayout:
+                adaptive_height: True
+
+                MDNavigationDrawerHeader:
+                    pos_hint: {"top": 1}
+                    title: "RiverApp"
+                    title_color: app.theme_cls.opposite_text_color
+                    title_halign: "center"
+
+                    MDIconButton:
+                        icon: "close"
+                        theme_icon_color: "Custom"
+                        icon_color: app.theme_cls.opposite_text_color
+                        ripple_scale: 0
+                        on_release: nav_drawer.set_state("close")
+                    
+            MDBoxLayout:
+         
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_width: True
+                    padding: nav_drawer.height * 0.02, 0, nav_drawer.height * 0.04, 0
+                    
+                    ReverseLollipopProgressBar:
+                        id: lollipop_progress_bar
+                        progress_bar_size: 8
+                        size_hint: None, None
+                        size: nav_drawer.height * 0.05, nav_drawer.height * 0.11
+                
+                MDBoxLayout:
+                    orientation: "vertical"
+
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Project"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Video"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+                    
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Bathymetry"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Beacons"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+                    
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Filter"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "PIV"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+                    
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Post-Process"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+                    
+                    MDBoxLayout:
+                        size_hint: 1, None
+                        height: nav_drawer.height * 0.11
+
+                        MDLabel:
+                            text_size: self.size
+                            text: "Transect"
+                            valign: "bottom"
+                            font_style: "H5"
+                            color: app.theme_cls.opposite_text_color
+            
