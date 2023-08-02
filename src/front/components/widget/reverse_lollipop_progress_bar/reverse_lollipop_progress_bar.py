@@ -41,4 +41,4 @@ class ReverseLollipopProgressBar(MDAnchorLayout):
 
         for child in self.children:
             if isinstance(child, ReverseLollipop):
-                child.active = child.order==order
+                child.active = child.order >= order
