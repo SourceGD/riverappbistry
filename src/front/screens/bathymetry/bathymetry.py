@@ -43,7 +43,6 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         self.file_manager: MDFileManager = MDFileManager(
             exit_manager=self.exit_file_manager, 
             select_path=self.select_path,
-            ext=[".csv", ".txt", ".dat"],
             selector="file"
         )
         self.graph = None
@@ -68,29 +67,24 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         """
             Check selected file.
         """
-        if path.splitext(file_path)[1] in [".csv", ".txt", ".dat"]:
-            try:
-                if self.graph is None:
-                    self.graph = BathymetryGraph(file_path)
+        try:
+            if self.graph is None:
+                self.graph = BathymetryGraph(file_path)
 
-                    self.exit_file_manager()
-                    self.children[0].ids.content.clear_widgets()
-                    self.children[0].ids.content.add_widget(self.graph.generate_image_widget())
-                    self.children[0].ids.control_button.disabled = False
+                self.exit_file_manager()
+                self.children[0].ids.content.clear_widgets()
+                self.children[0].ids.content.add_widget(self.graph.generate_image_widget())
+                self.children[0].ids.control_button.disabled = False
 
-            except InvalidFileFormat:
-                ConfirmAction(
-                    title="Wrong File Format",
-                    text="The bathymetry file has a specific format !\nMore information in the documentation.",
-                    confirm_text="I understand"
-                ).open()
-
-        else:
+        except InvalidFileFormat:
             ConfirmAction(
-                title="Wrong File",
-                text="The bathymetry file can only be a csv, a txt or a dat !",
+                title="The bathymetry isn't provided in a suitable typesetting !",
+                text="Please check the documentation for more information on how to typeset your bathymetry",
                 confirm_text="I understand"
             ).open()
+
+    def test(self, *args):
+        print(*args)
 
             
 
