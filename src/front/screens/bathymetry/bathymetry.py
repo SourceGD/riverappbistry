@@ -83,6 +83,13 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
                 confirm_text="I understand"
             ).open()
 
+        except UnicodeDecodeError:
+            ConfirmAction(
+                title="The bathymetry isn't provided in a suitable encoding !",
+                text="Please use UTF-8 encoded file",
+                confirm_text="I understand"
+            ).open()
+
     def test(self, *args):
         print(*args)
 

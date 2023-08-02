@@ -23,7 +23,7 @@ class BathymetryGraph():
 
     def _is_file_format_valid(self, file_path:str) -> None:
         
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding="utf-8") as file:
             lines: list = file.readlines()
 
             separators : list = [",", ";", " "]
@@ -47,7 +47,7 @@ class BathymetryGraph():
         return line.strip().split(sep)
     
     def _save_coordinates(self) -> None:
-         with open(self.bathymetry_path, 'r') as file:
+         with open(self.bathymetry_path, 'r', encoding="utf-8") as file:
             lines = file.readlines()
 
             for line in lines[1:]:
