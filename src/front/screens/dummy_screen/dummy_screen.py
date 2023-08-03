@@ -21,4 +21,4 @@ class DummyScreen(MDScreen):
             transistion.
         """
         self.manager.transition = NoTransition()
-        self.manager.current = "beacons"
+        self.manager.current = "bathymetry"
