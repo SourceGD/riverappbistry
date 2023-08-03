@@ -1,7 +1,6 @@
 #:kivy 2.2.0
 
-#:import MainAppBar src.front.components.app_bar.MainAppBar
-#:import ScreenTitle src.front.components.app_bar.ScreenTitle
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
 
 <BeaconsMobileView>:
     name: "beacons_mobile_view"
@@ -12,9 +11,7 @@
     MDBoxLayout:
         orientation: "vertical"
 
-        MainAppBar:
-
-        ScreenTitle:
+        DefaultScreenTopBar:
             title: "Beacons - Configuration"
             left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("beacons").go_back()]]
             
