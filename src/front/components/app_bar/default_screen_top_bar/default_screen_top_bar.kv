@@ -1,0 +1,25 @@
+#:kivy 2.2.0
+
+<DefaultScreenTopBar>:
+    orientation: "vertical"
+    size_hint_y: None
+    height: dp(128)
+    
+    MDTopAppBar:
+        title: "RiverApp"
+        anchor_title: "left"
+        elevation: 2
+        set_bars_color: True
+        pos_hint: {"top": 1}
+        left_action_items: [["menu", lambda x: app.root.ids.nav_drawer.set_state("toggle")]]
+
+    MDTopAppBar:
+        elevation: 0
+        padding: 0,0,0,0
+        md_bg_color: self.theme_cls.bg_normal
+        specific_text_color: self.theme_cls.text_color
+        left_action_items: root.left_action_items
+        right_action_items: root.right_action_items
+        title: root.title
+        use_overflow: root.use_overflow
+        overflow_cls: root.overflow_cls
