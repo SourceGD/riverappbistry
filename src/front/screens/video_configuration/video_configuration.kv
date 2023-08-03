@@ -1,7 +1,5 @@
 #:kivy 2.2.0
 
-#:import MainAppBar src.front.components.app_bar.MainAppBar
-#:import ScreenTitle src.front.components.app_bar.ScreenTitle
 #:import TextUnderIconButton src.front.components.widget.TextUnderIconButton
 #:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
 
@@ -57,7 +55,7 @@
                     MDBoxLayout:
                         pos_hint: {"center_y": 0.5, "right": 1}
 
-                    BottomButtons:
+                    VideoConfigurationBottomButtons:
                         id: bottom_buttons
 
 <VideoConfigurationTabletView>:
@@ -99,7 +97,7 @@
                     id: frequency_input
                     input_filter: "int"
 
-        BottomButtons:
+        VideoConfigurationBottomButtons:
             id: bottom_buttons
 
 <VideoConfigurationDesktopView>:
@@ -141,7 +139,7 @@
                     id: frequency_input
                     input_filter: "int"
 
-        BottomButtons:
+        VideoConfigurationBottomButtons:
             id: bottom_buttons
 
 <VideoUpload@MDGridLayout>:
@@ -214,7 +212,7 @@
     on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
     text:"1"
 
-<BottomButtons@MDBoxLayout>:
+<VideoConfigurationBottomButtons@MDBoxLayout>:
     padding: dp(10)
     spacing: dp(10)
     adaptive_size: True
