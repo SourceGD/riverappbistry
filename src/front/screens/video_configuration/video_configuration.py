@@ -99,7 +99,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
                 )
             self.video_path = file_path
             self.children[0].ids.video_upload.disabled = True
-            self.children[0].ids.remove_video.disabled = False
+            self.children[0].ids.bottom_buttons.remove_is_disabled = False
             self.children[0].add_widget(self._video_reader)
             
 
@@ -123,7 +123,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         self._video_reader = None
         self.video_path = ""
         self.children[0].ids.video_upload.disabled = False
-        self.children[0].ids.remove_video.disabled = True
+        self.children[0].ids.bottom_buttons.remove_is_disabled = True
 
     def set_start_time(self, value: str | int | float) -> None:
         """

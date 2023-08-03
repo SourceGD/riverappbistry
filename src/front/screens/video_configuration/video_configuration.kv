@@ -3,6 +3,7 @@
 #:import MainAppBar src.front.components.app_bar.MainAppBar
 #:import ScreenTitle src.front.components.app_bar.ScreenTitle
 #:import TextUnderIconButton src.front.components.widget.TextUnderIconButton
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
 
 <VideoConfigurationMobileView>:
     name: "video_configuration_mobile_view"
@@ -10,86 +11,54 @@
     MDBoxLayout:
         orientation: "vertical"
 
-        MainAppBar:
-
-        ScreenTitle:
+        DefaultScreenTopBar:
             title: "Video - Configuration"
-            
-        MDBoxLayout:
-            orientation: "vertical"
-            size_hint_y: None
-            height: root.height - 2 * dp(64) #dp(64) = MDTopAppBar height
-            
-            VideoUpload:
-                id: video_upload
-                type: "mobile"
+   
+        VideoUpload:
+            id: video_upload
+            type: "tablet" 
+        
+        MDScrollView:
+            do_scroll_x: False
+            do_scroll_y: True
+
+            MDGridLayout:
+                cols: 1
+                spacing: 0
+                size_hint: 1, 1.3
+                pos_hint: {"center_x": .5}
+
+                MDBoxLayout:
+                    padding: dp(10)
+                    spacing: dp(10)
+
+                    StartTimeInput:
+                        id: start_time_input
+                        input_filter: "float"
+
+                MDBoxLayout:
+                    padding: dp(10)
+                    spacing: dp(10)
+
+                    EndTimeInput:
+                        id: end_time_input
+                        input_filter: "float"
                 
-            MDScrollView:
-                do_scroll_x: False
-                do_scroll_y: True
+                MDBoxLayout:
+                    padding: dp(10)
+                    spacing: dp(10)
 
-                MDGridLayout:
-                    cols: 1
-                    spacing: 0
-                    size_hint: 1, 1.3
-                    pos_hint: {"center_x": .5}
+                    FrequencyInput:
+                        id: frequency_input
+                        input_filter: "int"
 
-                    MDBoxLayout:
-                        padding: dp(10)
-                        spacing: dp(10)
-
-                        VideoConfTextInput:
-                            id: start_time_input
-                            hint_text: "Start Time [s]"
-                            input_filter: "float"
-                            helper_text_mode: "on_error"
-                            on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_start_time(self.text) if not self.focus else None
-                            text: "0"
+                MDBoxLayout:
 
                     MDBoxLayout:
-                        padding: dp(10)
-                        spacing: dp(10)
-                        
-                        VideoConfTextInput:
-                            id: end_time_input
-                            hint_text: "End Time [s]"
-                            input_filter: "float"
-                            helper_text_mode: "on_error"
-                            on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_end_time(self.text) if not self.focus else None
-                            text: "1"
+                        pos_hint: {"center_y": 0.5, "right": 1}
 
-                            
-                    MDBoxLayout:
-                        padding: dp(10)
-                        spacing: dp(10)
-
-                        VideoConfTextInput:
-                            id: frequency_input
-                            hint_text: "Frequency [frame / s]"
-                            input_filter: "int"
-                            helper_text_mode: "on_error"
-                            on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
-                            text:"1"
-                    
-                    MDBoxLayout:
-                        padding: dp(10)
-                        spacing: dp(10)
-                        
-                        MDBoxLayout:
-                            pos_hint: {"center_y": 0.5, "right": 1}
-                        
-                        MDFillRoundFlatButton:
-                            id: remove_video
-                            text: "Change Video"
-                            font_style: "Button"
-                            disabled: True
-                            md_bg_color: app.theme_cls.error_color
-                            on_release: app.root.ids.screen_manager.get_screen("video_configuration").remove_video()
-
-                        MDFillRoundFlatButton:
-                            text: "Validate"
-                            font_style: "Button"
-                            on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
+                    BottomButtons:
+                        id: bottom_buttons
 
 <VideoConfigurationTabletView>:
     name: "video_configuration_tablet_view"
@@ -97,77 +66,41 @@
     MDBoxLayout:
         orientation: "vertical"
 
-        MainAppBar:
-
-        ScreenTitle:
+        DefaultScreenTopBar:
             title: "Video - Configuration"
 
+        VideoUpload:
+            id: video_upload
+            type: "tablet" 
+        
         MDBoxLayout:
             orientation: "vertical"
-            size_hint_y: None
-            height: root.height - 2 * dp(64) #dp(64) = MDTopAppBar height
+            spacing: 0
+            size_hint_x: 0.85
+            pos_hint: {"center_x": .5}
 
-            VideoUpload:
-                id: video_upload
-                type: "tablet" 
-                                      
             MDBoxLayout:
-                orientation: "vertical"
-                spacing: 0
-                size_hint_x: 0.85
-                pos_hint: {"center_x": .5}
+                padding: dp(10)
+                spacing: dp(10)
 
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
+                StartTimeInput:
+                    id: start_time_input
+                    input_filter: "float"
 
-                    VideoConfTextInput:
-                        id: start_time_input
-                        hint_text: "Start Time [s]"
-                        input_filter: "float"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_start_time(self.text) if not self.focus else None
-                        text: "0"
+                EndTimeInput:
+                    id: end_time_input
+                    input_filter: "float"
 
-                    VideoConfTextInput:
-                        id: end_time_input
-                        hint_text: "End Time [s]"
-                        input_filter: "float"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_end_time(self.text) if not self.focus else None
-                        text: "1"
+            MDBoxLayout:
+                padding: dp(10)
+                spacing: dp(10)
 
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
+                FrequencyInput:
+                    id: frequency_input
+                    input_filter: "int"
 
-                    VideoConfTextInput:
-                        id: frequency_input
-                        hint_text: "Frequency [frame / s]"
-                        input_filter: "int"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
-                        text:"1"
-                
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
-                    adaptive_size: True
-                    pos_hint: {"center_y": 0.5, "right": 1}
-
-                    MDFillRoundFlatButton:
-                        id: remove_video
-                        text: "Change Video"
-                        font_style: "Button"
-                        disabled: True
-                        md_bg_color: app.theme_cls.error_color
-                        on_release: app.root.ids.screen_manager.get_screen("video_configuration").remove_video()
-
-                    MDFillRoundFlatButton:
-                        text: "Validate"
-                        font_style: "Button"
-                        on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
-                        
+        BottomButtons:
+            id: bottom_buttons
 
 <VideoConfigurationDesktopView>:
     name: "video_configuration_desktop_view"
@@ -175,76 +108,41 @@
     MDBoxLayout:
         orientation: "vertical"
 
-        MainAppBar:
-
-        ScreenTitle:
+        DefaultScreenTopBar:
             title: "Video - Configuration"
-            
+
+        VideoUpload:
+            id: video_upload
+            type: "tablet" 
+        
         MDBoxLayout:
             orientation: "vertical"
-            size_hint_y: None
-            height: root.height - 2 * dp(64) #dp(64) = MDTopAppBar height
-            
-            VideoUpload:
-                id: video_upload
-                type: "desktop"
-                            
+            spacing: 0
+            size_hint_x: 0.85
+            pos_hint: {"center_x": .5}
+
             MDBoxLayout:
-                orientation: "vertical"
-                spacing: 0
-                size_hint_x: 0.85
-                pos_hint: {"center_x": .5}
+                padding: dp(10)
+                spacing: dp(10)
 
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
+                StartTimeInput:
+                    id: start_time_input
+                    input_filter: "float"
 
-                    VideoConfTextInput:
-                        id: start_time_input
-                        hint_text: "Start Time [s]"
-                        input_filter: "float"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_start_time(self.text) if not self.focus else None
-                        text:"0"
-                    
-                    VideoConfTextInput:
-                        id: end_time_input
-                        hint_text: "End Time [s]"
-                        input_filter: "float"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_end_time(self.text) if not self.focus else None
-                        text:"1"
+                EndTimeInput:
+                    id: end_time_input
+                    input_filter: "float"
 
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
+            MDBoxLayout:
+                padding: dp(10)
+                spacing: dp(10)
 
-                    VideoConfTextInput:
-                        id: frequency_input
-                        hint_text: "Frequency [frame / s]"
-                        input_filter: "int"
-                        helper_text_mode: "on_error"
-                        on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
-                        text:"1"
+                FrequencyInput:
+                    id: frequency_input
+                    input_filter: "int"
 
-                MDBoxLayout:
-                    padding: dp(10)
-                    spacing: dp(10)
-                    adaptive_size: True
-                    pos_hint: {"center_y": 0.5, "right": 1}
-
-                    MDFillRoundFlatButton:
-                        id: remove_video
-                        text: "Change Video"
-                        font_style: "Button"
-                        disabled: True
-                        md_bg_color: app.theme_cls.error_color
-                        on_release: app.root.ids.screen_manager.get_screen("video_configuration").remove_video()
-
-                    MDFillRoundFlatButton:
-                        text: "Validate"
-                        font_style: "Button"
-                        on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
+        BottomButtons:
+            id: bottom_buttons
 
 <VideoUpload@MDGridLayout>:
     cols: 2
@@ -281,9 +179,56 @@
             icon: "video"
             icon_size: "64sp"
             text: "Record Video"
-
+            
 <VideoConfTextInput@MDTextField>:
     mode: "rectangle"
     line_color_normal: app.theme_cls.primary_color
     text_color_normal: app.theme_cls.primary_color
+
+
+<StartTimeInput@MDTextField>:
+    mode: "rectangle"
+    line_color_normal: app.theme_cls.primary_color
+    text_color_normal: app.theme_cls.primary_color
+    hint_text: "Start Time [s]"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_start_time(self.text) if not self.focus else None
+    text:"0"
     
+
+<EndTimeInput@MDTextField>:
+    mode: "rectangle"
+    line_color_normal: app.theme_cls.primary_color
+    text_color_normal: app.theme_cls.primary_color
+    hint_text: "End Time [s]"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_end_time(self.text) if not self.focus else None
+    text: "1"
+
+<FrequencyInput@MDTextField>:
+    mode: "rectangle"
+    line_color_normal: app.theme_cls.primary_color
+    text_color_normal: app.theme_cls.primary_color
+    hint_text: "Frequency [frame / s]"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
+    text:"1"
+
+<BottomButtons@MDBoxLayout>:
+    padding: dp(10)
+    spacing: dp(10)
+    adaptive_size: True
+    pos_hint: {"center_y": 0.5, "right": 1}
+    remove_is_disabled : True
+
+    MDFillRoundFlatButton:
+        text: "Change Video"
+        font_style: "Button"
+        disabled: root.remove_is_disabled
+        md_bg_color: app.theme_cls.error_color
+        on_release: app.root.ids.screen_manager.get_screen("video_configuration").remove_video()
+
+    MDFillRoundFlatButton:
+        text: "Validate"
+        font_style: "Button"
+        on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
