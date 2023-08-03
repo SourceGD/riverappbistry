@@ -1,10 +1,6 @@
-from os import path
-from io import BytesIO
-import numpy as np
 from matplotlib import pyplot as plt
 
-from kivy.uix.image import Image
-from kivy.graphics.texture import Texture
+from src.utils.image_generator import plot_to_image
 
 class InvalidFileFormat(Exception):
     """
@@ -60,30 +56,7 @@ class BathymetryGraph():
         return plt
 
            
-    def generate_image_widget(self) -> Image:
-        graph: plt = self.generate_graph()
-        image_buffer: BytesIO = BytesIO()
-        
-        graph.savefig(image_buffer, format="png")
-        graph.close()
-        image_buffer.seek(0)
-    
-        # Load image data from the BytesIO object
-        image_data = plt.imread(image_buffer)
-        height, width, _ = image_data.shape
-
-        # Invert the image vertically
-        image_data = np.flipud(image_data)
-
-        # Convert the image into values from 0 to 255 (8 bits) 
-        image_data = (image_data * 255).astype(np.uint8)
-
-        # Create texture from image data
-        texture = Texture.create(size=(width, height), colorfmt='rgba')
-        texture.blit_buffer(image_data.flatten(), colorfmt='rgba', bufferfmt='ubyte')
-        
-        image_buffer.close()
-
-        return Image(texture=texture, size=(width, height), fit_mode="contain")
+    def generate_image_widget(self):
+        return plot_to_image(self.generate_graph())
 
 
