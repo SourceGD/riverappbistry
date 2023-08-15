@@ -1,7 +1,7 @@
 from .bathymetry_graph.bathymetry_graph import BathymetryGraph, InvalidFileFormat
 from .draggable_point.draggable_point import DraggablePoint
-from .image_area_selection.image_area_selection import ImageAreaSelection
 from .reverse_lollipop.reverse_lollipop import ReverseLollipop
 from .reverse_lollipop_progress_bar.reverse_lollipop_progress_bar import ReverseLollipopProgressBar
+from.shape_on_image.shape_on_image import ShapeOnImage
 from .text_under_icon_button.text_under_icon_button import TextUnderIconButton
 from .video_player.video_player import RiverAppVideoPlayer
