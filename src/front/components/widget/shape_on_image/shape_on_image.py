@@ -17,7 +17,8 @@ class ShapeOnImage(MDRelativeLayout):
         self.shape: Line = None
         self.point_labels: list = []
         self.points: list = self._load_points()
-        self.size_hint_x = None 
+        self.size_hint_x = None
+        self.image_default_norm_size =  self.image.norm_image_size
         
     def _load_points(self) -> list:
         if not self.coordinates:
@@ -110,8 +111,9 @@ class ShapeOnImage(MDRelativeLayout):
         coordinate: list = []
 
         for point in self.points:
-            x = (point.x + 25) / self. width * self.image.norm_image_size[0]
-            y = (point.y + 25) / self. height * self.image.norm_image_size[1]
+            print(self.image_default_norm_size)
+            x = int((point.x + 25) / self. width * self.image_default_norm_size[0])
+            y = int((point.y + 25) / self. height * self.image_default_norm_size[1])
             coordinate.append((x,y))
 
         return coordinate
