@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from src.utils.image_generator import plot_to_image
+from src.utils import plot_to_image
 
 class InvalidFileFormat(Exception):
     """

@@ -3,8 +3,7 @@ from os import path
 import numpy as np
 from scipy import ndimage
 import math
-from src.utils.image_generator import video_to_image
-import matplotlib.pyplot as plt
+from src.utils import video_to_image
 
 def beacons_detection(video_path: str) -> tuple:
     if not isinstance(video_path, str):
