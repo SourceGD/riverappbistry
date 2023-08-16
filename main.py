@@ -1,4 +1,7 @@
-from os import environ
+from os import environ, path
+from json import load
+from definitions import CONFIG_DIR
+
 environ["KIVY_VIDEO"] = "ffpyplayer"
 environ["KIVY_AUDIO"] = "ffpyplayer"
 
@@ -8,9 +11,6 @@ from kivy.config import Config
 
 from src.front.riverapp_controller import RiverappController
 from src.front.components.dialogs import ConfirmAction
-
-from json import load
-from os import path
 
 class RiverApp(MDApp):
 
@@ -51,7 +51,7 @@ class RiverApp(MDApp):
             More information about color definiton here : https://kivymd.readthedocs.io/en/1.1.1/themes/color-definitions/ 
                 & https://github.com/kivymd/KivyMD/blob/master/kivymd/color_definitions.py
         """
-        with open(path.join(path.dirname(__file__),"config/color_definitions.json")) as colors_config_file:
+        with open(path.join(path.dirname(__file__), CONFIG_DIR, "color_definitions.json")) as colors_config_file:
             config: dict = load(colors_config_file)
         return config
     
