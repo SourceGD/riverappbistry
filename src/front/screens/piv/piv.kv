@@ -1,0 +1,39 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+
+<PivMobileView>:
+
+<PivTabletView>:
+    name: "piv_tablet_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "PIV - Filter Selection"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("piv").go_back()]]
+
+        MDBoxLayout:
+            size_hint_y: 0.6
+
+        MDGridLayout:
+            cols: 3
+            size_hint_y: 0.4
+        
+        MDBoxLayout:
+            id: control_button
+            padding: dp(10)
+            spacing: dp(10)
+            adaptive_size: True
+            pos_hint: {"center_y": 0.5, "right": 1}
+
+            MDFillRoundFlatButton:
+                text: "Preview Filter"
+                font_style: "Button"
+            
+            MDFillRoundFlatButton:
+                text: "Launch Piv"
+                font_style: "Button"
+
+<PivDesktopView>:

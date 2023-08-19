@@ -9,7 +9,7 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 
 from src.front.components.widget import ShapeOnImage
-from src.back.gcp_detection import beacons_detection
+from src.back import beacons_detection
 
 Builder.load_file(path.join(path.dirname(__file__),"beacons.kv"))
 

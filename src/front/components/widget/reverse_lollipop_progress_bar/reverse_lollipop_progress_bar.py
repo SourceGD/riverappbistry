@@ -1,5 +1,5 @@
 from kivymd.uix.anchorlayout import MDAnchorLayout
-from kivy.properties import NumericProperty
+from kivy.properties import NumericProperty, ColorProperty
 
 from src.front.components.widget import ReverseLollipop
 
@@ -9,6 +9,7 @@ class ReverseLollipopProgressBar(MDAnchorLayout):
         using the reverse lollipop design.
     """
     progress_bar_size = NumericProperty(1)
+    progress_bar_color = ColorProperty("#FFFFFF")
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -21,15 +22,15 @@ class ReverseLollipopProgressBar(MDAnchorLayout):
         self.clear_widgets()
 
         for i in range(self.progress_bar_size):
-            self.add_widget(ReverseLollipop(order=i+1))
+            self.add_widget(ReverseLollipop(order=i+1, lollipop_color=self.progress_bar_color))
 
-    def on_progress_bar_size(self, instance, value) -> None:
+    def on_progress_bar_size(self, *args) -> None:
         """ 
             Numeric property allows float and int but in this case we only want int value
         """
-        if not isinstance(value, int):
-            raise ValueError(f"progress_bar_size must be an int: {value}")
+        self.display_progress_bar()
 
+    def on_progress_bar_color(self, *args) -> None:
         self.display_progress_bar()
 
     def activate_lollipop(self, order: int) -> None :

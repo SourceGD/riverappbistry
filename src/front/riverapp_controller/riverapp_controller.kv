@@ -1,18 +1,24 @@
 #:kivy 2.2.0
 
 #:import DummyScreen src.front.screens.DummyScreen
-#:import VideoConfiguration src.front
-#:import Bathymetry src.front
-#:import Beacons src.front
+#:import Projects src.front.screens.Projects
+#:import ProjectDetails src.front.screens.ProjectDetails
+#:import VideoConfiguration src.front.screens.VideoConfiguration
+#:import Bathymetry src.front.screens.Bathymetry
+#:import Beacons src.front.screens.Beacons
+#:import Piv src.front.screens.Piv
 #:import ReverseLollipopProgressBar src.front.components.widget
 
 <RiverappController>:
     MDScreenManager:
         id: screen_manager
         DummyScreen:
+        Projects:
+        ProjectDetails:
         VideoConfiguration:
         Bathymetry:
         Beacons:
+        Piv:
 
     MDNavigationDrawer:
         id: nav_drawer
