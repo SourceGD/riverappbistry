@@ -1,6 +1,7 @@
 from os import environ, path
 from json import load
-from definitions import CONFIG_DIR
+from threading import Thread
+from definitions import CONFIG_DIR, PROJECTS_DIR
 
 environ["KIVY_VIDEO"] = "ffpyplayer"
 environ["KIVY_AUDIO"] = "ffpyplayer"
@@ -12,6 +13,7 @@ from kivy.properties import DictProperty
 
 from src.front.riverapp_controller import RiverappController
 from src.front.components.dialogs import ConfirmAction
+from src.back import save_project
 
 class RiverApp(MDApp):
 
@@ -61,8 +63,31 @@ class RiverApp(MDApp):
     def build(self) -> None:
         return RiverappController()
 
-    def on_project_data(self, instance, value) -> None:
-        print(value)
+    def on_project_data(self, instance, value: dict) -> None:
+        if value is None:
+            return
+
+        error_dialogs: ConfirmAction = ConfirmAction(
+                title="Save error",
+                text="An error occured while saving. Go back & revalidate the previous step to make sure it's saved.",
+                confirm_text="I understand"
+            )
+        
+        if not isinstance(value, dict):
+            error_dialogs.open()
+            return
+        
+        try:
+            if value["project_name"] == "":
+                error_dialogs.open()
+                return
+
+            Thread(target=save_project(path.join(PROJECTS_DIR, value["project_name"]), value)).start()
+
+        except (KeyError, ValueError, FileNotFoundError, TypeError):
+            error_dialogs.open()
+            return
+
         
 if __name__=="__main__":
     RiverApp().run()

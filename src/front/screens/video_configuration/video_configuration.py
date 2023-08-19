@@ -63,13 +63,36 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             selector="file"
         )
         self.dialog: ConfirmAction = None
+        self.data = None
+        self._app = MDApp.get_running_app()
 
     def on_pre_enter(self, *args) -> None:
         """
             Called just before the screen appear to the user.
             Update the left progress bar to Video.
         """
-        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(7)
+
+        if self._app.project_data is None:
+            self.manager.current = "project"
+            return
+        
+        self._app.root.ids["lollipop_progress_bar"].activate_lollipop(7)
+
+    def on_enter(self, *args) -> None:
+        # Load data into screen
+        if self.data is None:
+            self.data = self._app.project_data["video_configuration"]
+            if self.data["video"] != "":
+        
+                self.start_time = self.data["start_time"]
+                self.end_time = self.data["end_time"]
+                self.frequency = self.data["frequency"]
+                self.video_path = self.data["video"]
+
+                self.load_video(self.data["video"])
+                self.children[0].ids.start_time_input.text = str(self.start_time)
+                self.children[0].ids.end_time_input.text = str(self.end_time)
+                self.children[0].ids.frequency_input.text = str(self.frequency)
 
     def on_pre_leave(self, *args) -> None:
         """
@@ -91,17 +114,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
 
         if path.splitext(file_path)[1] in [".mp4", ".avi"]: 
             self.exit_file_manager()
-            self._video_reader = RiverAppVideoPlayer(
-                source=file_path,
-                size_hint= (1, None),
-                height=(self.height - 2 * dp(64)) / 2,
-                y=(self.height - 2 * dp(64)) / 2
-                )
-            self.video_path = file_path
-            self.children[0].ids.video_upload.disabled = True
-            self.children[0].ids.bottom_buttons.remove_is_disabled = False
-            self.children[0].add_widget(self._video_reader)
-            
+            self.load_video(file_path)
 
         else:
             self.dialog= ConfirmAction(
@@ -111,6 +124,18 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             )
 
             self.dialog.open()
+
+    def load_video(self, video_path: str) -> None:
+        self._video_reader = RiverAppVideoPlayer(
+                source=video_path,
+                size_hint= (1, None),
+                height=(self.height - 2 * dp(64)) / 2,
+                y=(self.height - 2 * dp(64)) / 2
+                )
+        self.video_path = video_path
+        self.children[0].ids.video_upload.disabled = True
+        self.children[0].ids.bottom_buttons.remove_is_disabled = False
+        self.children[0].add_widget(self._video_reader)
 
     def exit_file_manager(self, *args) -> None:
         """
@@ -230,12 +255,12 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         
         if self._start_time_is_valid and self._end_time_is_valid and self._frequency_is_valid :
             # Launch Save Process + Swicth to next screen
-            print(f"""\n
-                start_time : {self.start_time} \n
-                end_time : {self.end_time} \n
-                freq : {self.frequency}\n
-                video : {self.video_path}
-                """)
+
+            self._app.project_data["video_configuration"]["video"] = self.video_path
+            self._app.project_data["video_configuration"]["start_time"] = self.start_time
+            self._app.project_data["video_configuration"]["end_time"] = self.end_time
+            self._app.project_data["video_configuration"]["frequency"] = self.frequency
+            self._app.project_data["last_step_done"] = "video_configuration"
             
             self.manager.current = "bathymetry"
         

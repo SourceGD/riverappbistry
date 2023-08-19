@@ -11,7 +11,8 @@ PROJECT_DEFAULT_STRUCT = {
     "video_configuration": {
         "video" : "",
         "start_time": 0,
-        "end_time": 1
+        "end_time": 1,
+        "frequency": 1
     },
 
     "bathymetry" : {

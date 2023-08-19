@@ -46,13 +46,26 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
             selector="file"
         )
         self.graph = None
+        self.data = None
+        self._app = MDApp.get_running_app()
 
     def on_pre_enter(self, *args) -> None:
         """
             Called just before the screen appear to the user.
             Update the left progress bar to Video.
         """
-        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(6)
+
+        if self._app.project_data is None:
+            self.manager.current = "project"
+            return
+        
+        self._app.root.ids["lollipop_progress_bar"].activate_lollipop(6)
+
+    def on_enter(self, *args) -> None:
+            if self.data is None:
+                self.data = self._app.project_data["bathymetry"]
+                if self.data["x"] and self.data["y"] :
+                    self.load_graph((self.data["x"], self.data["y"]))
 
     def go_back(self) -> None:
         self.manager.current = "video_configuration"
@@ -67,11 +80,14 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         """
             Check selected file.
         """
+        self.load_graph(file_path)
+        self.exit_file_manager()
+
+    def load_graph(self, bathymetry: str | tuple) -> None:
         try:
             if self.graph is None:
-                self.graph = BathymetryGraph(file_path)
+                self.graph = BathymetryGraph(bathymetry)
 
-                self.exit_file_manager()
                 self.children[0].ids.content.clear_widgets()
                 self.children[0].ids.content.add_widget(self.graph.generate_image_widget())
                 self.children[0].ids.control_button.disabled = False
@@ -90,11 +106,6 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
                 confirm_text="I understand"
             ).open()
 
-    def test(self, *args):
-        print(*args)
-
-            
-
     def exit_file_manager(self, *args) -> None:
         """
             Called when leaving the file manager
@@ -108,5 +119,13 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         self.children[0].ids.content.add_widget(self.children[0].ids.upload_button)
 
     def send_bathymetry(self) -> None:
+
+        if self.graph is None:
+            return
+
+        self._app.project_data["bathymetry"]["x"] = self.graph.x_coordinates
+        self._app.project_data["bathymetry"]["y"] = self.graph.y_coordinates
+        self._app.project_data["last_step_done"] = "bathymetry"
+        
         self.manager.current = "beacons"
     

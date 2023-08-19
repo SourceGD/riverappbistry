@@ -91,8 +91,10 @@ class Projects(MDResponsiveLayout, MDScreen):
             return
         self._new_project_dialogs.buttons[1].disabled = True
 
+        project_name = self._new_project_dialogs.content_cls.text
+
         try:
-            create_project_thread = Thread(target=create_project(self._new_project_dialogs.content_cls.text, PROJECTS_DIR))
+            create_project_thread = Thread(target=create_project(project_name, PROJECTS_DIR))
             create_project_thread.start()
             create_project_thread.join()
 
@@ -101,9 +103,10 @@ class Projects(MDResponsiveLayout, MDScreen):
             self._new_project_dialogs.content_cls.error = True
             self._new_project_dialogs.content_cls.helper_text = str(error)
             return
-         
+        
+        self._new_project_dialogs.buttons[1].disabled = False 
         self._new_project_dialogs.dismiss()
-        self.manager.current = "video_configuration"
+        self.select_project(project_name)
 
     def _del_project(self, project_name:str, *args) -> None:
         if self._del_project_dialogs is None:

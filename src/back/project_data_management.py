@@ -37,7 +37,8 @@ def delete_projects(project_directory: str) -> None:
 def save_project(project_directory: str, json_data: dict) -> None:
     
     save_file = check_path(project_directory)
-    
+    check_data_format(PROJECT_DEFAULT_STRUCT, json_data)
+
     with open(save_file, "w") as json_file:
         dump(json_data, json_file, indent=4)
 
@@ -66,5 +67,27 @@ def check_path(folder_path: str) -> str:
         raise FileNotFoundError(f"Could not find the save file : {save_file_path}")
     
     return save_file_path
+
+def check_data_format(data_format: dict, data: dict) -> None:
+    if not isinstance(data_format, dict):
+        raise TypeError(f"data_format should be a dict : {data_format}")
+    
+    if not isinstance(data, dict):
+        raise TypeError(f"data should be a dict : {data}")
+    
+    keys_format = set(data_format.keys())
+    keys_data = set(data.keys())
+
+    if keys_format != keys_data:
+        raise ValueError(f"The data format doesn't respect the wanted format")
+    
+    for key in keys_format:
+        if isinstance(data_format[key], dict) and isinstance(data[key], dict):
+            check_data_format(data_format[key], data[key])
+        
+        elif (isinstance(data_format[key], dict) and not isinstance(data[key], dict)) or not isinstance(data_format[key], dict) and isinstance(data[key], dict):
+            raise ValueError(f"The data format doesn't respect the wanted format")
+        
+    return
     
     
