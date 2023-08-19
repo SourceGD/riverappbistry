@@ -8,11 +8,14 @@ environ["KIVY_AUDIO"] = "ffpyplayer"
 from kivymd.app import MDApp
 from kivy.core.window import Window
 from kivy.config import Config
+from kivy.properties import DictProperty
 
 from src.front.riverapp_controller import RiverappController
 from src.front.components.dialogs import ConfirmAction
 
 class RiverApp(MDApp):
+
+    project_data: DictProperty = DictProperty()
 
     def __init__(self, **kwargs) -> None:
         super(RiverApp, self).__init__(**kwargs)
@@ -58,5 +61,8 @@ class RiverApp(MDApp):
     def build(self) -> None:
         return RiverappController()
 
+    def on_project_data(self, instance, value) -> None:
+        print(value)
+        
 if __name__=="__main__":
     RiverApp().run()
