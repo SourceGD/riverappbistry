@@ -5,6 +5,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.uix.textfield import MDTextField
 from kivymd.app import MDApp
+from kivymd.uix.filemanager import MDFileManager
 
 from kivy.lang import Builder
 from kivy.clock import Clock
@@ -14,7 +15,7 @@ from src.front.components.card import ProjectCard
 from src.front.components.card import NoResults
 from src.front.components.dialogs import ConfirmAction
 
-from src.back import create_project, delete_projects, load_project
+from src.back import create_project, delete_projects, load_project, download_project
 
 Builder.load_file(path.join(path.dirname(__file__),"projects.kv"))
 
@@ -50,6 +51,12 @@ class Projects(MDResponsiveLayout, MDScreen):
         self.no_results : NoResults = None
         self._new_project_dialogs: ConfirmAction = None
         self._del_project_dialogs: ConfirmAction = None
+        self._download_project: str = None
+        self._download_file_manager: MDFileManager = MDFileManager(
+            exit_manager=self.exit_download_file_manager, 
+            select_path=self.select_download_destination,
+            selector="folder"
+        )
 
     def on_pre_enter(self, *args) -> None:
         """
@@ -152,7 +159,8 @@ class Projects(MDResponsiveLayout, MDScreen):
                     "viewclass": "ProjectCard",
                     "title": name,
                     "on_release": lambda: self.select_project(name),
-                    "delete_callback": lambda: self.open_del_project_dialogs(name)
+                    "delete_callback": lambda: self.open_del_project_dialogs(name),
+                    "download_callback": lambda: self.open_download_file_manager(name)
                     
                 }
             )
@@ -187,3 +195,44 @@ class Projects(MDResponsiveLayout, MDScreen):
         data = load_project(path.join(PROJECTS_DIR, project_name))
         MDApp.get_running_app().project_data = data
         return
+    
+    def open_download_file_manager(self, project_to_download: str = "") -> None:
+        """
+            Called to open the file manager
+        """
+        self._download_project = project_to_download
+        self._download_file_manager.show(path.expanduser('~'))
+
+    def select_download_destination(self, folder_path: str) -> None:
+        try:
+            Thread(target=download_project(path.join(PROJECTS_DIR, self._download_project), folder_path)).start()
+
+        except ValueError:  
+            ConfirmAction(
+                title="Download error",
+                text="The requested download folder is not found or is invalid",
+                confirm_text="I understand"
+            ).open()
+        
+        except FileNotFoundError:
+            ConfirmAction(
+                title="Download error",
+                text="An error occured while downloading the project. Please retry !",
+                confirm_text="I understand"
+            ).open()
+
+        except PermissionError :
+            ConfirmAction(
+                title="Download error",
+                text="RiverApp do not have the permission to save the project at the request folder.",
+                confirm_text="I understand"
+            ).open()
+
+        self.exit_download_file_manager()
+
+    def exit_download_file_manager(self, *args) -> None:
+        """
+            Called when leaving the file manager
+        """
+        self._download_project = None
+        self._download_file_manager.close()
