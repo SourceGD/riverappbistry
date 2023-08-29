@@ -101,7 +101,7 @@ class Projects(MDResponsiveLayout, MDScreen):
         project_name = self._new_project_dialogs.content_cls.text
 
         try:
-            create_project_thread = Thread(target=create_project(project_name, PROJECTS_DIR))
+            create_project_thread = Thread(target=MDApp.get_running_app().project.create_project(PROJECTS_DIR, project_name))
             create_project_thread.start()
             create_project_thread.join()
 
@@ -120,11 +120,11 @@ class Projects(MDResponsiveLayout, MDScreen):
             return
         
         try:
-            delete_projects_thread = Thread(target=delete_projects(path.join(PROJECTS_DIR, project_name)))
+            delete_projects_thread = Thread(target=MDApp.get_running_app().project.delete_project(path.join(PROJECTS_DIR, project_name)))
             delete_projects_thread.start()
             delete_projects_thread.join()
 
-        except (ValueError, FileExistsError):
+        except (ValueError, FileNotFoundError):
             pass
 
         self._del_project_dialogs.dismiss()
@@ -176,7 +176,7 @@ class Projects(MDResponsiveLayout, MDScreen):
     def select_project(self, project_name: str) -> None:
 
         try:
-            project_data=Thread(target=self._load_project_data(project_name))
+            project_data=Thread(target=MDApp.get_running_app().project.load_project(path.join(PROJECTS_DIR, project_name)))
             project_data.start()
             project_data.join()
 
@@ -190,11 +190,6 @@ class Projects(MDResponsiveLayout, MDScreen):
             return
 
         self.manager.current = "project_details"
-        
-    def _load_project_data(self, project_name: str) -> None:
-        data = load_project(path.join(PROJECTS_DIR, project_name))
-        MDApp.get_running_app().project_data = data
-        return
     
     def open_download_file_manager(self, project_to_download: str = "") -> None:
         """

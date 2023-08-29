@@ -1,11 +1,12 @@
 from os import path
+from threading import Thread
+from kivy.clock import Clock
 
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.app import MDApp
 from kivymd.uix.filemanager import MDFileManager
 
-from kivy.properties import NumericProperty, BooleanProperty, StringProperty
 from kivy.metrics import dp
 from kivy.animation import Animation
 from kivy.lang import Builder
@@ -40,15 +41,6 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
     """
         Class managing the App video configuration.
     """
-    start_time = NumericProperty(0)
-    end_time = NumericProperty(1)
-    frequency = NumericProperty(1)
-    video_path = StringProperty()
-
-    _start_time_is_valid = BooleanProperty(True)
-    _end_time_is_valid = BooleanProperty(True)
-    _frequency_is_valid = BooleanProperty(True)
-    _video_reader = None
 
     def __init__(self, **kw) -> None:
         super().__init__(**kw)
@@ -56,58 +48,24 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         self.mobile_view: VideoConfigurationMobileView = VideoConfigurationMobileView()
         self.tablet_view: VideoConfigurationTabletView = VideoConfigurationTabletView()
         self.desktop_view: VideoConfigurationDesktopView = VideoConfigurationDesktopView()
-        self.file_manager: MDFileManager = MDFileManager(
+        self._file_manager: MDFileManager = MDFileManager(
             exit_manager=self.exit_file_manager, 
-            select_path=self.select_path,
+            select_path=self._select_path,
             ext=[".mp4", ".avi"],
             selector="file"
         )
-        self.dialog: ConfirmAction = None
-        self.data = None
-        self._app = MDApp.get_running_app()
+        self._project = MDApp.get_running_app().project
+        self._theme_cls = MDApp.get_running_app().theme_cls
+        self._need_load_from_backup: bool = True
 
-    def on_pre_enter(self, *args) -> None:
-        """
-            Called just before the screen appear to the user.
-            Update the left progress bar to Video.
-        """
+        self._video_reader: RiverAppVideoPlayer = None
+        self._video_path: str = None
 
-        if self._app.project_data is None:
-            self.manager.current = "project"
-            return
-        
-        self._app.root.ids["lollipop_progress_bar"].activate_lollipop(7)
+        self._start_time: float = None
+        self._end_time: float = None
+        self._frequency: int = None
 
-    def on_enter(self, *args) -> None:
-        # Load data into screen
-        if self.data is None:
-            self.data = self._app.project_data["video_configuration"]
-            if self.data["video"] != "":
-        
-                self.start_time = self.data["start_time"]
-                self.end_time = self.data["end_time"]
-                self.frequency = self.data["frequency"]
-                self.video_path = self.data["video"]
-
-                self.load_video(self.data["video"])
-                self.children[0].ids.start_time_input.text = str(self.start_time)
-                self.children[0].ids.end_time_input.text = str(self.end_time)
-                self.children[0].ids.frequency_input.text = str(self.frequency)
-
-    def on_pre_leave(self, *args) -> None:
-        """
-            Called just before the user leave the screen.
-        """
-        if self._video_reader is not None:
-            self._video_reader.state = "pause"
-            
-    def open_file_manager(self) -> None:
-        """
-            Called to open the file manager
-        """
-        self.file_manager.show(path.expanduser('~'))
-
-    def select_path(self, file_path: str) -> None:
+    def _select_path(self, file_path: str) -> None:
         """
             Check selected file.
         """
@@ -117,13 +75,71 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.load_video(file_path)
 
         else:
-            self.dialog= ConfirmAction(
+            ConfirmAction(
                 title="Wrong File",
                 text="The video can only be a mp3 or an avi !",
                 confirm_text="I understand"
-            )
+            ).open()
 
-            self.dialog.open()
+    def _load_configuration(self) -> None:
+        if self._project.steps_done["video_configuration"]:
+            data = self._project.video_configuration
+
+            self._start_time = data["start_time"]
+            self._end_time = data["end_time"]
+            self._frequency = data["frequency"]
+            self._video_path = data["video"]
+
+            Clock.schedule_once(lambda dt: self._display_loaded_configuration(data))
+
+        return 
+    
+    def _display_loaded_configuration(self, video_configuration: dict) -> None:
+        self.children[0].ids.start_time.text = str(video_configuration["start_time"])
+        self.children[0].ids.end_time.text = str(video_configuration["end_time"])
+        self.children[0].ids.frequency.text = str(video_configuration["frequency"])
+        self.load_video(video_configuration["video"])
+        
+        return
+        
+    def _save_video_configuration(self) -> None:
+    
+        MDApp.get_running_app().project.video_configuration = {
+            "video": self._video_path,
+            "start_time": self._start_time,
+            "end_time": self._end_time,
+            "frequency": self._frequency
+        }
+
+        return
+    
+    def on_pre_enter(self, *args) -> None:
+        """
+            Called just before the screen appear to the user.
+            Update the left progress bar to Video.
+        """
+
+        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(7)
+
+    def on_enter(self, *args) -> None:
+        if self._need_load_from_backup:
+            Thread(target=self._load_configuration).start()
+
+    def on_pre_leave(self, *args) -> None:
+        """
+            Called just before the user leave the screen.
+        """
+        if self._video_reader is not None:
+            self._video_reader.state = "pause"
+
+    def go_back(self) -> None:
+        self.manager.current = "projects"
+
+    def open_file_manager(self) -> None:
+        """
+            Called to open the file manager
+        """
+        self._file_manager.show(path.expanduser('~'))
 
     def load_video(self, video_path: str) -> None:
         self._video_reader = RiverAppVideoPlayer(
@@ -132,7 +148,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
                 height=(self.height - 2 * dp(64)) / 2,
                 y=(self.height - 2 * dp(64)) / 2
                 )
-        self.video_path = video_path
+        self._video_path = video_path
         self.children[0].ids.video_upload.disabled = True
         self.children[0].ids.bottom_buttons.remove_is_disabled = False
         self.children[0].add_widget(self._video_reader)
@@ -141,126 +157,112 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         """
             Called when leaving the file manager
         """
-        self.file_manager.close()
+        self._file_manager.close()
 
     def remove_video(self) -> None:
         self.children[0].remove_widget(self._video_reader)
         self._video_reader = None
-        self.video_path = ""
+        self._video_path = None
         self.children[0].ids.video_upload.disabled = False
         self.children[0].ids.bottom_buttons.remove_is_disabled = True
 
-    def set_start_time(self, value: str | int | float) -> None:
-        """
-            Check then set the start time input
-        """
-        if not value and value != 0:
-            self.start_time = -9999
-            self.children[0].ids.start_time_input.error = True
-            self.children[0].ids.start_time_input.helper_text = "Start Time is required"
-            self._start_time_is_valid = False
-            return
+    def set_start_time(self, value: int | float) -> bool:
 
-        try:
-            self.start_time = float(value)
-            self._start_time_is_valid = True
-
-            if self.start_time < 0:
-                self.children[0].ids.start_time_input.error = True
-                self.children[0].ids.start_time_input.helper_text = "Start Time cannot be negative"
-                self._start_time_is_valid = False
-
-            if self.start_time > self.end_time:
-                self.children[0].ids.start_time_input.error = True
-                self.children[0].ids.start_time_input.helper_text = "Start Time is greater than End Time"
-                self._start_time_is_valid = False
-
-        except ValueError:
-            self.start_time = -9999
-            self.children[0].ids.start_time_input.error = True
-            self.children[0].ids.start_time_input.helper_text = "Start Time should be a float"
-            self._start_time_is_valid = False
-
-    def set_end_time(self, value: str | int | float) -> None:
-        """
-            Check then set the end time input
-        """
-        if not value and value != 0:
-            self.end_time = -9999
-            self.children[0].ids.end_time_input.error = True
-            self.children[0].ids.end_time_input.helper_text = "End Time is required"
-            self._end_time_is_valid = False
-            return
+        if value == "" or value is None:
+            self.children[0].ids.start_time.error = True
+            self.children[0].ids.start_time.helper_text = "Start Time is required"
+            self._start_time = None
+            return False
         
         try:
-            self.end_time = float(value)
-            self._end_time_is_valid = True
-
-            if self.end_time < 0:
-                self.children[0].ids.end_time_input.error = True
-                self.children[0].ids.end_time_input.helper_text = "End Time cannot be negative"
-                self._end_time_is_valid = False
-
-            if self.end_time < self.start_time:
-                self.children[0].ids.end_time_input.error = True
-                self.children[0].ids.end_time_input.helper_text = "Start Time is greater than End Time"
-                self._end_time_is_valid = False
+            value = float(value)
 
         except ValueError:
-            self.end_time = -9999
-            self.children[0].ids.end_time_input.error = True
-            self.children[0].ids.end_time_input.helper_text = "Start Time should be a float"
-            self._end_time_is_valid = False
+            self.children[0].ids.start_time.error = True
+            self.children[0].ids.start_time.helper_text = "Start Time should be a number"
+            return False
+        
+        if value < 0:
+            self.children[0].ids.start_time.error = True
+            self.children[0].ids.start_time.helper_text = "Start Time cannot be less than 0"
+            return False
+        
+        if self._end_time is not None and value >= self._end_time:
+            self.children[0].ids.start_time.error = True
+            self.children[0].ids.start_time.helper_text = "Start Time cannot be greater than End Time"
+            return False
 
-    def set_frequency(self, value: str | int | float) -> None:
-        """
-            Check then set the frequency input
-        """
-        if not value and value != 0:
-            self.frequency = -9999
-            self.children[0].ids.frequency_input.error = True
-            self.children[0].ids.frequency_input.helper_text = "Frequency is required"
-            self._frequency_is_valid = False
-            return
+        self._start_time = value
+        return True
+    
+    def set_end_time(self, value: int | float) -> bool:
+
+        if value == "" or value is None:
+            self.children[0].ids.end_time.error = True
+            self.children[0].ids.end_time.helper_text = "End Time is required"
+            self._end_time = None
+            return False
         
         try:
-            self.frequency = int(value)
-            self._frequency_is_valid = True
-
-            if self.frequency < 1:
-                self.children[0].ids.frequency_input.error = True
-                self.children[0].ids.frequency_input.helper_text = "Frequency must be greater than 1"
-                self._frequency_is_valid = False
+            value = float(value)
 
         except ValueError:
-            self.frequency = -9999
-            self.children[0].ids.frequency_input.error = True
-            self.children[0].ids.frequency_input.helper_text = "Frequency must be an int"
-            self._frequency_is_valid = False
+            self.children[0].ids.end_time.error = True
+            self.children[0].ids.end_time.helper_text = "End Time should be a number"
+            return False
+        
+        if value < 0:
+            self.children[0].ids.end_time.error = True
+            self.children[0].ids.end_time.helper_text = "End Time cannot be less than 0"
+            return False
+        
+        if self._start_time is not None and value <= self._start_time:
+            self.children[0].ids.end_time.error = True
+            self.children[0].ids.end_time.helper_text = "End Time cannot be smaller than Start Time"
+            return False
 
-    def send_video_configuration(self) -> None:
-        self.set_start_time(self.start_time)
-        self.set_end_time(self.end_time)
-        self.set_frequency(self.frequency)
+        self._end_time = value
+        return True
 
-        if not path.exists(self.video_path) or self.video_path == "":
-            app_theme_color = MDApp.get_running_app().theme_cls
+    def set_frequency(self, value: int | float) -> bool:
 
-            error_flash = Animation(md_bg_color=app_theme_color.error_color, duration=0.1)
-            revert_to_normal = Animation(md_bg_color=app_theme_color.bg_normal, duration=0.45)
+        if value == "" or value is None:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Frequency is required"
+            self._frequency = None
+            return False
+        
+        try:
+            value = int(value)
+
+        except ValueError:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Frequency should be a number"
+            return False
+        
+        if value <= 0:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Start Frequency cannot be less than or equal to 0"
+            return False
+
+        self._frequency = value
+        return True
+    
+    def validate_video_configuration(self) -> None:
+
+        if self._video_path is None or not path.exists(self._video_path):
+            error_flash = Animation(md_bg_color=self._theme_cls.error_color, duration=0.1)
+            revert_to_normal = Animation(md_bg_color=self._theme_cls.bg_normal, duration=0.45)
             error_flash.bind(on_complete=lambda *_: revert_to_normal.start(self.children[0].ids.video_upload))
             error_flash.start(self.children[0].ids.video_upload)
-
             return 
         
-        if self._start_time_is_valid and self._end_time_is_valid and self._frequency_is_valid :
-            # Launch Save Process + Swicth to next screen
-
-            self._app.project_data["video_configuration"]["video"] = self.video_path
-            self._app.project_data["video_configuration"]["start_time"] = self.start_time
-            self._app.project_data["video_configuration"]["end_time"] = self.end_time
-            self._app.project_data["video_configuration"]["frequency"] = self.frequency
-            self._app.project_data["last_step_done"] = "video_configuration"
+        if self.set_start_time(self._start_time) and \
+            self.set_end_time(self._end_time) and \
+            self.set_frequency(self._frequency) :
             
+            Thread(target=self._save_video_configuration).start()
+            self._need_load_from_backup = False
             self.manager.current = "bathymetry"
-        
+
+        return

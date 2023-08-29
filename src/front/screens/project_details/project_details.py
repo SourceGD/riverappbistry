@@ -1,4 +1,6 @@
 from os import path
+from threading import Thread
+from kivy.clock import Clock
 
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
@@ -41,33 +43,26 @@ class ProjectDetails(MDResponsiveLayout, MDScreen):
         self.mobile_view: ProjectDetailsMobileView = ProjectDetailsMobileView()
         self.tablet_view: ProjectDetailsTabletView = ProjectDetailsTabletView()
         self.desktop_view: ProjectDetailsDesktopView = ProjectDetailsDesktopView()
-        self.project = None
+        self.next_step = PROJECT_STEPS[0]
 
-    def on_pre_enter(self, *args) -> None:
-        self.project = MDApp.get_running_app().project_data
+    def _display_setps_done(self) -> None:
+        self.next_step = next((key for key in PROJECT_STEPS if not MDApp.get_running_app().project.steps_done[key]), None)
 
-        if self.project is None:
-            ConfirmAction(
-                title="Error while loading project",
-                text="Please retry",
-                confirm_text="I understand"
-            ).open()
-
-            self.go_back()
-
+        if self.next_step is not None:
+            Clock.schedule_once(lambda dt: self.children[0].ids.rl_progress_bar.activate_lollipop(8 - PROJECT_STEPS.index(self.next_step)))
+        
+        return
+    
     def on_enter(self, *args) -> None:
-        if self.project is not None: 
-            if self.project["last_step_done"] in PROJECT_STEPS:
-                self.children[0].ids.rl_progress_bar.activate_lollipop(7 - PROJECT_STEPS.index(self.project["last_step_done"]))
+        Thread(target=self._display_setps_done).start()    
 
     def continue_project(self, *args) -> None:
-        step = self.project["last_step_done"]
-        if step not in PROJECT_STEPS:
+        if self.next_step is None:
+            # Screen do not exist yet
             self.manager.current = "video_configuration"
         
         else:
-            next_step_index = PROJECT_STEPS.index(step) + 1 if PROJECT_STEPS.index(step) + 1 < len(PROJECT_STEPS) else len(PROJECT_STEPS) - 1
-            self.manager.current = PROJECT_STEPS[next_step_index]
+            self.manager.current = self.next_step
 
     def go_back(self) -> None:
         self.manager.current = "projects"

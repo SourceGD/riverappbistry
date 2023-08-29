@@ -6,18 +6,23 @@ PROJECTS_DIR = path.join(ROOT_DIR, "projects")
 
 PROJECT_DEFAULT_STRUCT = {
     "project_name": "",
-    "last_step_done":"",
-    
+    "steps_done": {
+        "video_configuration" : 0,
+        "bathymetry" : 0,
+        "beacons" : 0,
+    },
+
     "video_configuration": {
         "video" : "",
         "start_time": 0,
-        "end_time": 1,
-        "frequency": 1
+        "end_time": 0,
+        "frequency": 0
     },
 
     "bathymetry" : {
         "x": [],
-        "y": []
+        "y": [],
+        "water_level": 0
     },
 
     "beacons" : {
@@ -25,9 +30,7 @@ PROJECT_DEFAULT_STRUCT = {
         "p1_to_p2" : 0,
         "p2_to_p3": 0,
         "p3_to_p4": 0,
-        "p4_to_p1": 0,
-        "p1_to_p3": 0,
-        "p2_to_p4": 0
+        "p4_to_p1": 0
     },
 
     "piv": {
@@ -45,4 +48,4 @@ PROJECT_DEFAULT_STRUCT = {
     }
 }
 
-PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "piv"]
+PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "filter_video", "piv"]

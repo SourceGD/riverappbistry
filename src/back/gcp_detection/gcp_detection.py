@@ -5,7 +5,7 @@ from scipy import ndimage
 import math
 from src.utils import video_to_image
 
-def beacons_detection(video_path: str) -> tuple:
+def beacons_detection(video_path: str, time: int) -> tuple:
     if not isinstance(video_path, str):
         raise ValueError(f"video_path must be a string: {video_path}")
     
@@ -13,7 +13,7 @@ def beacons_detection(video_path: str) -> tuple:
         raise FileNotFoundError(f"Could not find {video_path}")
     
     gcp = sort_src(GCP_detect(video_path))
-    image = video_to_image(video_path)
+    image = video_to_image(video_path, time)
 
     return (image, gcp)
 

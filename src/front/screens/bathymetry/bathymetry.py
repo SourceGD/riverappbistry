@@ -1,4 +1,6 @@
 from os import path
+from threading import Thread
+from kivy.clock import Clock
 
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
@@ -40,32 +42,62 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         self.mobile_view: BathymetryMobileView = BathymetryMobileView()
         self.tablet_view: BathymetryTabletView = BathymetryTabletView()
         self.desktop_view: BathymetryDesktopView = BathymetryDesktopView()
-        self.file_manager: MDFileManager = MDFileManager(
+        self._file_manager: MDFileManager = MDFileManager(
             exit_manager=self.exit_file_manager, 
-            select_path=self.select_path,
+            select_path=self._select_path,
             selector="file"
         )
-        self.graph = None
-        self.data = None
-        self._app = MDApp.get_running_app()
+        self._graph = None
+        self._water_level: float = None
 
+        self._project = MDApp.get_running_app().project
+        self._need_load_from_backup: bool = True
+
+
+    def _select_path(self, file_path: str) -> None:
+        """
+            Check selected file.
+        """
+        self.load_graph(file_path)
+        self.exit_file_manager()
+
+        return
+    
+    def _load_bathymetry(self) -> None:
+        if self._project.steps_done["bathymetry"]:
+            data = self._project.bathymetry
+            self._water_level = data["water_level"]
+
+            Clock.schedule_once(lambda dt: self._display_loaded_bathymetry(data["x"], data["y"]))
+        
+        return
+    
+    def _display_loaded_bathymetry(self, x: list, y: list) -> None:
+        self.load_graph((x, y))
+        self.children[0].ids.water_level.text = str(self._water_level)
+
+        return
+    
+    def _save_bathymetry(self) -> None:
+        MDApp.get_running_app().project.bathymetry = {
+            "x": self._graph.x_coordinates,
+            "y": self._graph.y_coordinates,
+            "water_level": self._water_level
+        }
+
+        return
+    
     def on_pre_enter(self, *args) -> None:
         """
             Called just before the screen appear to the user.
             Update the left progress bar to Video.
         """
 
-        if self._app.project_data is None:
-            self.manager.current = "project"
-            return
-        
-        self._app.root.ids["lollipop_progress_bar"].activate_lollipop(6)
+        MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(6)
 
     def on_enter(self, *args) -> None:
-            if self.data is None:
-                self.data = self._app.project_data["bathymetry"]
-                if self.data["x"] and self.data["y"] :
-                    self.load_graph((self.data["x"], self.data["y"]))
+        if self._need_load_from_backup:
+            Thread(target=self._load_bathymetry).start()
 
     def go_back(self) -> None:
         self.manager.current = "video_configuration"
@@ -74,22 +106,15 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         """
             Called to open the file manager
         """
-        self.file_manager.show(path.expanduser('~'))
-
-    def select_path(self, file_path: str) -> None:
-        """
-            Check selected file.
-        """
-        self.load_graph(file_path)
-        self.exit_file_manager()
+        self._file_manager.show(path.expanduser('~'))
 
     def load_graph(self, bathymetry: str | tuple) -> None:
         try:
-            if self.graph is None:
-                self.graph = BathymetryGraph(bathymetry)
+            if self._graph is None:
+                self._graph = BathymetryGraph(bathymetry)
 
                 self.children[0].ids.content.clear_widgets()
-                self.children[0].ids.content.add_widget(self.graph.generate_image_widget())
+                self.children[0].ids.content.add_widget(self._graph.generate_image_widget())
                 self.children[0].ids.control_button.disabled = False
 
         except InvalidFileFormat:
@@ -110,22 +135,41 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         """
             Called when leaving the file manager
         """
-        self.file_manager.close()
+        self._file_manager.close()
     
     def remove_graph(self) -> None:
-        self.graph = None
+        self._graph = None
         self.children[0].ids.control_button.disabled = True
         self.children[0].ids.content.clear_widgets()
         self.children[0].ids.content.add_widget(self.children[0].ids.upload_button)
 
-    def send_bathymetry(self) -> None:
+    def set_water_level(self, value: int | float) -> bool:
+        if value == "" or value is None:
+            self.children[0].ids.water_level.error = True
+            self.children[0].ids.water_level.helper_text = "Water Level is required"
+            self._water_level = None
+            return False
+        
+        try:
+            value = float(value)
 
-        if self.graph is None:
+        except ValueError:
+            self.children[0].ids.water_level.error = True
+            self.children[0].ids.water_level.helper_text = "Water Level should be a number"
+            return False
+        
+        if value <= 0:
+            self.children[0].ids.water_level.error = True
+            self.children[0].ids.water_level.helper_text = "Water Level cannot be less than or equal to 0"
+            return True
+        
+        self._water_level = value
+        return True
+    
+    def validate_bathymetry(self) -> None:
+
+        if self._graph is None or not self.set_water_level(self._water_level):
             return
 
-        self._app.project_data["bathymetry"]["x"] = self.graph.x_coordinates
-        self._app.project_data["bathymetry"]["y"] = self.graph.y_coordinates
-        self._app.project_data["last_step_done"] = "bathymetry"
-        
+        Thread(target=self._save_bathymetry).start()
         self.manager.current = "beacons"
-    

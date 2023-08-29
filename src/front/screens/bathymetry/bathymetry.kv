@@ -2,6 +2,7 @@
 
 #:import TextUnderIconButton src.front.components.widget.TextUnderIconButton
 #:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+#:import DefaultTextInput src.front.components.widget.DefaultTextInput
 
 <BathymetryMobileView>:
     name: "bathymetry_mobile_view"
@@ -15,10 +16,18 @@
             
         MDBoxLayout:
             id: content
-
+            size_hint_y: 0.75
+            
             UploadBathy:
                 id: upload_button
-                type: "mobile"
+                type: "mobile" 
+
+        MDBoxLayout:
+            size_hint: 0.6, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
 
         BathymetryBottomButtons:
             id: control_button
@@ -35,10 +44,18 @@
             
         MDBoxLayout:
             id: content
+            size_hint_y: 0.75
 
             UploadBathy:
                 id: upload_button
                 type: "tablet"
+
+        MDBoxLayout:
+            size_hint: 0.5, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
 
         BathymetryBottomButtons:
             id: control_button
@@ -55,18 +72,21 @@
             
         MDBoxLayout:
             id: content
+            size_hint_y: 0.75
 
             UploadBathy:
                 id: upload_button
                 type: "desktop"
 
+        MDBoxLayout:
+            size_hint: 0.55, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
+
         BathymetryBottomButtons:
             id: control_button
-
-<Input@MDTextField>:
-    mode: "rectangle"
-    line_color_normal: app.theme_cls.primary_color
-    text_color_normal: app.theme_cls.primary_color
 
 <UploadBathy@MDBoxLayout>:
     id: id.__self__
@@ -116,4 +136,10 @@
         text: "Validate"
         font_style: "Button"
         disabled: root.disabled
-        on_release: app.root.ids.screen_manager.get_screen("bathymetry").send_bathymetry()
+        on_release: app.root.ids.screen_manager.get_screen("bathymetry").validate_bathymetry()
+
+<WaterLevelInput@DefaultTextInput>:
+    hint_text: "water level [m]"
+    input_filter: "float"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_water_level(self.text) if not self.focus else None

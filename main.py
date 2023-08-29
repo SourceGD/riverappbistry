@@ -13,11 +13,9 @@ from kivy.properties import DictProperty
 
 from src.front.riverapp_controller import RiverappController
 from src.front.components.dialogs import ConfirmAction
-from src.back import save_project
+from src.back import SavingProjectData
 
 class RiverApp(MDApp):
-
-    project_data: DictProperty = DictProperty()
 
     def __init__(self, **kwargs) -> None:
         super(RiverApp, self).__init__(**kwargs)
@@ -35,6 +33,8 @@ class RiverApp(MDApp):
         self.theme_cls.primary_palette = "Teal"
         self.theme_cls.accent_palette = "Orange"
 
+        self.project: SavingProjectData = SavingProjectData()
+        
     def _on_request_close(self, *args) -> bool:
         """
             Display a dialog to make sure the user want to leave the app
@@ -62,32 +62,6 @@ class RiverApp(MDApp):
     
     def build(self) -> None:
         return RiverappController()
-
-    def on_project_data(self, instance, value: dict) -> None:
-        if value is None:
-            return
-
-        error_dialogs: ConfirmAction = ConfirmAction(
-                title="Save error",
-                text="An error occured while saving. Go back & revalidate the previous step to make sure it's saved.",
-                confirm_text="I understand"
-            )
-        
-        if not isinstance(value, dict):
-            error_dialogs.open()
-            return
-        
-        try:
-            if value["project_name"] == "":
-                error_dialogs.open()
-                return
-
-            Thread(target=save_project(path.join(PROJECTS_DIR, value["project_name"]), value)).start()
-
-        except (KeyError, ValueError, FileNotFoundError, TypeError):
-            error_dialogs.open()
-            return
-
         
 if __name__=="__main__":
     RiverApp().run()

@@ -1,4 +1,5 @@
 from .bathymetry_graph.bathymetry_graph import BathymetryGraph, InvalidFileFormat
+from .default_text_input.default_text_input import DefaultTextInput
 from .draggable_point.draggable_point import DraggablePoint
 from .reverse_lollipop.reverse_lollipop import ReverseLollipop
 from .reverse_lollipop_progress_bar.reverse_lollipop_progress_bar import ReverseLollipopProgressBar

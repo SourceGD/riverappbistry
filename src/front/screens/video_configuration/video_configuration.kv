@@ -31,7 +31,7 @@
                     spacing: dp(10)
 
                     StartTimeInput:
-                        id: start_time_input
+                        id: start_time
                         input_filter: "float"
 
                 MDBoxLayout:
@@ -39,7 +39,7 @@
                     spacing: dp(10)
 
                     EndTimeInput:
-                        id: end_time_input
+                        id: end_time
                         input_filter: "float"
                 
                 MDBoxLayout:
@@ -47,7 +47,7 @@
                     spacing: dp(10)
 
                     FrequencyInput:
-                        id: frequency_input
+                        id: frequency
                         input_filter: "int"
 
                 MDBoxLayout:
@@ -66,6 +66,7 @@
 
         DefaultScreenTopBar:
             title: "Video - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("video_configuration").go_back()]]
 
         VideoUpload:
             id: video_upload
@@ -82,11 +83,11 @@
                 spacing: dp(10)
 
                 StartTimeInput:
-                    id: start_time_input
+                    id: start_time
                     input_filter: "float"
 
                 EndTimeInput:
-                    id: end_time_input
+                    id: end_time
                     input_filter: "float"
 
             MDBoxLayout:
@@ -94,7 +95,7 @@
                 spacing: dp(10)
 
                 FrequencyInput:
-                    id: frequency_input
+                    id: frequency
                     input_filter: "int"
 
         VideoConfigurationBottomButtons:
@@ -124,11 +125,11 @@
                 spacing: dp(10)
 
                 StartTimeInput:
-                    id: start_time_input
+                    id: start_time
                     input_filter: "float"
 
                 EndTimeInput:
-                    id: end_time_input
+                    id: end_time
                     input_filter: "float"
 
             MDBoxLayout:
@@ -136,7 +137,7 @@
                 spacing: dp(10)
 
                 FrequencyInput:
-                    id: frequency_input
+                    id: frequency
                     input_filter: "int"
 
         VideoConfigurationBottomButtons:
@@ -173,7 +174,7 @@
         pos_hint: {'center_y':0.5}
 
         TextUnderIconButton:
-            disabled: root.disabled
+            disabled: True
             icon: "video"
             icon_size: "64sp"
             text: "Record Video"
@@ -191,8 +192,6 @@
     hint_text: "Start Time [s]"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_start_time(self.text) if not self.focus else None
-    text:"0"
-    
 
 <EndTimeInput@MDTextField>:
     mode: "rectangle"
@@ -201,7 +200,6 @@
     hint_text: "End Time [s]"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_end_time(self.text) if not self.focus else None
-    text: "1"
 
 <FrequencyInput@MDTextField>:
     mode: "rectangle"
@@ -210,7 +208,6 @@
     hint_text: "Frequency [frame / s]"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
-    text:"1"
 
 <VideoConfigurationBottomButtons@MDBoxLayout>:
     padding: dp(10)
@@ -229,4 +226,4 @@
     MDFillRoundFlatButton:
         text: "Validate"
         font_style: "Button"
-        on_release: app.root.ids.screen_manager.get_screen("video_configuration").send_video_configuration()
+        on_release: app.root.ids.screen_manager.get_screen("video_configuration").validate_video_configuration()
