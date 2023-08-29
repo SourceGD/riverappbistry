@@ -6,7 +6,7 @@ from matplotlib import patheffects
 from matplotlib.collections import QuadMesh
 import matplotlib.ticker as mticker
 
-from pyorc import helpers, cv
+from libs.pyorc import helpers, cv
 
 
 def _base_plot(plot_func):

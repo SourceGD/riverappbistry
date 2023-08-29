@@ -1,5 +1,5 @@
 import os.path
-from pyorc import CameraConfig, Video
+from libs.pyorc import CameraConfig, Video
 import matplotlib.pyplot as plt
 
 def camera_config(

@@ -10,7 +10,7 @@ import yaml
 from pyorc.cli import cli_utils
 from pyorc.cli import log
 # import pyorc api below
-from pyorc import __version__
+from libs.pyorc import __version__
 import pyorc
 # import cli components below
 

@@ -8,7 +8,7 @@ import os
 import pyorc
 import yaml
 
-from pyorc import Video, helpers, CameraConfig
+from libs.pyorc import Video, helpers, CameraConfig
 from pyorc.cli.cli_elements import GcpSelect, AoiSelect
 from shapely.geometry import Point
 

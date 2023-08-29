@@ -3,7 +3,7 @@ import xarray as xr
 
 from xarray.core import utils
 
-from pyorc import helpers
+from libs.pyorc import helpers
 from .plot import _Transect_PlotMethods
 from .orcbase import ORCBase
 

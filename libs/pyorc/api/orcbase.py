@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import xarray as xr
-from pyorc import helpers
+from libs.pyorc import helpers
 
 depr_warning = """
 
@@ -44,7 +44,7 @@ class ORCBase(object):
         import warnings
         if isinstance(cam_config, str):
             # convert into a camera_config object
-            from pyorc import get_camera_config
+            from libs.pyorc import get_camera_config
             # START DEPRECATION BEHAVIOUR
             # =====================
             # check if cam config contains height/width
