@@ -5,11 +5,11 @@ import json
 import logging
 import matplotlib.pyplot as plt
 import os
-import pyorc
+import libs.pyorc as pyorc
 import yaml
 
 from libs.pyorc import Video, helpers, CameraConfig
-from pyorc.cli.cli_elements import GcpSelect, AoiSelect
+from libs.pyorc.cli.cli_elements import GcpSelect, AoiSelect
 from shapely.geometry import Point
 
 

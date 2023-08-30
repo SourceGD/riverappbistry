@@ -4,7 +4,7 @@ import numpy as np
 import warnings
 import xarray as xr
 
-from pyorc.const import v_x, v_y, s2n, corr
+from libs.pyorc.const import v_x, v_y, s2n, corr
 from libs.pyorc import helpers
 
 

@@ -5,10 +5,10 @@ import os.path
 
 import click
 
-import pyorc
+import libs.pyorc as pyorc
 import xarray as xr
 import yaml
-from pyorc.cli import cli_utils
+from libs.pyorc.cli import cli_utils
 
 from dask.diagnostics import ProgressBar
 from matplotlib.colors import Normalize
