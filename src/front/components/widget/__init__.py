@@ -3,6 +3,7 @@ from .default_text_input.default_text_input import DefaultTextInput
 from .draggable_point.draggable_point import DraggablePoint
 from .reverse_lollipop.reverse_lollipop import ReverseLollipop
 from .reverse_lollipop_progress_bar.reverse_lollipop_progress_bar import ReverseLollipopProgressBar
+from .select__chip.select__chip import SelectChip
 from.shape_on_image.shape_on_image import ShapeOnImage
 from .text_under_icon_button.text_under_icon_button import TextUnderIconButton
 from .video_player.video_player import RiverAppVideoPlayer
