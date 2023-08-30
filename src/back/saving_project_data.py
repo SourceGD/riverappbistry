@@ -1,8 +1,14 @@
 from os import path, mkdir
-from json import load, dumps
+from json import load, dumps, loads
 from shutil import rmtree
+import math
+from dask.diagnostics import ProgressBar
+from cv2 import	VideoCapture, CAP_PROP_FPS
 
-from definitions import PROJECT_STEPS, PROJECT_DEFAULT_STRUCT
+from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
+
+from src.utils import get_video_frame
+from libs.pyorc import CameraConfig, Video
 
 class ProjectNotLoaded(Exception):
     pass
@@ -15,6 +21,9 @@ class SavingProjectData():
         self._video_configuration: dict = None
         self._bathymetry: dict = None
         self._beacons: dict = None
+        self._cam_config: dict = None
+        self._filter_video: dict = None
+        self._piv: dict = None
 
     @property
     def project_name(self) -> str:
@@ -32,6 +41,9 @@ class SavingProjectData():
     def video_configuration(self, video_configuration: dict) -> None:
         if self._backup_file is None:
             raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+        
+        if self._video_configuration == video_configuration:
+            return
         
         if not isinstance(video_configuration, dict):
             return TypeError(f"video_configuration should be a dict : {video_configuration}")
@@ -64,7 +76,8 @@ class SavingProjectData():
         
         self._video_configuration = video_configuration
         self._save_step("video_configuration", video_configuration)
-
+        self.generate_cam_config()
+        
         return
     
     @property
@@ -75,6 +88,9 @@ class SavingProjectData():
     def bathymetry(self, bathymetry: dict) -> None:
         if self._backup_file is None:
             raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+        
+        if self._bathymetry == bathymetry:
+            return
         
         if not isinstance(bathymetry, dict):
             return TypeError(f"bathymetry should be a dict : {bathymetry}")
@@ -96,9 +112,10 @@ class SavingProjectData():
     
         self._bathymetry = bathymetry
         self._save_step("bathymetry", bathymetry)
+        self.generate_cam_config()
 
         return
-    
+
     @property
     def beacons(self) -> dict:
         return self._beacons
@@ -108,10 +125,13 @@ class SavingProjectData():
         if self._backup_file is None:
             raise ProjectNotLoaded(f"The project need to be loaded before adding data")
         
+        if self._beacons == beacons:
+            return
+        
         if not isinstance(beacons, dict):
             return TypeError(f"beacons should be a dict : {beacons}")
 
-        self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1"], beacons)
+        self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"], beacons)
 
         if len(beacons["points"]) != 4:
             raise ValueError("Points should have 4 pairs of coordinates ")
@@ -128,11 +148,31 @@ class SavingProjectData():
             
         self._beacons = beacons
         self._save_step("beacons", beacons)
+        self.generate_cam_config()
 
-    def _save_step(self, step: str, data: dict) -> None:
-        if step not in PROJECT_STEPS:
-            raise ValueError(f"Unknown step : {step}")
+    @property
+    def cam_config(self) -> dict:
+        return self._cam_config
+    
+    @property
+    def filter_video(self) -> dict:
+        return self._filter_video
+    
+    @filter_video.setter
+    def filter_video(self, filter_video: dict) -> None:
+        self._save_step("filter_video", {})
+        return
+    
+    @property
+    def piv(self) -> dict:
+        if self._piv is None:
+            return None
         
+        data = self._piv
+        data["file"] = path.abspath(path.join(PROJECTS_DIR, self._project_name, self._piv["file"]))
+        return data
+    
+    def _save_step(self, step: str, data: dict) -> None:
         if not isinstance(data, dict):
             raise TypeError(f"data should be a dict")
         
@@ -162,6 +202,9 @@ class SavingProjectData():
             raise ValueError(f"The data format doesn't respect the wanted format")
         
         for key in keys_format:
+            if key == "cam_config":
+                continue
+
             if isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 self._check_backup_file_format(wanted_dict_format[key], dict_format[key])
             
@@ -183,7 +226,86 @@ class SavingProjectData():
             raise ValueError(f"Missing data : {missing_data}")
         
         return True
+    
+    def _convert_dist_to_dest_points(self, dist: list) -> list:
+            # Points coordinates computation
+            # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
+            P1, P4 = [0, dist[3]], [0, 0]
+
+            # Then we compute other coordinates using cosine law
+            alpha = math.acos((dist[3] ** 2 + dist[5] ** 2 - dist[0] ** 2) / (2 * dist[3] * dist[5]))
+            P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
+            beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
+            P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
+
+            return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
+    
+    def generate_cam_config(self) -> bool:
+        if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] or not self._steps_done["beacons"]:
+            return False
         
+        init_frame = get_video_frame(self.video_configuration["video"], self.video_configuration["start_time"])
+
+        height, width = init_frame.shape[0:2]
+        dst: list = self._convert_dist_to_dest_points([
+                self._beacons["p1_to_p2"], 
+                self._beacons["p2_to_p3"], 
+                self._beacons["p3_to_p4"], 
+                self._beacons["p4_to_p1"],
+                self._beacons["p1_to_p3"],
+                self._beacons["p2_to_p4"]
+            ])
+        
+        gcps: dict = {
+            "src": self._beacons["points"],
+            "dst": dst,
+            "z_0": self._bathymetry["water_level"]
+        }
+        
+        cam_config: CameraConfig = CameraConfig(
+            height=height,
+            width=width,
+            gcps=gcps,
+            lens_position=[7, -2, 3] #the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
+        )
+
+        cam_config.set_bbox_from_corners(self._beacons["points"])
+        self._save_step("cam_config", loads(cam_config.to_json()))
+    
+        return True
+
+    def generate_piv(self) -> bool:
+        if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] \
+            or not self._steps_done["beacons"] or not self._steps_done["cam_config"] \
+            or not self._steps_done["filter_video"]:
+
+            return False
+
+        video: str = self._video_configuration["video"]
+        fps: int = VideoCapture(video).get(CAP_PROP_FPS)
+        start_frame: int = int(self._video_configuration["start_time"] * fps)
+        end_frame: int = int(self._video_configuration["end_time"] * fps)
+
+        pyorc_video: Video = Video(
+            video,
+            start_frame=start_frame,
+            end_frame=end_frame,
+            freq=self._video_configuration["frequency"],
+            h_a=self._bathymetry["water_level"],
+            camera_config=self._cam_config
+        )
+
+        da = pyorc_video.get_frames()
+        #Apply previous steps filter here
+
+        piv = da.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name ,"piv.nc"))
+        self._save_step("piv", {
+                "file": "piv.nc",
+                "need_update": False
+            })
+        
+        return True
+
     def load_project(self, project_dir: str) -> None:
         if not isinstance(project_dir, str):
             raise ValueError(f"project_dir should be a str : {project_dir}")
@@ -202,10 +324,14 @@ class SavingProjectData():
         # Check if data format is correct
         self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
         self._backup_file = backup_file_path
+        self._project_name = path.basename(project_dir)
         self._steps_done = project_data["steps_done"]
         self._video_configuration = project_data["video_configuration"]
         self._bathymetry = project_data["bathymetry"]
         self._beacons = project_data["beacons"]
+        self._cam_config = project_data["cam_config"]
+        self._filter_video = project_data["filter_video"]
+        self._piv = project_data["piv"]
 
         return
     

@@ -21,7 +21,7 @@
             size_hint_y: 0.6
 
         MDGridLayout:
-            cols: 2
+            cols: 3
             padding: dp(10), 25, dp(10), 0
             spacing: dp(10)
             size_hint_y: 0.4
@@ -53,6 +53,21 @@
                 input_filter: "float"
                 helper_text_mode: "on_error"
                 on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p4_to_p1", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p1_to_p3
+                hint_text: "P1 - P3 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p1_to_p3", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p2_to_p4
+                hint_text: "P2 - P4 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p2_to_p4", self.text) if not self.focus else None
+
 
         MDBoxLayout:
             id: control_button

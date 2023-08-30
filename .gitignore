@@ -116,3 +116,4 @@ examples/riverapp_examples/*
 # PyCharm
 .idea/
 
+src/front/screens/bathymetry/bathymetry.py

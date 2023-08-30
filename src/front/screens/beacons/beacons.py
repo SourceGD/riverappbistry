@@ -51,6 +51,8 @@ class Beacons(MDResponsiveLayout,MDScreen):
         self._P2_to_P3: float = None
         self._P3_to_P4: float = None
         self._P4_to_P1: float = None
+        self._P1_to_P3: float = None
+        self._P2_to_P4: float = None
 
     def _load_beacons_selection(self) -> None:
         if self._project.steps_done["beacons"]:
@@ -64,6 +66,8 @@ class Beacons(MDResponsiveLayout,MDScreen):
         self._P2_to_P3 = self._project.beacons["p2_to_p3"]
         self._P3_to_P4 = self._project.beacons["p3_to_p4"]
         self._P4_to_P1 = self._project.beacons["p4_to_p1"]
+        self._P1_to_P3 = self._project.beacons["p1_to_p3"]
+        self._P2_to_P4 = self._project.beacons["p2_to_p4"]
 
         Clock.schedule_once(lambda dt: self._display_loaded_beacons(image, gcp))
 
@@ -74,6 +78,8 @@ class Beacons(MDResponsiveLayout,MDScreen):
         self.children[0].ids.p2_to_p3.text = str(self._P2_to_P3)
         self.children[0].ids.p3_to_p4.text = str(self._P3_to_P4)
         self.children[0].ids.p4_to_p1.text = str(self._P4_to_P1)
+        self.children[0].ids.p1_to_p3.text = str(self._P1_to_P3)
+        self.children[0].ids.p2_to_p4.text = str(self._P2_to_P4)
         self.display_beacons_selection(
                 ShapeOnImage(image, gcp, shape_width=2, label_format= "P")
             )
@@ -139,7 +145,13 @@ class Beacons(MDResponsiveLayout,MDScreen):
 
         elif input_id == "p4_to_p1" :
             self._P4_to_P1 = value
-            
+
+        elif input_id == "p1_to_p3" :
+            self._P1_to_P3 = value
+
+        elif input_id == "p2_to_p4" :
+            self._P2_to_P4 = value
+   
         return True
 
     def validate_beacons(self) -> None:
@@ -147,12 +159,14 @@ class Beacons(MDResponsiveLayout,MDScreen):
         if not ( self.is_input_valid("p1_to_p2", self._P1_to_P2) and \
             self.is_input_valid("p2_to_p3", self._P2_to_P3) and \
             self.is_input_valid("p3_to_p4", self._P3_to_P4) and \
-            self.is_input_valid("p4_to_p1", self._P4_to_P1)) :
+            self.is_input_valid("p4_to_p1", self._P4_to_P1)) and \
+            self.is_input_valid("p1_to_p3", self.P1_to_P3) and \
+            self.is_input_valid("p2_to_p4", self.P2_to_P4) :
 
             return
         
         Thread(target=self._save_beacons).start()
-
+        self.manager.current = "filter_video"
 
     def _save_beacons(self) -> None:
         MDApp.get_running_app().project.beacons = {
@@ -160,5 +174,7 @@ class Beacons(MDResponsiveLayout,MDScreen):
             "p1_to_p2" : self._P1_to_P2,
             "p2_to_p3": self._P2_to_P3,
             "p3_to_p4": self._P3_to_P4,
-            "p4_to_p1": self._P4_to_P1
+            "p4_to_p1": self._P4_to_P1,
+            "p1_to_p3": self._P1_to_P3,
+            "p2_to_p4": self._P2_to_P4
         }

@@ -8,8 +8,7 @@ from kivy.uix.image import Image
 from kivy.graphics.texture import Texture
 
 
-def video_to_image(video_path: str, time: int | float = 0) -> Image:
-    
+def get_video_frame(video_path: str, time: int | float = 0) -> list:
     if not isinstance(video_path, str):
         raise ValueError(f"video_path must be a string: {video_path}")
     
@@ -32,6 +31,12 @@ def video_to_image(video_path: str, time: int | float = 0) -> Image:
 
     if not success:
         raise IOError(f"Could not read {video_path}")
+    
+    return frame
+
+def video_to_image(video_path: str, time: int | float = 0) -> Image:
+    
+    frame = get_video_frame(video_path, time)
     
     flipped_frame = flip(frame, 0)
     height, width, _ = flipped_frame.shape

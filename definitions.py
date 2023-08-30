@@ -10,6 +10,10 @@ PROJECT_DEFAULT_STRUCT = {
         "video_configuration" : 0,
         "bathymetry" : 0,
         "beacons" : 0,
+        "cam_config" : 0,
+        "filter_video" : 0,
+        "piv" : 0,
+        "post_process": 0
     },
 
     "video_configuration": {
@@ -30,12 +34,18 @@ PROJECT_DEFAULT_STRUCT = {
         "p1_to_p2" : 0,
         "p2_to_p3": 0,
         "p3_to_p4": 0,
-        "p4_to_p1": 0
+        "p4_to_p1": 0,
+        "p1_to_p3": 0,
+        "p2_to_p4": 0
     },
 
+    "cam_config": {},
+
+    "filter_video" : {},
+
     "piv": {
-        "filters": [],
-        "piv_file_data": ""
+        "file": "",
+        "need_update": 1
     },
 
     "post_process": {

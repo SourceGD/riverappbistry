@@ -154,3 +154,38 @@ Project organisation
     ├── tests               <- pytest suite
         ├── ...             <- pytest functions on API level
 
+RiverApp Project organisation
+-----
+    .
+    ├── README.md
+    ├── setup.py                <- setup script compatible with pip
+    ├── environment.yml         <- YML-file for setting up a conda environment with dependencies
+    ├── main.py                 <- main file which lauch RiverApp
+    ├── definitions.py          <- set of constants useful for RiverApp
+    ├── .gitlab-ci.yml          <- RiverApp CI/CD configuration file
+    ├── assets                  <- RiverApp assets such as images, data, logos, etc.
+        ├── ...
+    ├── config                  <- RiverApp configurations
+        ├── ...
+    ├── docs                    <- Sphinx documentation source code
+        ├── ...
+    ├── examples                <- Sets of examples on how to use the project
+        ├── pyorc_examples      <- Jupyter notebooks with examples how to use the PyOrc API
+            ├── ...             
+        ├── riverapp_examples   <- images, files & data on the results you can expect from RiverApp
+            ├── ...
+    ├── libs                    <- libraries within the project
+        ├── pyorc               <- pyorc library
+            ├── ...  
+    ├── src                     <- RiverApp source code
+        ├── back                <- calculation & data management source code
+            ├── ...
+        ├── front               <- interface source code
+            ├── ...
+        ├── utils               <- usefull functions for the whole project
+            ├── ...        
+    ├── tests                   <- pytest suite
+        ├── pyorc_tests         <- pytest functions on PyOrc source code
+            ├── ...     
+        ├── riverapp_tests      <- pytest functions on RiverApp source code
+ 

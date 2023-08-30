@@ -1,6 +1,7 @@
 from .bathymetry.bathymetry import Bathymetry
 from .beacons.beacons import Beacons
 from .dummy_screen.dummy_screen import DummyScreen
+from .filter_video.filter_video import FilterVideo
 from .piv.piv import Piv
 from .project_details.project_details import ProjectDetails
 from .projects.projects import Projects
