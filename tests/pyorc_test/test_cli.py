@@ -1,10 +1,10 @@
 import os.path
 
 from click.testing import CliRunner
-from pyorc.cli.main import cli
-from pyorc.cli.cli_elements import GcpSelect, AoiSelect
-from pyorc.cli import cli_utils
-from pyorc.helpers import xyz_transform
+from libs.pyorc.cli.main import cli
+from libs.pyorc.cli.cli_elements import GcpSelect, AoiSelect
+from libs.pyorc.cli import cli_utils
+from libs.pyorc.helpers import xyz_transform
 import json
 
 def test_cli_cam_config(cli_obj):

@@ -4,7 +4,7 @@ import pyorc
 import pytest
 
 from cartopy.mpl.geoaxes import GeoAxesSubplot
-from pyorc import helpers, cv
+from libs.pyorc import helpers, cv
 
 from shapely.geometry import Polygon
 from rasterio import Affine

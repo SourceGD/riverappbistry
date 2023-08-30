@@ -331,7 +331,7 @@ def cli_obj():
 
 @pytest.fixture
 def recipe(recipe_yml):
-    from pyorc.cli import cli_utils
+    from libs.pyorc.cli import cli_utils
     return cli_utils.parse_recipe("a", "b", recipe_yml)
 
 
