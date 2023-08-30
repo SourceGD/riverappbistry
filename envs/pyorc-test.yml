@@ -33,6 +33,10 @@ dependencies:
   - typeguard
   - xarray
   - yaml
+  - pylint==2.16.*
+  - ffpyplayer==4.5.*
   - pip:
     - openpiv
+    - kivy
+    - kivymd
 
