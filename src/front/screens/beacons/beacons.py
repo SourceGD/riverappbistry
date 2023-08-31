@@ -58,31 +58,30 @@ class Beacons(MDResponsiveLayout,MDScreen):
         if self._project.steps_done["beacons"]:
             image = video_to_image(self._project.video_configuration["video"], self._project.video_configuration["start_time"])
             gcp = self._project.beacons["points"]
+            self._P1_to_P2 = self._project.beacons["p1_to_p2"]
+            self._P2_to_P3 = self._project.beacons["p2_to_p3"]
+            self._P3_to_P4 = self._project.beacons["p3_to_p4"]
+            self._P4_to_P1 = self._project.beacons["p4_to_p1"]
+            self._P1_to_P3 = self._project.beacons["p1_to_p3"]
+            self._P2_to_P4 = self._project.beacons["p2_to_p4"]
         
         else:
             image, gcp = beacons_detection(self._project.video_configuration["video"], self._project.video_configuration["start_time"])
-
-        self._P1_to_P2 = self._project.beacons["p1_to_p2"]
-        self._P2_to_P3 = self._project.beacons["p2_to_p3"]
-        self._P3_to_P4 = self._project.beacons["p3_to_p4"]
-        self._P4_to_P1 = self._project.beacons["p4_to_p1"]
-        self._P1_to_P3 = self._project.beacons["p1_to_p3"]
-        self._P2_to_P4 = self._project.beacons["p2_to_p4"]
 
         Clock.schedule_once(lambda dt: self._display_loaded_beacons(image, gcp))
 
         return
     
     def _display_loaded_beacons(self, image, gcp) -> None:
-        self.children[0].ids.p1_to_p2.text = str(self._P1_to_P2)
-        self.children[0].ids.p2_to_p3.text = str(self._P2_to_P3)
-        self.children[0].ids.p3_to_p4.text = str(self._P3_to_P4)
-        self.children[0].ids.p4_to_p1.text = str(self._P4_to_P1)
-        self.children[0].ids.p1_to_p3.text = str(self._P1_to_P3)
-        self.children[0].ids.p2_to_p4.text = str(self._P2_to_P4)
         self.display_beacons_selection(
                 ShapeOnImage(image, gcp, shape_width=2, label_format= "P")
             )
+        self.children[0].ids.p1_to_p2.text = str(self._P1_to_P2) if self._P1_to_P2 is not None else ""
+        self.children[0].ids.p2_to_p3.text = str(self._P2_to_P3) if self._P2_to_P3 is not None else ""
+        self.children[0].ids.p3_to_p4.text = str(self._P3_to_P4) if self._P3_to_P4 is not None else ""
+        self.children[0].ids.p4_to_p1.text = str(self._P4_to_P1) if self._P4_to_P1 is not None else ""
+        self.children[0].ids.p1_to_p3.text = str(self._P1_to_P3) if self._P1_to_P3 is not None else ""
+        self.children[0].ids.p2_to_p4.text = str(self._P2_to_P4) if self._P2_to_P3 is not None else ""
         
     def on_pre_enter(self, *args) -> None:
         """
@@ -110,11 +109,8 @@ class Beacons(MDResponsiveLayout,MDScreen):
         return
 
     def is_input_valid(self, input_id: int, value: float | int) -> bool:
-        
-        if value == "":
-            value = None
 
-        if value is not None:
+        if value is not None or value == "":
             try:
                 value = float(value)
 
@@ -129,7 +125,7 @@ class Beacons(MDResponsiveLayout,MDScreen):
                 self.children[0].ids[input_id].helper_text = "The distance can't be negative"
                 return False
         
-        if value is None:
+        else:
             self.children[0].ids[input_id].error = True
             self.children[0].ids[input_id].helper_text = "Mandatory input"
             return False
@@ -156,17 +152,17 @@ class Beacons(MDResponsiveLayout,MDScreen):
 
     def validate_beacons(self) -> None:
         
-        if not ( self.is_input_valid("p1_to_p2", self._P1_to_P2) and \
+        if( self.is_input_valid("p1_to_p2", self._P1_to_P2) and \
             self.is_input_valid("p2_to_p3", self._P2_to_P3) and \
             self.is_input_valid("p3_to_p4", self._P3_to_P4) and \
             self.is_input_valid("p4_to_p1", self._P4_to_P1)) and \
-            self.is_input_valid("p1_to_p3", self.P1_to_P3) and \
-            self.is_input_valid("p2_to_p4", self.P2_to_P4) :
-
-            return
+            self.is_input_valid("p1_to_p3", self._P1_to_P3) and \
+            self.is_input_valid("p2_to_p4", self._P2_to_P4) :
         
-        Thread(target=self._save_beacons).start()
-        self.manager.current = "filter_video"
+            Thread(target=self._save_beacons).start()
+            self.manager.current = "filter_video"
+        
+        return
 
     def _save_beacons(self) -> None:
         MDApp.get_running_app().project.beacons = {

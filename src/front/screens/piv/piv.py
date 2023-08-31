@@ -41,6 +41,7 @@ class Piv(MDResponsiveLayout, MDScreen):
         self.desktop_view: PivDesktopView = PivDesktopView()
         
         self._project = MDApp.get_running_app().project
+        self._lauch_piv: bool = True
         self._piv_thread: Thread = None
         self._stop_piv_flag: Event = Event()
 
@@ -59,7 +60,7 @@ class Piv(MDResponsiveLayout, MDScreen):
 
             return
         
-        self.manager.current = "projects"
+        #self.manager.current = "projects"
         return
     
     def on_pre_enter(self, *args) -> None:
@@ -70,12 +71,13 @@ class Piv(MDResponsiveLayout, MDScreen):
         MDApp.get_running_app().root.ids["lollipop_progress_bar"].activate_lollipop(3)
 
         if not self._project.piv["need_update"]:
-            self.manager.current = "projects"
+            self._lauch_piv = False
 
     def on_enter(self, *args) -> None:
-
-        self.children[0].ids.progress.start()
-        Thread(target=self._piv_calculation).start()
+        
+        if self._lauch_piv:
+            self.children[0].ids.progress.start()
+            Thread(target=self._piv_calculation).start()
         return 
 
     def on_leave(self, *args) -> None:
