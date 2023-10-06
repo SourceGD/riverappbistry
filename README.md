@@ -6,7 +6,7 @@ Installation
 
 **RiverApp** uses Python 3.10. No help is provided if you are using another version.
 
-### Installation from latest code base with Windows 64 bits
+### Installation from latest code base (Windows 64 bits)
 
 To install **RiverApp** from the code base with Windows 64 bits , go through these steps.
 
@@ -28,11 +28,11 @@ pip install libs/Cartopy-0.20.2-cp310-cp310-win_amd64.whl
 
 > **_note :_** the Windows binaries files for pyproj, shapely and cartopy are provided by Christoph Gohlke on this [page](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
-> **_note 2 :_** the environments do not have the dependencies needed for testing
+> **_note 2 :_** this environments do not have the dependencies needed for testing and documenting
 
-### Installation from latest code base with Windows 32 bits
+### Installation from latest code base (Windows 32 bites)
 
-To install **RiverApp** from the code base with Windows 64 bits , go through these steps.
+To install **RiverApp** from the code base with Windows 32 bits , go through these steps.
 
 First, clone the code with `git` and move into the cloned folder.
 
@@ -50,9 +50,9 @@ pip install -r requirements.txt
 pip install libs/Cartopy-0.20.2-cp310-cp310-win32.whl
 ```
 
-> **_note:_** the Windows binaries files for pyproj, shapely and cartopy are provided by Christoph Gohlke on this [page](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
+> **_note :_** the Windows binaries files for pyproj, shapely and cartopy are provided by Christoph Gohlke on this [page](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
-> **_note 2 :_** the environments do not have the dependencies needed for testing
+> **_note 2 :_** this environments do not have the dependencies needed for testing and documenting
 
 Project organisation
 --------------------
