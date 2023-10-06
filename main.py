@@ -18,6 +18,16 @@ from src.back import SavingProjectData
 class RiverApp(MDApp):
 
     def __init__(self, **kwargs) -> None:
+        """ Initialise the RiverApp params
+
+        This function is called when the app launches and is used to setup the app configuration
+        such as keybindind, window size, theme color, name, etc.
+        
+        Parameters
+        ----------
+        **kwargs
+            Arbitrary keyword arguments
+        """
         super(RiverApp, self).__init__(**kwargs)
         Config.set('kivy', 'exit_on_escape', '0')
 
@@ -36,8 +46,17 @@ class RiverApp(MDApp):
         self.project: SavingProjectData = SavingProjectData()
         
     def _on_request_close(self, *args) -> bool:
-        """
-            Display a dialog to make sure the user want to leave the app
+        """ Display a dialog to make sure the use want to leave
+
+        Parameters
+        ----------
+        *args
+            Variable length argument list
+            
+        Returns
+        -------
+        bool
+            bool will always be True to stop the app from closing before the use confirm
         """
         if not self._exit_dialog:
             self._exit_dialog = ConfirmAction(
@@ -51,16 +70,30 @@ class RiverApp(MDApp):
         return True
     
     def _load_colors_config(self) -> dict:
-        """
-            Load the colors config file needed for RiverApp and return a dict with the data
-            More information about color definiton here : https://kivymd.readthedocs.io/en/1.1.1/themes/color-definitions/ 
-                & https://github.com/kivymd/KivyMD/blob/master/kivymd/color_definitions.py
+        """ Load the colors config
+
+        Load the colors config file needed for RiverApp.
+        More information about color definiton here : https://kivymd.readthedocs.io/en/1.1.1/themes/color-definitions/ 
+            & https://github.com/kivymd/KivyMD/blob/master/kivymd/color_definitions.py
+
+        Returns
+        -------
+        dict
+            Contains the color configuration usable be KivyMd
         """
         with open(path.join(path.dirname(__file__), CONFIG_DIR, "color_definitions.json")) as colors_config_file:
             config: dict = load(colors_config_file)
         return config
     
-    def build(self) -> None:
+    def build(self) -> RiverappController:
+        """ Load & lauch the App
+
+        Returns
+        -------
+        RiverappController
+            return the app controller
+
+        """
         return RiverappController()
         
 if __name__=="__main__":
