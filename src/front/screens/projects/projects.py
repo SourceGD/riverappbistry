@@ -1,4 +1,4 @@
-from os import path, listdir
+from os import mkdir, path, listdir
 from threading import Thread
 
 from kivymd.uix.screen import MDScreen
@@ -99,6 +99,9 @@ class Projects(MDResponsiveLayout, MDScreen):
         self._new_project_dialogs.buttons[1].disabled = True
 
         project_name = self._new_project_dialogs.content_cls.text
+
+        if not path.exists(PROJECTS_DIR) or not path.isdir(PROJECTS_DIR):
+            mkdir(PROJECTS_DIR)
 
         try:
             create_project_thread = Thread(target=MDApp.get_running_app().project.create_project(PROJECTS_DIR, project_name))
