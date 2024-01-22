@@ -4,12 +4,12 @@ stages:
     - Linting
 
 before_script:
-    #- sudo apt-get update
-    # install all required libraries using existing conda environment requirements file:
-    - conda env create -f envs/pyorc-dev.yml
-    - conda init bash
-    - source ~/.bashrc
-    - conda activate pyorc-dev
+    # - sudo apt-get update
+    # # install all required libraries using existing conda environment requirements file:
+    # - conda env create -f envs/pyorc-dev.yml
+    # - conda init bash
+    # - source ~/.bashrc
+    # - conda activate pyorc-dev
 
 pylint:
     stage: Linting
