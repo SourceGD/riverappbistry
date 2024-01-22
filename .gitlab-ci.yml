@@ -10,7 +10,7 @@ before_script:
     # - conda init bash
     # - source ~/.bashrc
     # - conda activate pyorc-dev
-    - python3 -m pip install -r requirements-linux.txt pylint
+    - python3.10 -m pip install -r requirements-linux.txt pylint
 
 pylint:
     stage: Linting
