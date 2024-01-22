@@ -2,6 +2,7 @@ image: continuumio/miniconda3
 
 stages:
     - Linting
+    - Languages
 
 before_script:
     # - sudo apt-get update
@@ -16,3 +17,9 @@ pylint:
     stage: Linting
     script: 
         - pylint --recursive=y riverapp --disable=R0901,W0613,C0114,E0611 --fail-under=7 --class-attribute-naming-style=snake_case
+
+python-hello-world:
+    stage: Languages
+    image : python3.10
+    script :
+        - python3.10 --version
