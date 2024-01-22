@@ -11,6 +11,8 @@ before_script:
     # - source ~/.bashrc
     # - conda activate pyorc-dev
     - python3.10 -m pip install -r requirements-linux.txt pylint
+    - cd ..
+    - cd ..
     - ls
 
 pylint:
