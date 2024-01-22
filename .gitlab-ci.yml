@@ -12,9 +12,7 @@ before_script:
     # - source ~/.bashrc
     # - conda activate pyorc-dev
     - python3.10 -m pip install pylint
-    - cd ..
-    - cd ..
-    - ls
+    - pwd
 
 # pylint:
 #     stage: Linting
