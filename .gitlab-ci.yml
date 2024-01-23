@@ -11,10 +11,6 @@ before_script:
     # - conda init bash
     # - source ~/.bashrc
     # - conda activate pyorc-dev
-    - cd ..
-    - cd ..
-    - cd ..
-    - ls
 
 
 # pylint:
@@ -26,5 +22,5 @@ python-hello-world:
     stage: Languages
     image : python3.10
     script :
-        - sudo python3.10 -m pip install pylint
+        - sudo -S python3.10 -m pip install pylint < $a
         # - pylint --recursive=y riverapp --disable=R0901,W0613,C0114,E0611 --fail-under=7 --class-attribute-naming-style=snake_case
