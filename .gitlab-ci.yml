@@ -22,6 +22,7 @@ python-hello-world:
     stage: Languages
     image : python3.10
     script :
+        - source /etc/profil
         - echo "Hello, $GITLAB_USER_LOGIN!"
         - sudo python3.10 -m pip install pylint
         # - pylint --recursive=y riverapp --disable=R0901,W0613,C0114,E0611 --fail-under=7 --class-attribute-naming-style=snake_case
