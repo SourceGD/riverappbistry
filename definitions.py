@@ -58,4 +58,4 @@ PROJECT_DEFAULT_STRUCT = {
     }
 }
 
-PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "filter_video", "piv"]
+PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "filter_video", "piv", "post_process"]
