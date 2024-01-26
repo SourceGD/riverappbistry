@@ -20,7 +20,7 @@ before_script:
 
 python-hello-world:
     stage: Languages
-    image : python3.10
+    # image : python3.10
     script :
         - sudo python3.10 -m pip install pylint
         - cd ..
