@@ -1,5 +1,5 @@
 # image: continuumio/miniconda3
-# image : python3.10
+image : python:3.10
 
 stages:
     # - Linting
@@ -23,6 +23,7 @@ python-hello-world:
     stage: Languages
     # image : python3.10
     script :
+        - pyhton3.10 --version
         # - python3.10 -m pip install pylint
         # - cd ..
         # - pylint --recursive=y riverapp --disable=R0901,W0613,C0114,E0611 --fail-under=7 --class-attribute-naming-style=snake_case
