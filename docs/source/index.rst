@@ -19,4 +19,5 @@ This is the documentation welcome page
 
    installation
    dev_guide/index.rst
+   dev_guide/gitlab_runner.rst
 
