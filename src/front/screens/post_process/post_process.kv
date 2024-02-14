@@ -21,5 +21,6 @@
                 text: "Autre bouton"
                 font_style: "Button"
                 md_bg_color: app.theme_cls.error_color
+                on_release: app.root.ids.screen_manager.get_screen("post_process").on_button_press()
 
 <PostProcessDesktopView>:

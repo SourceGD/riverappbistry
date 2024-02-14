@@ -1,13 +1,16 @@
 from os import path
 from threading import Thread, Event
-
+from pprint import pprint
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.app import MDApp
 
 from kivy.lang import Builder
 
-from src.front.components.dialogs import ConfirmAction
+from libs import pyorc
+from src.back import transect
+import xarray as xr
+
 
 Builder.load_file(path.join(path.dirname(__file__), "post_process.kv"))
 
@@ -60,4 +63,18 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
     def on_leave(self, *args) -> None:
         print("on_leave post processing")
+        return
+
+    def on_button_press(self, *args) -> None:
+        print("on_button_press post processing")
+        obj_vars = vars(self._project)
+        pprint(obj_vars)
+        piv_path = self._project._backup_file.strip("test.json") + "piv.nc"
+        dataset = xr.open_dataset(piv_path)
+        start_frame = int(5*self._project._video_configuration['start_time'])
+        end_frame = int(5*self._project._video_configuration['end_time'])
+        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame)
+        video.camera_config = self._project.cam_config
+        # print(video)
+        transect(dataset, video, self._project._backup_file.strip("test.json"), "/home/andreas/examples/riverapp_examples/VGC1/bathy_format_riverApp.txt")
         return
