@@ -8,7 +8,7 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 
 from libs import pyorc
-from src.back import transect
+from src.back import transect, mask_and_plot
 import xarray as xr
 
 
@@ -66,15 +66,19 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         return
 
     def on_button_press(self, *args) -> None:
+        start_frame = int(5 * self._project._video_configuration['start_time'])
+        end_frame = int(5 * self._project._video_configuration['end_time'])
+        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame)
+        video.camera_config = self._project.cam_config
         print("on_button_press post processing")
         obj_vars = vars(self._project)
         pprint(obj_vars)
-        piv_path = self._project._backup_file.strip("test.json") + "piv.nc"
+        piv_path = self._project._backup_file.strip(self._project.project_name+".json") + "piv.nc"
         dataset = xr.open_dataset(piv_path)
-        start_frame = int(5*self._project._video_configuration['start_time'])
-        end_frame = int(5*self._project._video_configuration['end_time'])
-        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame)
-        video.camera_config = self._project.cam_config
-        # print(video)
-        transect(dataset, video, self._project._backup_file.strip("test.json"), "/home/andreas/examples/riverapp_examples/VGC1/bathy_format_riverApp.txt")
+        mask_and_plot(self._project._backup_file.strip(self._project.project_name+".json"), dataset, video)
+
+        masked_dataset = xr.open_dataset(self._project._backup_file.strip(self._project.project_name+".json") + "piv_masked.nc")
+
+        bathy_path = self._project._video_configuration['video'].strip("") + "bathy_format_riverApp.txt"
+        transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name+".json"), "C:/Users/Dany/Documents/Memoire/riverapp/examples/riverapp_examples/VGC1/bathy_format_riverApp.txt")
         return

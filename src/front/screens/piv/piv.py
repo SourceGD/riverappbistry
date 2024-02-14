@@ -1,14 +1,11 @@
 from os import path
 from threading import Thread, Event
-
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.app import MDApp
-
 from kivy.lang import Builder
-
 from src.front.components.dialogs import ConfirmAction
-import time
+
 Builder.load_file(path.join(path.dirname(__file__), "piv.kv"))
 
 
@@ -87,10 +84,8 @@ class Piv(MDResponsiveLayout, MDScreen):
             # wait for 1 minute
             # TODO Find a way to fix the fact that we can't touch the window while the thread is running
 
-            while thread.is_alive():
-                if not thread.is_alive():
-                    self.to_post_processing()
-                    break
+            thread.join()
+            self.to_post_processing()
 
             print("in on_enter piv.py")
 
