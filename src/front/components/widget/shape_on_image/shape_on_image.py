@@ -109,7 +109,7 @@ class ShapeOnImage(MDRelativeLayout):
 
     def get_points_coordinate(self) -> list:
         coordinate: list = []
-        # TODO ICI QUE CA MERDE
+
         print("===========================================ICI ACTUELLEMENT===========================================")
         print("width:", self.width)
         print("height:", self.height)
