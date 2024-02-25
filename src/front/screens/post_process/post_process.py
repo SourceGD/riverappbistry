@@ -80,5 +80,5 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         masked_dataset = xr.open_dataset(self._project._backup_file.strip(self._project.project_name+".json") + "piv_masked.nc")
 
         bathy_path = self._project._video_configuration['video'].strip("") + "bathy_format_riverApp.txt"
-        transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name+".json"), "C:/Users/Dany/Documents/Memoire/riverapp/examples/riverapp_examples/VGC1/bathy_format_riverApp.txt")
+        transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name+".json"), "/media/andreas/LaCie Andreas/Mémoire/riverapp/examples/riverapp_examples/VGC1/bathy_format_riverApp.txt")
         return
