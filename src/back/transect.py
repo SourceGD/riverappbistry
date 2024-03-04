@@ -41,7 +41,7 @@ def all_points_bathy(bathy_file, bathy_delimeters, ds):
 # todo add user input to precise the factor correlation of how much varies
 #  the velocity with the depth (v_corr variable)
 def transect_plot(ds_points, video, ds, directory):
-    ds_points_q = ds_points.transect.get_q(v_corr=0.85, fill_method="log_interp")
+    ds_points_q = ds_points.transect.get_q(v_corr=0.80, fill_method="log_interp")
     ax = plt.axes()
     ds_points_q["v_eff"].isel(quantile=2).plot(ax=ax, label="q")
     plt.legend()
@@ -118,3 +118,4 @@ def transect(ds, video, directory, bathy_file):
     # print discharge for this transect
     ds_points_q.transect.get_river_flow()
     print(ds_points_q["river_flow"])
+    print(ds_points_q["river_flow"].mean())

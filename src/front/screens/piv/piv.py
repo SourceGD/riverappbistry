@@ -100,6 +100,4 @@ class Piv(MDResponsiveLayout, MDScreen):
     def cancel_piv(self) -> None:
         self._stop_piv_flag.set()
         self._piv_thread.join()
-        print("uwu")
-
         self._stop_piv_flag.clear()

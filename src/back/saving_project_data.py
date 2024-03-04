@@ -300,8 +300,9 @@ class SavingProjectData():
 
         da = pyorc_video.get_frames()
         #Apply previous steps filter here
-
-        piv = da.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+        da_norm = da.frames.normalize()
+        da_norm_proj = da_norm.frames.project()
+        piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
         print(piv)
         self._save_step("piv", {
                 "file": "piv.nc",
