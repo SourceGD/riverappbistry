@@ -20,8 +20,8 @@ def delimiter_points_bathy(cam_config):
     return cv2.perspectiveTransform(np.float32([local_points]), M)[0]
 
 
-def all_points_bathy(bathy_file, bathy_delimeters, ds):
-    bathy = pd.read_csv(bathy_file)
+def all_points_bathy(bathy, bathy_delimeters, ds):
+    bathy = pd.DataFrame.from_dict(bathy)
     x_bath = bathy["x"].values
     z_bath = bathy["y"].values
 
