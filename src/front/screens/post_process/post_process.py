@@ -79,7 +79,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         self.deactivate_display_button()
         self.load_image()
         avg_flow = self.update_river_flow_label(river_flow)
-        # self._project.save_post_process(avg_flow, self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg")
+        self._project.save_post_process(avg_flow, self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg")
 
         return
 

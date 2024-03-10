@@ -49,7 +49,8 @@ PROJECT_DEFAULT_STRUCT = {
     },
 
     "post_process": {
-        "masks": []
+        "river_flow": 0,
+        "transect_picture_path": "",
     },
 
     "transect": {

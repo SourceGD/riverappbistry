@@ -317,7 +317,6 @@ class SavingProjectData():
             "river_flow": river_flow,
             "transect_picture_path": transect_picture_path
         })
-
         return
 
     def load_project(self, project_dir: str) -> None:
