@@ -1,17 +1,20 @@
+import time
 from os import path, mkdir
 from json import load, dumps, loads
 from shutil import rmtree
 import math
 from dask.diagnostics import ProgressBar
-from cv2 import	VideoCapture, CAP_PROP_FPS
+from cv2 import VideoCapture, CAP_PROP_FPS
 
 from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
 
 from src.utils import get_video_frame
 from libs.pyorc import CameraConfig, Video
 
+
 class ProjectNotLoaded(Exception):
     pass
+
 
 class SavingProjectData():
     def __init__(self) -> None:
@@ -132,7 +135,8 @@ class SavingProjectData():
         if not isinstance(beacons, dict):
             return TypeError(f"beacons should be a dict : {beacons}")
 
-        self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"], beacons)
+        self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"],
+                                 beacons)
 
         if len(beacons["points"]) != 4:
             raise ValueError("Points should have 4 pairs of coordinates ")
@@ -209,7 +213,9 @@ class SavingProjectData():
             if isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 self._check_backup_file_format(wanted_dict_format[key], dict_format[key])
 
-            elif (isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key], dict)) or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
+            elif (isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key],
+                                                                               dict)) or not isinstance(
+                    wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 raise ValueError(f"The data format doesn't respect the wanted format")
 
         return True
@@ -229,20 +235,21 @@ class SavingProjectData():
         return True
 
     def _convert_dist_to_dest_points(self, dist: list) -> list:
-            # Points coordinates computation
-            # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
-            P1, P4 = [0, dist[3]], [0, 0]
+        # Points coordinates computation
+        # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
+        P1, P4 = [0, dist[3]], [0, 0]
 
-            # Then we compute other coordinates using cosine law
-            alpha = math.acos((dist[3] ** 2 + dist[5] ** 2 - dist[0] ** 2) / (2 * dist[3] * dist[5]))
-            P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
-            beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
-            P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
+        # Then we compute other coordinates using cosine law
+        alpha = math.acos((dist[3] ** 2 + dist[5] ** 2 - dist[0] ** 2) / (2 * dist[3] * dist[5]))
+        P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
+        beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
+        P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
 
-            return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
+        return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
 
     def generate_cam_config(self) -> bool:
-        if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] or not self._steps_done["beacons"]:
+        if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] or not self._steps_done[
+            "beacons"]:
             return False
 
         init_frame = get_video_frame(self.video_configuration["video"], self.video_configuration["start_time"])
@@ -252,13 +259,13 @@ class SavingProjectData():
         print(height," " ,width)
         print("=================================================================================")
         dst: list = self._convert_dist_to_dest_points([
-                self._beacons["p1_to_p2"],
-                self._beacons["p2_to_p3"],
-                self._beacons["p3_to_p4"],
-                self._beacons["p4_to_p1"],
-                self._beacons["p1_to_p3"],
-                self._beacons["p2_to_p4"]
-            ])
+            self._beacons["p1_to_p2"],
+            self._beacons["p2_to_p3"],
+            self._beacons["p3_to_p4"],
+            self._beacons["p4_to_p1"],
+            self._beacons["p1_to_p3"],
+            self._beacons["p2_to_p4"]
+        ])
 
         gcps: dict = {
             "src": self._beacons["points"],
@@ -270,7 +277,8 @@ class SavingProjectData():
             height=height,
             width=width,
             gcps=gcps,
-            lens_position=[7, -2, 3] #the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
+            lens_position=[7, -2, 3]
+            # the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
         )
 
         cam_config.set_bbox_from_corners(self._beacons["points"])
@@ -280,16 +288,16 @@ class SavingProjectData():
 
     def generate_piv(self) -> bool:
         if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] \
-            or not self._steps_done["beacons"] or not self._steps_done["cam_config"] \
-            or not self._steps_done["filter_video"]:
-
+                or not self._steps_done["beacons"] or not self._steps_done["cam_config"] \
+                or not self._steps_done["filter_video"]:
             return False
 
         video: str = self._video_configuration["video"]
         fps: int = VideoCapture(video).get(CAP_PROP_FPS)
         start_frame: int = int(self._video_configuration["start_time"] * fps)
         end_frame: int = int(self._video_configuration["end_time"] * fps)
-
+        print("=====================================")
+        print(self._cam_config)
         pyorc_video: Video = Video(
             video,
             start_frame=start_frame,
@@ -306,10 +314,11 @@ class SavingProjectData():
         piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
         print(piv)
         self._save_step("piv", {
-                "file": "piv.nc",
-                "need_update": False
-            })
-
+            "file": "piv.nc",
+            "need_update": False
+        })
+        print(piv)
+        print(f"PIV computation took {end_time - start_time} seconds")
         return True
 
     def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:
