@@ -15,7 +15,7 @@ class ProjectNotLoaded(Exception):
 
 class SavingProjectData():
     def __init__(self) -> None:
-        # self._post_process: dict = None
+        self._post_process: dict = None
         self._backup_file: str = None
         self._project_name: str = None
         self._steps_done: dict = None

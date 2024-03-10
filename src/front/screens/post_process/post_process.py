@@ -66,6 +66,12 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
     def on_enter(self, *args) -> None:
         print("on_enter post processing")
+        if self._project.steps_done["post_process"]:
+            self.deactivate_display_button()
+            self.load_image()
+            self.update_river_flow_label(self._project._post_process["river_flow"])
+
+            return
         return
 
     def on_leave(self, *args) -> None:
@@ -99,7 +105,10 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         return
 
     def update_river_flow_label(self, river_flow) -> float:
-        avg = str(round(float(river_flow.mean()) * -1, 2))
+        if isinstance(river_flow, str):
+            avg = river_flow
+        else:
+            avg = str(round(float(river_flow.mean()) * -1, 2))
         label = Label(text="Calculated river flow is " + avg + "m³/s", color=(0, 0, 0, 1))
         Clock.schedule_once(lambda dt: self.children[0].ids.river_flow_label.add_widget(label))
         return avg
