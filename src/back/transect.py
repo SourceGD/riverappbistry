@@ -46,7 +46,6 @@ def transect_plot(ds_points, video, ds, directory):
     ds_points_q["v_eff"].isel(quantile=2).plot(ax=ax, label="q")
     plt.legend()
     plt.grid()
-    plt.show()
 
     #################### plot velocimetry point results in local projection ########
     norm = Normalize(vmin=0, vmax=0.6, clip=False)
@@ -103,7 +102,6 @@ def transect_plot(ds_points, video, ds, directory):
     )
     # store figure in a JPEG
     p.axes.figure.savefig(directory + "plot_transect.jpg", dpi=200)
-    plt.show()
 
     return ds_points_q
 
@@ -117,5 +115,5 @@ def transect(ds, video, directory, bathy_file):
 
     # print discharge for this transect
     ds_points_q.transect.get_river_flow()
-    print(ds_points_q["river_flow"])
-    print(ds_points_q["river_flow"].mean())
+
+    return ds_points_q["river_flow"]

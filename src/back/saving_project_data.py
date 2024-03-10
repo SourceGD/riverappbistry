@@ -15,6 +15,7 @@ class ProjectNotLoaded(Exception):
 
 class SavingProjectData():
     def __init__(self) -> None:
+        # self._post_process: dict = None
         self._backup_file: str = None
         self._project_name: str = None
         self._steps_done: dict = None
@@ -197,8 +198,8 @@ class SavingProjectData():
 
         keys_format = set(wanted_dict_format.keys())
         keys_data = set(dict_format.keys())
-
         if keys_format != keys_data:
+            print("ValueError, The data format doesn't respect the wanted format")
             raise ValueError(f"The data format doesn't respect the wanted format")
 
         for key in keys_format:
@@ -311,6 +312,14 @@ class SavingProjectData():
 
         return True
 
+    def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:
+        self._save_step("post_process", {
+            "river_flow": river_flow,
+            "transect_picture_path": transect_picture_path
+        })
+
+        return
+
     def load_project(self, project_dir: str) -> None:
         if not isinstance(project_dir, str):
             raise ValueError(f"project_dir should be a str : {project_dir}")
@@ -337,7 +346,7 @@ class SavingProjectData():
         self._cam_config = project_data["cam_config"]
         self._filter_video = project_data["filter_video"]
         self._piv = project_data["piv"]
-
+        self._post_process = project_data["post_process"]
         return
 
     def create_project(self, projects_dir: str, project_name: str) -> None:
