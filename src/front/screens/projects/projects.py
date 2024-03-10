@@ -219,7 +219,7 @@ class Projects(MDResponsiveLayout, MDScreen):
                 confirm_text="I understand"
             ).open()
 
-        except PermissionError :
+        except PermissionError:
             ConfirmAction(
                 title="Download error",
                 text="RiverApp do not have the permission to save the project at the request folder.",

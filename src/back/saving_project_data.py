@@ -18,6 +18,7 @@ class ProjectNotLoaded(Exception):
 
 class SavingProjectData():
     def __init__(self) -> None:
+        self._post_process: dict = None
         self._backup_file: str = None
         self._project_name: str = None
         self._steps_done: dict = None
@@ -201,8 +202,8 @@ class SavingProjectData():
 
         keys_format = set(wanted_dict_format.keys())
         keys_data = set(dict_format.keys())
-
         if keys_format != keys_data:
+            print("ValueError, The data format doesn't respect the wanted format")
             raise ValueError(f"The data format doesn't respect the wanted format")
 
         for key in keys_format:
@@ -307,12 +308,11 @@ class SavingProjectData():
         )
 
         da = pyorc_video.get_frames()
-        # Apply previous steps filter here
-
-        # get time before computation to measure how long the piv lasts
-        start_time = time.time()
-        piv = da.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
-        end_time = time.time()
+        #Apply previous steps filter here
+        da_norm = da.frames.normalize()
+        da_norm_proj = da_norm.frames.project()
+        piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+        print(piv)
         self._save_step("piv", {
             "file": "piv.nc",
             "need_update": False
@@ -320,6 +320,13 @@ class SavingProjectData():
         print(piv)
         print(f"PIV computation took {end_time - start_time} seconds")
         return True
+
+    def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:
+        self._save_step("post_process", {
+            "river_flow": river_flow,
+            "transect_picture_path": transect_picture_path
+        })
+        return
 
     def load_project(self, project_dir: str) -> None:
         if not isinstance(project_dir, str):
@@ -347,7 +354,7 @@ class SavingProjectData():
         self._cam_config = project_data["cam_config"]
         self._filter_video = project_data["filter_video"]
         self._piv = project_data["piv"]
-
+        self._post_process = project_data["post_process"]
         return
 
     def create_project(self, projects_dir: str, project_name: str) -> None:

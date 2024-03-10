@@ -47,7 +47,10 @@ class ProjectDetails(MDResponsiveLayout, MDScreen):
 
     def _display_setps_done(self) -> None:
         self.next_step = next((key for key in PROJECT_STEPS if not MDApp.get_running_app().project.steps_done[key]), None)
-
+        print(self.next_step)
+        if self.next_step is None and MDApp.get_running_app().project.steps_done["post_process"]:
+            Clock.schedule_once(lambda dt: self.children[0].ids.rl_progress_bar.activate_lollipop(1))
+            return
         if self.next_step is not None:
             Clock.schedule_once(lambda dt: self.children[0].ids.rl_progress_bar.activate_lollipop(8 - PROJECT_STEPS.index(self.next_step)))
         
@@ -57,10 +60,11 @@ class ProjectDetails(MDResponsiveLayout, MDScreen):
         Thread(target=self._display_setps_done).start()    
 
     def continue_project(self, *args) -> None:
-        if self.next_step is None:
+        if self.next_step is None and not MDApp.get_running_app().project.steps_done["post_process"]:
             # Screen do not exist yet
             self.manager.current = "video_configuration"
-        
+        elif MDApp.get_running_app().project.steps_done["post_process"]:
+            self.manager.current = "post_process"
         else:
             self.manager.current = self.next_step
 
