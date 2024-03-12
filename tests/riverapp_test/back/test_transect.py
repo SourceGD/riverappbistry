@@ -12,9 +12,8 @@ from src.back.transect import delimiter_points_bathy, all_points_bathy, transect
 
 
 @pytest.fixture
-def sample_video_path():
-    return "../test_ressources/VGC1/VGC1.mp4"
-
+def directory_path():
+    return "../test_ressources/VGC1/"
 
 @pytest.fixture
 def bathymetry():
@@ -24,60 +23,55 @@ def bathymetry():
 
 
 @pytest.fixture
-def piv_path():
-    return "../test_ressources/VGC1/piv.nc"
-
-
-@pytest.fixture
-def masked_piv_path():
-    return "../test_ressources/VGC1/piv_masked.nc"
-
-@pytest.fixture
-def cam_config_json():
+def cam_config_json(directory_path):
     cam_config = {}
-    with open("../test_ressources/VGC1/cam_config.json", "r") as f:
+    with open(directory_path + "cam_config.json", "r") as f:
         cam_config = json.load(f)
     return cam_config
 
-@pytest.fixture
-def delimiter_points_path():
-    return "../test_ressources/delimiter_points_bathy_results.txt"
-
 
 @pytest.fixture
-def video(cam_config_json, sample_video_path):
+def video(cam_config_json, directory_path):
     start_frame = 25
     end_frame = 30
-    video = pyorc.Video(sample_video_path, start_frame=start_frame, end_frame=end_frame)
+    video = pyorc.Video(directory_path + "VGC1.mp4", start_frame=start_frame, end_frame=end_frame)
     video.camera_config = cam_config_json
     return video
 
 
-
-def test_delimiter_points_bathy(video, delimiter_points_path):
+def test_delimiter_points_bathy(video, directory_path):
     tst = delimiter_points_bathy(video.camera_config)
-    delimiter_points = np.loadtxt(delimiter_points_path)
+    delimiter_points = np.loadtxt("../test_ressources/delimiter_points_bathy_results.txt")
     assert tst.any() == delimiter_points.any()
     # TODO verify a case where it should not be equal
     return
 
 
-def test_all_points_bathy(video, bathymetry, masked_piv_path):
+def test_all_points_bathy(video, bathymetry, directory_path):
     delimiter_points = delimiter_points_bathy(video.camera_config)
-    tst = all_points_bathy(bathymetry, delimiter_points, xr.open_dataset(masked_piv_path))
+    all_points_ds = all_points_bathy(bathymetry, delimiter_points, xr.open_dataset(directory_path + "piv_masked.nc"))
     expected = pd.read_csv("../test_ressources/all_points_bathy_results.csv")
 
-    assert tst.any() == expected.any()
+    assert all_points_ds.any() == expected.any()
     # TODO verify a case where it should not be equal
     return
 
 
-def test_transect_plot():
-    # TODO
-    pass
+def test_transect_plot(video, bathymetry, directory_path):
+    delimiter_points = delimiter_points_bathy(video.camera_config)
+    all_points_ds = all_points_bathy(bathymetry, delimiter_points, xr.open_dataset(directory_path + "piv_masked.nc"))
+    ds = transect_plot(all_points_ds, video, xr.open_dataset(directory_path + "piv_masked.nc"), "../test_ressources/VGC1/")
+    expected = pd.read_csv("../test_ressources/transect_plot_results.csv")
+    assert ds.any() == expected.any()
+    # TODO verify a case where it should not be equal
+    return
 
 
-def test_transect():
-    # TODO
-
-    pass
+def test_transect(video, directory_path, bathymetry):
+    ds = xr.open_dataset(directory_path + "piv_masked.nc")
+    ds_points_q = transect(ds, video, directory_path, bathymetry)
+    ds_points_q = ds_points_q.to_dataframe()
+    expected = pd.read_csv("../test_ressources/ds_points_q.csv", index_col=0)
+    assert ds_points_q["river_flow"].any() == expected["river_flow"].any()
+    # TODO verify a case where it should not be equal
+    return
