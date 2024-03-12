@@ -16,3 +16,4 @@ openpiv==0.25.0
 kivy==2.2.0
 kivymd==1.1.1
 dask==2023.8.1
+pytest==8.1.1

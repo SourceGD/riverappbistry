@@ -318,7 +318,6 @@ class SavingProjectData():
             "need_update": False
         })
         print(piv)
-        print(f"PIV computation took {end_time - start_time} seconds")
         return True
 
     def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:
