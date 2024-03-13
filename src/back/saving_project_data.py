@@ -97,7 +97,7 @@ class SavingProjectData():
             return
 
         if not isinstance(bathymetry, dict):
-            return TypeError(f"bathymetry should be a dict : {bathymetry}")
+            raise TypeError(f"bathymetry should be a dict : {bathymetry}")
 
         self._check_missing_data(["x", "y", "water_level"], bathymetry)
 
@@ -328,6 +328,7 @@ class SavingProjectData():
         return
 
     def load_project(self, project_dir: str) -> None:
+        print(project_dir)
         if not isinstance(project_dir, str):
             raise ValueError(f"project_dir should be a str : {project_dir}")
 
