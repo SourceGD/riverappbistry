@@ -2,7 +2,6 @@ import pytest
 
 from back_fixtures import saving_project_data, all_video_config, all_bathy_config, all_beacons_config
 
-
 def test_video_configuration_setter(saving_project_data, all_video_config):
     spd = saving_project_data
     with pytest.raises(FileExistsError):

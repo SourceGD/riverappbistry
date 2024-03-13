@@ -6,7 +6,7 @@ import math
 from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
 
-from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
+from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR, PROJECT_STEPS
 
 from src.utils import get_video_frame
 from libs.pyorc import CameraConfig, Video
@@ -180,6 +180,10 @@ class SavingProjectData():
     def _save_step(self, step: str, data: dict) -> None:
         if not isinstance(data, dict):
             raise TypeError(f"data should be a dict")
+
+        if str not in PROJECT_STEPS:
+            raise ValueError(f"step should be in {PROJECT_STEPS}")
+
 
         with open(self._backup_file, "r") as json_file:
             saved_data = load(json_file)
