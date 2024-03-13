@@ -217,9 +217,8 @@ class SavingProjectData():
             if isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 self._check_backup_file_format(wanted_dict_format[key], dict_format[key])
 
-            elif (isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key],
-                                                                               dict)) or not isinstance(
-                    wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
+            elif ((isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key], dict))
+                  or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict)):
                 raise ValueError(f"The data format doesn't respect the wanted format")
 
         return True

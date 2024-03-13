@@ -1,6 +1,8 @@
 import pytest
+import json
 
 from back_fixtures import saving_project_data, all_video_config, all_bathy_config, all_beacons_config
+
 
 def test_video_configuration_setter(saving_project_data, all_video_config):
     spd = saving_project_data
@@ -60,14 +62,40 @@ def test_beacons_setter(saving_project_data, all_beacons_config):
     pass
 
 
-def test_save_step():
-    # TODO
-    pass
+def test_save_step(saving_project_data):
+    spd = saving_project_data
+    with pytest.raises(TypeError):
+        spd._save_step("video_configuration", 1)
+    with pytest.raises(TypeError):
+        spd._save_step("video_configuration", [])
+    with pytest.raises(ValueError):
+        spd._save_step("not_existing_step", {})
+    return
 
 
-def test_check_backup_file_format():
-    # TODO
-    pass
+def test_check_backup_file_format(saving_project_data):
+    spd = saving_project_data
+    with open("../test_ressources/test_check_backup_file_format.json", "r") as file:
+        dict_format = json.load(file)
+    with open("../test_ressources/testing_project/default_config.json", "r") as file:
+        wanted_dict_format = json.load(file)
+
+    with pytest.raises(TypeError):
+        spd._check_backup_file_format(dict_format, [])
+    with pytest.raises(TypeError):
+        spd._check_backup_file_format(dict_format, 1)
+    with pytest.raises(ValueError):
+        temp_dict_format = dict_format.copy()
+        temp_dict_format["test_adding_a_key"] = {}
+        spd._check_backup_file_format(temp_dict_format, dict_format)
+    with pytest.raises(ValueError):
+        temp_dict_format = dict_format.copy()
+        temp_dict_format["filter_video"] = []
+        spd._check_backup_file_format(temp_dict_format, dict_format)
+
+    assert spd._check_backup_file_format(dict_format, wanted_dict_format) is True
+
+    return
 
 
 def test_check_missing_data():
@@ -108,6 +136,3 @@ def test_create_project():
 def test_delete_project():
     # TODO
     pass
-
-
-
