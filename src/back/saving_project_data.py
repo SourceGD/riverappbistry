@@ -133,7 +133,7 @@ class SavingProjectData():
             return
 
         if not isinstance(beacons, dict):
-            return TypeError(f"beacons should be a dict : {beacons}")
+            raise TypeError(f"beacons should be a dict : {beacons}")
 
         self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"],
                                  beacons)
@@ -148,7 +148,7 @@ class SavingProjectData():
             if not isinstance(coordinates[0], (int, float)) or not isinstance(coordinates[1], (int, float)):
                 raise ValueError(f"Point coordinates should be numbers")
 
-        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or beacons["p4_to_p1"] <= 0:
+        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or beacons["p4_to_p1"] <= 0 or beacons["p1_to_p3"] <= 0 or beacons["p2_to_p4"] <= 0:
             raise ValueError(f"Distance between points cannot be lass than or equal to 0")
 
         self._beacons = beacons

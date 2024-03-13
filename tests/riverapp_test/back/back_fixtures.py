@@ -53,7 +53,7 @@ def saving_project_data():
 
 
 @pytest.fixture
-def all_video_configs():
+def all_video_config():
     return {
         "good_video_config": {
             "video": "../test_ressources/VGC1/VGC1.mp4",
@@ -119,7 +119,7 @@ def all_video_configs():
 
 
 @pytest.fixture
-def all_bathy_configs():
+def all_bathy_config():
     return {
         "good_bathy": {
             "x": [
@@ -196,5 +196,137 @@ def all_bathy_configs():
                 0.14
             ],
             "water_level": -0.44
+        }
+    }
+
+
+@pytest.fixture
+def all_beacons_config():
+    return {
+        "good_beacons": {
+            "points": [
+                [
+                    1518,
+                    122
+                ],
+                [
+                    1449,
+                    749
+                ],
+                [
+                    203,
+                    658
+                ],
+                [
+                    770,
+                    161
+                ]
+            ],
+            "p1_to_p2": 6.65,
+            "p2_to_p3": 7.6,
+            "p3_to_p4": 6.69,
+            "p4_to_p1": 7.82,
+            "p1_to_p3": 10.29,
+            "p2_to_p4": 10.1
+        },
+        "bad_beacons_format": [],
+        "bad_beacons_pair_count": {
+            "points": [
+                [
+                    1518,
+                    122
+                ],
+                [
+                    1449,
+                    749
+                ],
+                [
+                    203,
+                    658
+                ]
+            ],
+            "p1_to_p2": 6.65,
+            "p2_to_p3": 7.6,
+            "p3_to_p4": 6.69,
+            "p4_to_p1": 7.82,
+            "p1_to_p3": 10.29,
+            "p2_to_p4": 10.1
+        },
+        "bad_beacons_point_lacking_coordinate": {
+            "points": [
+                [
+                    1518,
+                    122
+                ],
+                [
+                    1449,
+                    749
+                ],
+                [
+                    203,
+                    658
+                ],
+                [
+                    770
+                ]
+            ],
+            "p1_to_p2": 6.65,
+            "p2_to_p3": 7.6,
+            "p3_to_p4": 6.69,
+            "p4_to_p1": 7.82,
+            "p1_to_p3": 10.29,
+            "p2_to_p4": 10.1
+        },
+        "bad_beacons_values": {
+            "points": [
+                [
+                    1518,
+                    122
+                ],
+                [
+                    1449,
+                    749
+                ],
+                [
+                    203,
+                    658
+                ],
+                [
+                    770,
+                    "161"
+                ]
+            ],
+            "p1_to_p2": 6.65,
+            "p2_to_p3": 7.6,
+            "p3_to_p4": 6.69,
+            "p4_to_p1": 7.82,
+            "p1_to_p3": 10.29,
+            "p2_to_p4": 10.1
+        },
+        "bad_beacons_impossible_distance": {
+            "points": [
+                [
+                    1518,
+                    122
+                ],
+                [
+                    1449,
+                    749
+                ],
+                [
+                    203,
+                    658
+                ],
+                [
+                    770,
+                    161
+                ]
+            ],
+            "p1_to_p2": 6.65,
+            "p2_to_p3": 7.6,
+            "p3_to_p4": 6.69,
+            "p4_to_p1": 7.82,
+            "p1_to_p3": 0,
+            "p2_to_p4": 10.1
         }
     }

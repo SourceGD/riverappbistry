@@ -2,8 +2,8 @@
     "project_name": "testing",
     "steps_done": {
         "video_configuration": true,
-        "bathymetry": true,
-        "beacons": 0,
+        "bathymetry": 0,
+        "beacons": true,
         "cam_config": 0,
         "filter_video": 0,
         "piv": 0,
@@ -16,32 +16,35 @@
         "frequency": 0
     },
     "bathymetry": {
-        "x": [
-            0.0,
-            0.35,
-            0.6,
-            0.8,
-            1.2,
-            1.5
-        ],
-        "y": [
-            1.44,
-            0.29,
-            0.28,
-            0.3,
-            0.13,
-            0.14
-        ],
-        "water_level": 0.44
+        "x": [],
+        "y": [],
+        "water_level": 0
     },
     "beacons": {
-        "points": [],
-        "p1_to_p2": 0,
-        "p2_to_p3": 0,
-        "p3_to_p4": 0,
-        "p4_to_p1": 0,
-        "p1_to_p3": 0,
-        "p2_to_p4": 0
+        "points": [
+            [
+                1518,
+                122
+            ],
+            [
+                1449,
+                749
+            ],
+            [
+                203,
+                658
+            ],
+            [
+                770,
+                161
+            ]
+        ],
+        "p1_to_p2": 6.65,
+        "p2_to_p3": 7.6,
+        "p3_to_p4": 6.69,
+        "p4_to_p1": 7.82,
+        "p1_to_p3": 10.29,
+        "p2_to_p4": 10.1
     },
     "cam_config": {},
     "filter_video": {},
