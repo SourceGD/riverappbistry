@@ -5,7 +5,7 @@ from src.back import SavingProjectData
 from libs import pyorc
 
 
-# FIXTURES FOR TESTING SAVING_PROJECT_DATA.PY
+# FIXTURES FOR TESTING BACK/SAVING_PROJECT_DATA.PY
 @pytest.fixture
 def directory_path():
     return "../test_ressources/VGC1/"

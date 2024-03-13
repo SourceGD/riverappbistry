@@ -79,7 +79,6 @@ def test_check_backup_file_format(saving_project_data):
         dict_format = json.load(file)
     with open("../test_ressources/testing_project/default_config.json", "r") as file:
         wanted_dict_format = json.load(file)
-
     with pytest.raises(TypeError):
         spd._check_backup_file_format(dict_format, [])
     with pytest.raises(TypeError):
