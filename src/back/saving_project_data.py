@@ -3,6 +3,8 @@ from os import path, mkdir
 from json import load, dumps, loads
 from shutil import rmtree
 import math
+
+import requests
 from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
 
@@ -298,6 +300,22 @@ class SavingProjectData():
         end_frame: int = int(self._video_configuration["end_time"] * fps)
         print("=====================================")
         print(self._cam_config)
+        params = {
+            "fps": fps,
+            "start_frame": start_frame,
+            "end_frame": end_frame,
+            "cam_config": self._cam_config,
+            "freq": self._video_configuration["frequency"],
+            "h_a": self._bathymetry["water_level"],
+            "camera_config": self._cam_config,
+            "project_name": self._project_name
+        }
+        route_url = "http://localhost:5000/process-piv"
+        files = {"file": open(video, "rb")}
+
+        response = requests.post(route_url, files=files, data=params, json=params)
+        print(response.text)
+
         pyorc_video: Video = Video(
             video,
             start_frame=start_frame,
