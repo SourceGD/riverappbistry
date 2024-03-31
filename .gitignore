@@ -109,8 +109,7 @@ examples/riverapp_examples/*
 !examples/riverapp_examples/VGC1
 !examples/riverapp_examples/data_format.md
 !examples/riverapp_examples/img
-examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257
-
+examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257/*
 
 .mypy_cache/
 
@@ -118,7 +117,4 @@ examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257
 .idea/
 
 src/front/screens/bathymetry/bathymetry.py
-
-# API output and uploads folder contents
-api/output/*
 api/uploads/*

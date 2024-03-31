@@ -301,11 +301,11 @@ class SavingProjectData():
         end_frame: int = int(self._video_configuration["end_time"] * fps)
         print("=====================================")
         print(self._cam_config)
+        # TODO use the JSON cam_config and not the one with CameraConfig type
         params = {
             "fps": fps,
             "start_frame": start_frame,
             "end_frame": end_frame,
-            "cam_config": self._cam_config,
             "freq": self._video_configuration["frequency"],
             "h_a": self._bathymetry["water_level"],
             "camera_config": self._cam_config,
