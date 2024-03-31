@@ -109,6 +109,7 @@ examples/riverapp_examples/*
 !examples/riverapp_examples/VGC1
 !examples/riverapp_examples/data_format.md
 !examples/riverapp_examples/img
+examples/riverapp_examples/DJI_0873.mp4
 
 
 .mypy_cache/
