@@ -46,7 +46,7 @@ def process_piv():
 
 @app.route('/process', methods=['GET'])
 def process_transects():
-
+    # TODO : take the project name and process the transects using the proper piv file
     return send_file(os.path.join(OUTPUT_FOLDER, 'plot_transect.jpg'), mimetype='image/jpeg')
 
 

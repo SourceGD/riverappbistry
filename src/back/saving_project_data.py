@@ -308,7 +308,7 @@ class SavingProjectData():
             "end_frame": end_frame,
             "freq": self._video_configuration["frequency"],
             "h_a": self._bathymetry["water_level"],
-            "camera_config": self._cam_config,
+            "camera_config": loads(self._cam_config.to_json()),
             "project_name": self._project_name
         }
         route_url = "http://localhost:5000/process-piv"
