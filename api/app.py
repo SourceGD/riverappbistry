@@ -40,7 +40,7 @@ def process_piv():
         # Apply previous steps filter here
         da_norm = da.frames.normalize()
         da_norm_proj = da_norm.frames.project()
-        piv = da_norm_proj.frames.get_piv().to_netcdf(os.path.join(OUTPUT_FOLDER, filename+"_"+'piv.nc'))
+        piv = da_norm_proj.frames.get_piv().to_netcdf(os.path.join(OUTPUT_FOLDER, data["project_name"]+"_"+'piv.nc'))
         return 'File processed successfully', 200
 
 
