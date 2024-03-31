@@ -1,3 +1,4 @@
+import json
 import time
 from os import path, mkdir
 from json import load, dumps, loads
@@ -311,31 +312,37 @@ class SavingProjectData():
             "project_name": self._project_name
         }
         route_url = "http://localhost:5000/process-piv"
-        files = {"file": open(video, "rb")}
+        files = {
+            "file": (video, open(video, "rb"), 'application/octet-stream'),
+            "data": ('data', dumps(params), 'application/json')
+        }
+        headers = {
+            "Content-Type": "multipart/form-data"
+        }
 
-        response = requests.post(route_url, files=files, data=params, json=params)
+        response = requests.post(route_url, files=files)
         print(response.text)
 
-        pyorc_video: Video = Video(
-            video,
-            start_frame=start_frame,
-            end_frame=end_frame,
-            freq=self._video_configuration["frequency"],
-            h_a=self._bathymetry["water_level"],
-            camera_config=self._cam_config
-        )
-
-        da = pyorc_video.get_frames()
-        #Apply previous steps filter here
-        da_norm = da.frames.normalize()
-        da_norm_proj = da_norm.frames.project()
-        piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
-        print(piv)
+        # pyorc_video: Video = Video(
+        #     video,
+        #     start_frame=start_frame,
+        #     end_frame=end_frame,
+        #     freq=self._video_configuration["frequency"],
+        #     h_a=self._bathymetry["water_level"],
+        #     camera_config=self._cam_config
+        # )
+        #
+        # da = pyorc_video.get_frames()
+        # #Apply previous steps filter here
+        # da_norm = da.frames.normalize()
+        # da_norm_proj = da_norm.frames.project()
+        # piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+        # print(piv)
         self._save_step("piv", {
             "file": "piv.nc",
             "need_update": False
         })
-        print(piv)
+
         return True
 
     def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:

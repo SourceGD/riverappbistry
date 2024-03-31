@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, send_file
 import os
 from libs.pyorc import CameraConfig, Video
@@ -24,11 +26,9 @@ def process_piv():
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        data = request.data
-        print("data", request.data)
-        print("request", request)
-        print("files", request.files)
-        print("json", request.json)
+        data = json.loads(request.files['data'].read())
+        print("request", data)
+        print("data start frame", data["start_frame"])
         pyorc_video: Video = Video(
             # concat upload_folder+filename
             os.path.join(app.config['UPLOAD_FOLDER'], filename),
@@ -38,12 +38,16 @@ def process_piv():
             h_a=data["h_a"],
             camera_config=data["camera_config"]
         )
+        print("here")
         da = pyorc_video.get_frames()
+        print("now here")
         # Apply previous steps filter here
         da_norm = da.frames.normalize()
+        print("now here 2")
         da_norm_proj = da_norm.frames.project()
+        print("now here 3")
         piv = da_norm_proj.frames.get_piv().to_netcdf(os.path.join(OUTPUT_FOLDER, 'piv.nc'))
-
+        print("now here 4")
         return 'File processed successfully', 200
 
 

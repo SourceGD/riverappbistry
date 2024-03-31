@@ -117,3 +117,7 @@ examples/riverapp_examples/*
 .idea/
 
 src/front/screens/bathymetry/bathymetry.py
+
+# API output and uploads folder contents
+api/output/*
+api/uploads/*
