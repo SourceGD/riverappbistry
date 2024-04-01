@@ -1,6 +1,6 @@
 import base64
 import json
-from os import path
+from os import path, environ, getenv
 from threading import Thread, Event
 from pprint import pprint
 
@@ -13,9 +13,8 @@ from kivymd.uix.responsivelayout import MDResponsiveLayout
 from kivymd.app import MDApp
 from kivy.uix.image import Image
 
-
 from kivy.lang import Builder
-
+from dotenv import load_dotenv
 from libs import pyorc
 from libs.pyorc import CameraConfig
 from src.back import transect, mask_and_plot, saving_project_data
@@ -139,9 +138,16 @@ class PostProcess(MDResponsiveLayout, MDScreen):
             },
             "bathymetry": self._project._bathymetry,
         }
-        headers = {"Content-Type": "application/json"}
-        route_url = "http://localhost:5000"
-        response = requests.get(route_url + "/process", data=json.dumps(params), headers=headers)
+        # get api key from .env file
+        load_dotenv()
+        api_key = getenv("API_KEY")
+        headers = {
+            "Content-Type": "application/json",
+            "X-API-KEY": api_key,
+        }
+
+        route_url = getenv("API_URL") + "/process"
+        response = requests.get(route_url, data=json.dumps(params), headers=headers)
         river_flow = []
         if response.status_code == 200:
             data = response.json()
@@ -152,7 +158,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
             river_flow = data["river_flow"]
 
-
+        # TODO: If no internet connection is available, use the following code to process the transects
         # piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
         # dataset = xr.open_dataset(piv_path)
         # mask_and_plot(self._project._backup_file.strip(self._project.project_name + ".json"), dataset, video)

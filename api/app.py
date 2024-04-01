@@ -1,13 +1,14 @@
 import base64
 import json
+from functools import wraps
 
-from flask import Flask, request, send_file, jsonify
+from dotenv import load_dotenv
+from flask import Flask, request, send_file, jsonify, abort
 import os
 from libs.pyorc import CameraConfig, Video
 from src.back.transect import transect
 from src.back.mask import mask_and_plot
 import xarray as xr
-
 
 from werkzeug.utils import secure_filename
 import logging
@@ -18,11 +19,25 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 OUTPUT_FOLDER = 'outputs'
+load_dotenv()
+required_api_key = os.getenv("API_KEY")
+
+def api_key_required(api_key):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if request.headers.get('X-API-KEY') and request.headers.get('X-API-KEY') == api_key:
+                return f(*args, **kwargs)
+            else:
+                abort(401)
+        return decorated_function
+    return decorator
 
 
 # TODO: check if the user connecting has the right to do so
 
 @app.route('/process-piv', methods=['POST'])
+@api_key_required(required_api_key)
 def process_piv():
     if 'file' not in request.files:
         return 'No file part', 400
@@ -54,15 +69,10 @@ def process_piv():
 
 
 @app.route('/process', methods=['GET'])
+@api_key_required(required_api_key)
 def process_transects():
-    # TODO : take the project name and process the transects using the proper piv file
-    # print json params
     request_data = request.get_json()
-    print(request_data)
-    print(request_data["video_name"])
-    print("HERE")
-    print("project name : " + request_data["project_name"])
-    print(OUTPUT_FOLDER + request_data["video_name"])
+
     pyorc_video : Video = Video(
         os.path.join(OUTPUT_FOLDER, request_data["video_name"]),
         start_frame=request_data["video"]["start_frame"],
@@ -70,21 +80,12 @@ def process_transects():
         camera_config=request_data["video"]["camera_config"]
     )
     dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'piv.nc')
-    print("dataset ok")
     mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
-    print("mask_and_plot ok")
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
-    print("masked_dataset ok")
     river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/"+ request_data["project_name"] + "_", request_data["bathymetry"])
     os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
 
-    print("river_flow ok")
-
-    # TODO: verify that it returns the value of the river flow
-    # TODO: verify how the plot transect is received in the front
-    # convert river_flow from DataArray to classic array
     river_flow = river_flow.values.tolist()
-    print(river_flow)
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
     # converting image to base64 to send it with other responses
     with open(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', "rb") as image_file:
@@ -95,7 +96,6 @@ def process_transects():
         "river_flow": river_flow,
         "image": encoded_string
     }
-    print(data)
     return jsonify(data)
 
 

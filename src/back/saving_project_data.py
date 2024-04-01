@@ -1,14 +1,13 @@
 import json
 import time
-from os import path, mkdir
+from os import path, mkdir, getenv
 from json import load, dumps, loads
 from shutil import rmtree
 import math
-
 import requests
 from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
-
+from dotenv import load_dotenv
 from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
 
 from src.utils import get_video_frame
@@ -258,9 +257,6 @@ class SavingProjectData():
         init_frame = get_video_frame(self.video_configuration["video"], self.video_configuration["start_time"])
 
         height, width = init_frame.shape[0:2]
-        print("=================================================================================")
-        print(height," " ,width)
-        print("=================================================================================")
         dst: list = self._convert_dist_to_dest_points([
             self._beacons["p1_to_p2"],
             self._beacons["p2_to_p3"],
@@ -299,8 +295,7 @@ class SavingProjectData():
         fps: int = VideoCapture(video).get(CAP_PROP_FPS)
         start_frame: int = int(self._video_configuration["start_time"] * fps)
         end_frame: int = int(self._video_configuration["end_time"] * fps)
-        print("=====================================")
-        print(self._cam_config)
+
         self._cam_config = loads(self._cam_config.to_json()) if isinstance(self._cam_config, CameraConfig) else self._cam_config
         params = {
             "fps": fps,
@@ -311,18 +306,20 @@ class SavingProjectData():
             "camera_config": self._cam_config,
             "project_name": self._project_name
         }
-        # TODO change the route_url by using a .env file
-        route_url = "http://localhost:5000/process-piv"
+        load_dotenv()
+        api_key = getenv("API_KEY")
+        route_url = getenv("API_URL") + "/process-piv"
         files = {
             "file": (video, open(video, "rb"), 'application/octet-stream'),
             "data": ('data', dumps(params), 'application/json')
         }
         headers = {
-            "Content-Type": "multipart/form-data"
+            "X-API-KEY": api_key,
         }
 
-        response = requests.post(route_url, files=files)
-        print(response.text)
+        response = requests.post(route_url, files=files, headers=headers)
+        if response.status_code == 401:
+            raise ValueError("The API key is not correct")
 
 
         # TODO: if no internet connection, use the following code, if there is one use the api
