@@ -1,6 +1,7 @@
+import base64
 import json
 
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, jsonify
 import os
 from libs.pyorc import CameraConfig, Video
 from src.back.transect import transect
@@ -75,6 +76,8 @@ def process_transects():
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
     print("masked_dataset ok")
     river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/"+ request_data["project_name"] + "_", request_data["bathymetry"])
+    os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
+
     print("river_flow ok")
 
     # TODO: verify that it returns the value of the river flow
@@ -83,7 +86,17 @@ def process_transects():
     river_flow = river_flow.values.tolist()
     print(river_flow)
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
-    return river_flow, 200
+    # converting image to base64 to send it with other responses
+    with open(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+
+    data = {
+        "Message": "Transect processed successfully",
+        "river_flow": river_flow,
+        "image": encoded_string
+    }
+    print(data)
+    return jsonify(data)
 
 
 if __name__ == '__main__':

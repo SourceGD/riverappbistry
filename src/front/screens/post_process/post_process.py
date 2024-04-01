@@ -1,8 +1,10 @@
+import base64
 import json
 from os import path
 from threading import Thread, Event
 from pprint import pprint
 
+import numpy as np
 import requests
 from kivy.clock import Clock
 from kivy.uix.label import Label
@@ -140,13 +142,16 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         headers = {"Content-Type": "application/json"}
         route_url = "http://localhost:5000"
         response = requests.get(route_url + "/process", data=json.dumps(params), headers=headers)
-        print("riverflow:", response.text)
+        river_flow = []
         if response.status_code == 200:
-            print(response.content)
-            image_data = response.content
-            output_path = self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg"
-            with open(output_path, "wb") as f:
-                f.write(image_data)
+            data = response.json()
+            # the image is encoded in base64 and decoded in utf8, transform it back to jpg
+            image = base64.b64decode(data["image"].encode('utf-8'))
+            with open(self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg", "wb") as f:
+                f.write(image)
+
+            river_flow = data["river_flow"]
+
 
         # piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
         # dataset = xr.open_dataset(piv_path)
@@ -155,7 +160,11 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         # self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
         # river_flow = transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name + ".json"),
         # self._project._bathymetry)
-        print(type(response.text))
-        # convert response.text to array
 
-        return response.text
+
+        # print(type(response.text))
+        # # convert response.text to array
+        # print(response.content)
+        if river_flow == []:
+            raise ValueError("Error while processing transects, no river flow returned")
+        return np.array(river_flow)
