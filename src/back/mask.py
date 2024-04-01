@@ -41,7 +41,8 @@ def plot_result(da_rgb_proj, mask):
         norm=Normalize(vmax=0.6, clip=False),
         add_colorbar=True
     )
-    plt.show()
+    # UNCOMMENT ONLY WHEN DEVELOPING
+    # plt.show()
 
 
 # here the idea is that the user can choose which filter he wants to apply

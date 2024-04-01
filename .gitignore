@@ -118,3 +118,4 @@ examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257/*
 
 src/front/screens/bathymetry/bathymetry.py
 api/uploads/*
+api/outputs/*

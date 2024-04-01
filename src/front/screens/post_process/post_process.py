@@ -1,7 +1,9 @@
+import json
 from os import path
 from threading import Thread, Event
 from pprint import pprint
 
+import requests
 from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivymd.uix.screen import MDScreen
@@ -13,6 +15,7 @@ from kivy.uix.image import Image
 from kivy.lang import Builder
 
 from libs import pyorc
+from libs.pyorc import CameraConfig
 from src.back import transect, mask_and_plot, saving_project_data
 import xarray as xr
 
@@ -116,16 +119,43 @@ class PostProcess(MDResponsiveLayout, MDScreen):
     def set_video(self):
         start_frame = int(5 * self._project._video_configuration['start_time'])
         end_frame = int(5 * self._project._video_configuration['end_time'])
-        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame)
-        video.camera_config = self._project.cam_config
+        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame, camera_config=self._project.cam_config)
         return video
 
     def process_and_plot_transects(self, video):
-        piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
-        dataset = xr.open_dataset(piv_path)
-        mask_and_plot(self._project._backup_file.strip(self._project.project_name + ".json"), dataset, video)
-        masked_dataset = xr.open_dataset(
-        self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
-        river_flow = transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name + ".json"),
-        self._project._bathymetry)
-        return river_flow
+        # Convert cameraconfig to json, if not done request will not be able to convert the params to json
+        json_camera_config = json.loads(video.camera_config.to_json()) if isinstance(video.camera_config, CameraConfig) else video.camera_config
+        params = {
+            "video_name": video.fn,
+            "project_name": self._project.project_name,
+            "video": {
+                "start_frame": int(video.start_frame),
+                "end_frame": int(video.end_frame),
+                "freq": int(video.freq),
+                "h_a": video.h_a,
+                "camera_config": json_camera_config
+            },
+            "bathymetry": self._project._bathymetry,
+        }
+        headers = {"Content-Type": "application/json"}
+        route_url = "http://localhost:5000"
+        response = requests.get(route_url + "/process", data=json.dumps(params), headers=headers)
+        print("riverflow:", response.text)
+        if response.status_code == 200:
+            print(response.content)
+            image_data = response.content
+            output_path = self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg"
+            with open(output_path, "wb") as f:
+                f.write(image_data)
+
+        # piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
+        # dataset = xr.open_dataset(piv_path)
+        # mask_and_plot(self._project._backup_file.strip(self._project.project_name + ".json"), dataset, video)
+        # masked_dataset = xr.open_dataset(
+        # self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
+        # river_flow = transect(masked_dataset, video, self._project._backup_file.strip(self._project.project_name + ".json"),
+        # self._project._bathymetry)
+        print(type(response.text))
+        # convert response.text to array
+
+        return response.text

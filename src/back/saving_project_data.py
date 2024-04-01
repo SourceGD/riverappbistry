@@ -311,6 +311,7 @@ class SavingProjectData():
             "camera_config": self._cam_config,
             "project_name": self._project_name
         }
+        # TODO change the route_url by using a .env file
         route_url = "http://localhost:5000/process-piv"
         files = {
             "file": (video, open(video, "rb"), 'application/octet-stream'),
@@ -323,6 +324,8 @@ class SavingProjectData():
         response = requests.post(route_url, files=files)
         print(response.text)
 
+
+        # TODO: if no internet connection, use the following code, if there is one use the api
         # pyorc_video: Video = Video(
         #     video,
         #     start_frame=start_frame,
