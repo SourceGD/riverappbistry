@@ -146,7 +146,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
             "X-API-KEY": api_key,
         }
 
-        route_url = getenv("API_URL") + "/process"
+        route_url = getenv("API_URL") + "/process-transects"
         response = requests.get(route_url, data=json.dumps(params), headers=headers)
         river_flow = []
         if response.status_code == 200:

@@ -68,7 +68,7 @@ def process_piv():
         return 'File processed successfully', 200
 
 
-@app.route('/process', methods=['GET'])
+@app.route('/process-transects', methods=['GET'])
 @api_key_required(required_api_key)
 def process_transects():
     request_data = request.get_json()
