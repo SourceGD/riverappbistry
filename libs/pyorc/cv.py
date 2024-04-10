@@ -466,6 +466,7 @@ def _get_gcps_a(lensPosition, h_a, coords, z_0=0.0, h_ref=0.0):
         rows/cols for use in getPerspectivetransform
 
     """
+    print("================================================================= COORDS", coords)
     # get modified gcps based on camera location and elevation values
     cam_x, cam_y, cam_z = lensPosition
     x, y = zip(*coords)
@@ -482,6 +483,7 @@ def _get_gcps_a(lensPosition, h_a, coords, z_0=0.0, h_ref=0.0):
     _dest_x = list(cam_x + (np.array(x) - cam_x) * rel_diff)
     _dest_y = list(cam_y + (np.array(y) - cam_y) * rel_diff)
     dest_out = list(zip(_dest_x, _dest_y))
+    print("DEST OUT", dest_out)
     return dest_out
 
 def _gftt_split(img, split, n_pts, mask=None):

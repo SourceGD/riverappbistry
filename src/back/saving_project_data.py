@@ -277,7 +277,9 @@ class SavingProjectData():
             height=height,
             width=width,
             gcps=gcps,
-            lens_position=[7, -2, 3]
+            lens_position=[1.25, -2, 3],
+            # lens_position=[1.25, 0.75, 3] # Position for PB from above at 90 degrees
+            # lens_position=[7, -2, 3] # Position for VGC
             # the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
         )
 
