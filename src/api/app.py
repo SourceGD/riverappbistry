@@ -5,6 +5,9 @@ from functools import wraps
 from dotenv import load_dotenv
 from flask import Flask, request, send_file, jsonify, abort
 import os
+# import libs.pyorc path
+
+
 from libs.pyorc import CameraConfig, Video
 from src.back.transect import transect
 from src.back.mask import mask_and_plot
@@ -74,7 +77,7 @@ def process_transects():
     request_data = request.get_json()
 
     pyorc_video : Video = Video(
-        os.path.join(OUTPUT_FOLDER, request_data["video_name"]),
+        os.path.join(UPLOAD_FOLDER, request_data["video_name"]),
         start_frame=request_data["video"]["start_frame"],
         end_frame=request_data["video"]["end_frame"],
         camera_config=request_data["video"]["camera_config"]
@@ -83,7 +86,7 @@ def process_transects():
     mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
     river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/"+ request_data["project_name"] + "_", request_data["bathymetry"])
-    os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
+    # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
 
     river_flow = river_flow.values.tolist()
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
