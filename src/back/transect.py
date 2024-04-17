@@ -10,7 +10,7 @@ from matplotlib.colors import Normalize
 #  one on each side of the river
 def delimiter_points_bathy(cam_config):
     # two points that delimit the transect for the VGC1 example
-    local_points = [[600, 1200], [2800, 1200]]
+    local_points = [[600, 1080], [2800, 1080]]
     # local_points = [[600, 1200], [2800, 1200]] # Petit bocq 90 degrees
     # local_points = [[494, 427], [1391, 465]]
     # convert local_points to the orthorectified referential
