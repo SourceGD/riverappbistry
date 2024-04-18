@@ -26,6 +26,8 @@ load_dotenv()
 required_api_key = os.getenv("API_KEY")
 
 
+# TODO add tls to server
+
 def api_key_required(api_key):
     def decorator(f):
         @wraps(f)
@@ -39,8 +41,6 @@ def api_key_required(api_key):
 
     return decorator
 
-
-# TODO: check if the user connecting has the right to do so
 
 @app.route('/process-piv', methods=['POST'])
 @api_key_required(required_api_key)
@@ -90,7 +90,8 @@ def process_transects():
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
     river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/" + request_data["project_name"] + "_",
                           request_data["bathymetry"])
-    # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
+    # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc") does not have the right on every computer,
+    # TODO: find a way to bypass admin permissions (windows)
 
     river_flow = river_flow.values.tolist()
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
