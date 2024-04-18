@@ -259,12 +259,12 @@ class SavingProjectData():
         print(height," " ,width)
         print("=================================================================================")
         dst: list = self._convert_dist_to_dest_points([
+            self._beacons["p4_to_p1"],
             self._beacons["p1_to_p2"],
             self._beacons["p2_to_p3"],
             self._beacons["p3_to_p4"],
-            self._beacons["p4_to_p1"],
-            self._beacons["p1_to_p3"],
-            self._beacons["p2_to_p4"]
+            self._beacons["p2_to_p4"],
+            self._beacons["p1_to_p3"]
         ])
 
         gcps: dict = {
