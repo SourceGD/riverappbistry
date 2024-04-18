@@ -158,6 +158,8 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
             river_flow = data["river_flow"]
 
+        response.close()
+
         # TODO: If no internet connection is available, use the following code to process the transects
         # piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
         # dataset = xr.open_dataset(piv_path)

@@ -25,6 +25,7 @@ OUTPUT_FOLDER = 'outputs'
 load_dotenv()
 required_api_key = os.getenv("API_KEY")
 
+
 def api_key_required(api_key):
     def decorator(f):
         @wraps(f)
@@ -33,7 +34,9 @@ def api_key_required(api_key):
                 return f(*args, **kwargs)
             else:
                 abort(401)
+
         return decorated_function
+
     return decorator
 
 
@@ -75,9 +78,9 @@ def process_piv():
 @api_key_required(required_api_key)
 def process_transects():
     request_data = request.get_json()
-
-    pyorc_video : Video = Video(
-        os.path.join(UPLOAD_FOLDER, request_data["video_name"]),
+    video_path = request_data["video_name"].replace("/", "_").lstrip("_")
+    pyorc_video: Video = Video(
+        os.path.join(UPLOAD_FOLDER, video_path),
         start_frame=request_data["video"]["start_frame"],
         end_frame=request_data["video"]["end_frame"],
         camera_config=request_data["video"]["camera_config"]
@@ -85,7 +88,8 @@ def process_transects():
     dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'piv.nc')
     mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
-    river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/"+ request_data["project_name"] + "_", request_data["bathymetry"])
+    river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/" + request_data["project_name"] + "_",
+                          request_data["bathymetry"])
     # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
 
     river_flow = river_flow.values.tolist()
@@ -104,5 +108,6 @@ def process_transects():
 
 if __name__ == '__main__':
     from waitress import serve
+
     serve(app, host='0.0.0.0', port=5000)
     # app.run(debug=True)

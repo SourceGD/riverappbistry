@@ -1,7 +1,7 @@
 FROM python:3.10.14
 WORKDIR .
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y --no-install-recommends ffmpeg
-RUN apt install libgl1-mesa-glx libsm6 libxext6 -y
+RUN apt install libgl1-mesa-glx libsm6 libxext6 nano -y
 RUN pip install --upgrade pip
 RUN pip install flask
 

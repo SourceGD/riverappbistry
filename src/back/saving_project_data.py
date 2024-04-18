@@ -321,6 +321,7 @@ class SavingProjectData():
         if response.status_code == 401:
             raise ValueError("The API key is not correct")
 
+        response.close()
 
         # TODO: if no internet connection, use the following code, if there is one use the api
         # pyorc_video: Video = Video(
