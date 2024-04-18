@@ -117,3 +117,6 @@ examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257/*
 .idea/
 
 src/front/screens/bathymetry/bathymetry.py
+
+api/*
+examples/wetransfer_videos-rivialis-natoye_2024-03-18_1257/*

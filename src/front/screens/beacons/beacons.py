@@ -167,7 +167,7 @@ class Beacons(MDResponsiveLayout,MDScreen):
     def _save_beacons(self) -> None:
         MDApp.get_running_app().project.beacons = {
             "points": self._area_selection.get_points_coordinate(),
-            "p1_to_p2" : self._P1_to_P2,
+            "p1_to_p2": self._P1_to_P2,
             "p2_to_p3": self._P2_to_P3,
             "p3_to_p4": self._P3_to_P4,
             "p4_to_p1": self._P4_to_P1,
