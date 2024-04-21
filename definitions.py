@@ -20,7 +20,8 @@ PROJECT_DEFAULT_STRUCT = {
         "video" : "",
         "start_time": 0,
         "end_time": 0,
-        "frequency": 0
+        "frequency": 0,
+        "lens_position": []
     },
 
     "bathymetry" : {

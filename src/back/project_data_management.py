@@ -105,14 +105,14 @@ def check_data_format(data_format: dict, data: dict) -> None:
     keys_data = set(data.keys())
 
     if keys_format != keys_data:
-        raise ValueError(f"The data format doesn't respect the wanted format")
+        raise ValueError(f"The data format doesn't respect the wanted format 1")
     
     for key in keys_format:
         if isinstance(data_format[key], dict) and isinstance(data[key], dict):
             check_data_format(data_format[key], data[key])
         
         elif (isinstance(data_format[key], dict) and not isinstance(data[key], dict)) or not isinstance(data_format[key], dict) and isinstance(data[key], dict):
-            raise ValueError(f"The data format doesn't respect the wanted format")
+            raise ValueError(f"The data format doesn't respect the wanted format 2")
         
     return
     

@@ -277,8 +277,7 @@ class SavingProjectData():
             height=height,
             width=width,
             gcps=gcps,
-            lens_position=[7, -2, 3]
-            # the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
+            lens_position=self._video_configuration["lens_position"]
         )
 
         cam_config.set_bbox_from_corners(self._beacons["points"])
