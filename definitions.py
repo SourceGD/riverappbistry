@@ -27,7 +27,8 @@ PROJECT_DEFAULT_STRUCT = {
     "bathymetry" : {
         "x": [],
         "y": [],
-        "water_level": 0
+        "water_level": 0,
+        "surface_coefficient": 0
     },
 
     "beacons" : {

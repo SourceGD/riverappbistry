@@ -49,6 +49,7 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         )
         self._graph = None
         self._water_level: float = None
+        self._surface_coefficient: float = None
 
         self._project = MDApp.get_running_app().project
         self._need_load_from_backup: bool = True
@@ -67,6 +68,7 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         if self._project.steps_done["bathymetry"]:
             data = self._project.bathymetry
             self._water_level = data["water_level"]
+            self._surface_coefficient = data["surface_coefficient"]
 
             Clock.schedule_once(lambda dt: self._display_loaded_bathymetry(data["x"], data["y"]))
         
@@ -82,7 +84,8 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
         MDApp.get_running_app().project.bathymetry = {
             "x": self._graph.x_coordinates,
             "y": self._graph.y_coordinates,
-            "water_level": self._water_level
+            "water_level": self._water_level,
+            "surface_coefficient": self._surface_coefficient
         }
 
         return
@@ -164,6 +167,28 @@ class Bathymetry(MDResponsiveLayout, MDScreen):
             return True
         
         self._water_level = value
+        return True
+
+    def set_surface_coefficient(self, value: int | float) -> bool:
+        if value == "" or value is None:
+            self.children[0].ids.surface_coefficient.error = True
+            self.children[0].ids.surface_coefficient.helper_text = "Surface Coefficient is required"
+            return False
+
+        try:
+            value = float(value)
+
+        except ValueError:
+            self.children[0].ids.surface_coefficient.error = True
+            self.children[0].ids.surface_coefficient.helper_text = "Surface Coefficient should be a float value"
+            return False
+
+        if value <= 0:
+            self.children[0].ids.surface_coefficient.error = True
+            self.children[0].ids.surface_coefficient.helper_text = "Surface Coefficient cannot be less than or equal to 0"
+            return True
+
+        self._surface_coefficient = value
         return True
     
     def validate_bathymetry(self) -> None:
