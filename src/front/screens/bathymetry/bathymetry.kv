@@ -28,6 +28,8 @@
 
             WaterLevelInput:
                 id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
 
         BathymetryBottomButtons:
             id: control_button
@@ -56,6 +58,8 @@
 
             WaterLevelInput:
                 id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
 
         BathymetryBottomButtons:
             id: control_button
@@ -84,6 +88,8 @@
 
             WaterLevelInput:
                 id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
 
         BathymetryBottomButtons:
             id: control_button
@@ -143,3 +149,9 @@
     input_filter: "float"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_water_level(self.text) if not self.focus else None
+
+<SurfaceCoefficient@DefaultTextInput>:
+    hint_text: "Surface coefficient"
+    input_filter: "float"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_surface_coefficient(self.text) if not self.focus else None

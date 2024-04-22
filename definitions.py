@@ -20,13 +20,15 @@ PROJECT_DEFAULT_STRUCT = {
         "video" : "",
         "start_time": 0,
         "end_time": 0,
-        "frequency": 0
+        "frequency": 0,
+        "lens_position": []
     },
 
     "bathymetry" : {
         "x": [],
         "y": [],
-        "water_level": 0
+        "water_level": 0,
+        "surface_coefficient": 0
     },
 
     "beacons" : {
