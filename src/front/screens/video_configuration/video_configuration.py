@@ -261,7 +261,7 @@ class VideoConfiguration(MDResponsiveLayout, MDScreen):
         coords = value.split(",")
         new_coords = []
         for idx in range(len(coords)):
-            new_coords.append(int(coords[idx]))
+            new_coords.append(float(coords[idx]))
         if value == "" or value is None:
             self.children[0].ids.frequency.error = True
             self.children[0].ids.frequency.helper_text = "Lens position is required"
