@@ -55,7 +55,7 @@ class VideoConfiguration(MDResponsiveLayout, MDScreen):
         self._file_manager: MDFileManager = MDFileManager(
             exit_manager=self.exit_file_manager,
             select_path=self._select_path,
-            ext=[".mp4", ".avi"],
+            ext=[".mp4", ".avi", ".MP4"],
             selector="file"
         )
         self._project = MDApp.get_running_app().project
@@ -75,7 +75,7 @@ class VideoConfiguration(MDResponsiveLayout, MDScreen):
             Check selected file.
         """
 
-        if path.splitext(file_path)[1] in [".mp4", ".avi"]:
+        if path.splitext(file_path)[1] in [".mp4", ".avi", ".MP4"]:
             self.exit_file_manager()
             self.load_video(file_path)
 
