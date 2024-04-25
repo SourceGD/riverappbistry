@@ -139,4 +139,5 @@ def sort_src(src):
     sorted_src = np.append(sorted_src[-1:], sorted_src[:-1], axis=0)
     # switch first and third beacons to match good order for PIV
     sorted_src[[0, 2]] = sorted_src[[2, 0]]
+
     return sorted_src.tolist()

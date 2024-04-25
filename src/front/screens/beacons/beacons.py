@@ -12,7 +12,8 @@ from src.utils import video_to_image
 from src.front.components.widget import ShapeOnImage
 from src.back import beacons_detection
 
-Builder.load_file(path.join(path.dirname(__file__),"beacons.kv"))
+Builder.load_file(path.join(path.dirname(__file__), "beacons.kv"))
+
 
 class BeaconsMobileView(MDScreen):
     """
@@ -21,12 +22,14 @@ class BeaconsMobileView(MDScreen):
         to use the MDResponsiveLayout.
     """
 
+
 class BeaconsTabletView(MDScreen):
     """
         Class containing the tablet view of this screen.
         The class is empty because it is not possible to do otherwise
         to use the MDResponsiveLayout.
     """
+
 
 class BeaconsDesktopView(MDScreen):
     """
@@ -35,8 +38,9 @@ class BeaconsDesktopView(MDScreen):
         to use the MDResponsiveLayout.
     """
 
-class Beacons(MDResponsiveLayout,MDScreen):
-    
+
+class Beacons(MDResponsiveLayout, MDScreen):
+
     def __init__(self, **kw) -> None:
         super().__init__(**kw)
         self.name: str = "beacons"
@@ -56,7 +60,8 @@ class Beacons(MDResponsiveLayout,MDScreen):
 
     def _load_beacons_selection(self) -> None:
         if self._project.steps_done["beacons"]:
-            image = video_to_image(self._project.video_configuration["video"], self._project.video_configuration["start_time"])
+            image = video_to_image(self._project.video_configuration["video"],
+                                   self._project.video_configuration["start_time"])
             gcp = self._project.beacons["points"]
             self._P1_to_P2 = self._project.beacons["p1_to_p2"]
             self._P2_to_P3 = self._project.beacons["p2_to_p3"]
@@ -64,25 +69,26 @@ class Beacons(MDResponsiveLayout,MDScreen):
             self._P4_to_P1 = self._project.beacons["p4_to_p1"]
             self._P1_to_P3 = self._project.beacons["p1_to_p3"]
             self._P2_to_P4 = self._project.beacons["p2_to_p4"]
-        
+
         else:
-            image, gcp = beacons_detection(self._project.video_configuration["video"], self._project.video_configuration["start_time"])
+            image, gcp = beacons_detection(self._project.video_configuration["video"],
+                                           self._project.video_configuration["start_time"])
 
         Clock.schedule_once(lambda dt: self._display_loaded_beacons(image, gcp))
 
         return
-    
+
     def _display_loaded_beacons(self, image, gcp) -> None:
         self.display_beacons_selection(
-                ShapeOnImage(image, gcp, shape_width=2, label_format= "P")
-            )
+            ShapeOnImage(image, gcp, shape_width=2, label_format="P")
+        )
         self.children[0].ids.p1_to_p2.text = str(self._P1_to_P2) if self._P1_to_P2 is not None else ""
         self.children[0].ids.p2_to_p3.text = str(self._P2_to_P3) if self._P2_to_P3 is not None else ""
         self.children[0].ids.p3_to_p4.text = str(self._P3_to_P4) if self._P3_to_P4 is not None else ""
         self.children[0].ids.p4_to_p1.text = str(self._P4_to_P1) if self._P4_to_P1 is not None else ""
         self.children[0].ids.p1_to_p3.text = str(self._P1_to_P3) if self._P1_to_P3 is not None else ""
         self.children[0].ids.p2_to_p4.text = str(self._P2_to_P4) if self._P2_to_P3 is not None else ""
-        
+
     def on_pre_enter(self, *args) -> None:
         """
             Called just before the screen appear to the user.
@@ -102,7 +108,7 @@ class Beacons(MDResponsiveLayout,MDScreen):
 
         if self._area_selection is not None:
             beacons_selection_layout.clear_widgets()
-        
+
         beacons_selection_layout.add_widget(widget)
         self._area_selection = widget
 
@@ -119,49 +125,48 @@ class Beacons(MDResponsiveLayout,MDScreen):
                 self.children[0].ids[input_id].helper_text = "The distance should be a number"
 
                 return False
-        
-            if value < 0 :
+
+            if value < 0:
                 self.children[0].ids[input_id].error = True
                 self.children[0].ids[input_id].helper_text = "The distance can't be negative"
                 return False
-        
+
         else:
             self.children[0].ids[input_id].error = True
             self.children[0].ids[input_id].helper_text = "Mandatory input"
             return False
-        
-        if input_id == "p1_to_p2" :
+
+        if input_id == "p1_to_p2":
             self._P1_to_P2 = value
 
-        elif input_id == "p2_to_p3" :
+        elif input_id == "p2_to_p3":
             self._P2_to_P3 = value
 
-        elif input_id == "p3_to_p4" :
+        elif input_id == "p3_to_p4":
             self._P3_to_P4 = value
 
-        elif input_id == "p4_to_p1" :
+        elif input_id == "p4_to_p1":
             self._P4_to_P1 = value
 
-        elif input_id == "p1_to_p3" :
+        elif input_id == "p1_to_p3":
             self._P1_to_P3 = value
 
-        elif input_id == "p2_to_p4" :
+        elif input_id == "p2_to_p4":
             self._P2_to_P4 = value
-   
+
         return True
 
     def validate_beacons(self) -> None:
-        
-        if( self.is_input_valid("p1_to_p2", self._P1_to_P2) and \
+
+        if (self.is_input_valid("p1_to_p2", self._P1_to_P2) and \
             self.is_input_valid("p2_to_p3", self._P2_to_P3) and \
             self.is_input_valid("p3_to_p4", self._P3_to_P4) and \
             self.is_input_valid("p4_to_p1", self._P4_to_P1)) and \
-            self.is_input_valid("p1_to_p3", self._P1_to_P3) and \
-            self.is_input_valid("p2_to_p4", self._P2_to_P4) :
-        
+                self.is_input_valid("p1_to_p3", self._P1_to_P3) and \
+                self.is_input_valid("p2_to_p4", self._P2_to_P4):
             Thread(target=self._save_beacons).start()
             self.manager.current = "filter_video"
-        
+
         return
 
     def _save_beacons(self) -> None:

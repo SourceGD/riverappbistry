@@ -8,32 +8,16 @@ from matplotlib.colors import Normalize
 
 # todo add user input interface to get the two points, defining the edge points of the transect,
 #  one on each side of the river
-def delimiter_points_bathy(cam_config):
+def delimiter_points_bathy(cam_config, local_points):
     # two points that delimit the transect for the VGC1 example
-    local_points = [[700, 600], [1500, 500]] # Limelette
-    # local_points = [[600, 1080], [2800, 1080]]
+    #local_points = [[600, 1080], [2800, 1080]]
     # local_points = [[600, 1200], [2800, 1200]] # Petit bocq 90 degrees
     # local_points = [[494, 427], [1391, 465]]
     # convert local_points to the orthorectified referential
-    transformMatrix = cam_config.get_M(reverse=False)
     M = np.array(cv2.getPerspectiveTransform(np.float32(cam_config.gcps['src']),
                                              np.float32(cam_config.gcps['dst'])))
-    print("M ==========================================", M)
     ret = cv2.perspectiveTransform(np.float32([local_points]), M)[0]
-    print("RET ==========================================", ret)
 
-    # transformed_points = np.array([[-0.08855923, 0.7072463], [1.4265642, 1.4920276]])
-    #
-    # # Points de destination
-    # dst_points = np.float32([[500, 1080], [2700, 1080]])
-    #
-    # # Obtenir la matrice de transformation inverse
-    # M_inv = np.linalg.inv(cv2.getPerspectiveTransform(transformed_points, dst_points))
-    #
-    # # Appliquer la transformation inverse pour obtenir les points locaux
-    # local_points = cv2.perspectiveTransform(np.float32([transformed_points]), M_inv)[0]
-    #
-    # print("Local Points:", local_points)
     return ret
 
 
@@ -123,9 +107,9 @@ def transect_plot(ds_points, video, ds, directory, v_corr):
     return ds_points_q
 
 
-def transect(ds, video, directory, bathy_file):
+def transect(ds, video, directory, bathy_file, local_points):
     # video.camera_config = ds.velocimetry.camera_config
-    bathy_delimiters = delimiter_points_bathy(video.camera_config)
+    bathy_delimiters = delimiter_points_bathy(video.camera_config, local_points)
 
     ds_points = all_points_bathy(bathy_file, bathy_delimiters, ds)
     ds_points_q = transect_plot(ds_points, video, ds, directory, bathy_file["surface_coefficient"])

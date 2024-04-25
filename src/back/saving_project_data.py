@@ -323,10 +323,11 @@ class SavingProjectData():
         print(piv)
         return True
 
-    def save_post_process(self, river_flow: float, transect_picture_path: str) -> None:
+    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> None:
         self._save_step("post_process", {
             "river_flow": river_flow,
-            "transect_picture_path": transect_picture_path
+            "transect_picture_path": transect_picture_path,
+            "local_points": local_points
         })
         return
 
