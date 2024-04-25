@@ -53,12 +53,8 @@ PROJECT_DEFAULT_STRUCT = {
     "post_process": {
         "river_flow": 0,
         "transect_picture_path": "",
+        "local_points": []
     },
-
-    "transect": {
-        "points": [],
-        "transect_file_data": ""
-    }
 }
 
 PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "filter_video", "piv", "post_process"]
