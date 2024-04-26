@@ -19,5 +19,6 @@ RUN pip install opencv-python
 RUN pip install waitress
 WORKDIR /srv/riverapp/api
 ENV FLASK_APP=app
+CMD ["nohup", "python", "app.py", "&"]
 
 CMD ["tail", "-f", "/dev/null"]
