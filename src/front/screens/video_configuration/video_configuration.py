@@ -14,7 +14,8 @@ from kivy.lang import Builder
 from src.front.components.dialogs import ConfirmAction
 from src.front.components.widget import RiverAppVideoPlayer
 
-Builder.load_file(path.join(path.dirname(__file__),"video_configuration.kv"))
+Builder.load_file(path.join(path.dirname(__file__), "video_configuration.kv"))
+
 
 class VideoConfigurationMobileView(MDScreen):
     """
@@ -23,12 +24,14 @@ class VideoConfigurationMobileView(MDScreen):
         to use the MDResponsiveLayout.
     """
 
+
 class VideoConfigurationTabletView(MDScreen):
     """
         Class containing the tablet view of this screen.
         The class is empty because it is not possible to do otherwise
         to use the MDResponsiveLayout.
     """
+
 
 class VideoConfigurationDesktopView(MDScreen):
     """
@@ -37,7 +40,8 @@ class VideoConfigurationDesktopView(MDScreen):
         to use the MDResponsiveLayout.
     """
 
-class VideoConfiguration(MDResponsiveLayout,MDScreen):
+
+class VideoConfiguration(MDResponsiveLayout, MDScreen):
     """
         Class managing the App video configuration.
     """
@@ -49,9 +53,9 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         self.tablet_view: VideoConfigurationTabletView = VideoConfigurationTabletView()
         self.desktop_view: VideoConfigurationDesktopView = VideoConfigurationDesktopView()
         self._file_manager: MDFileManager = MDFileManager(
-            exit_manager=self.exit_file_manager, 
+            exit_manager=self.exit_file_manager,
             select_path=self._select_path,
-            ext=[".mp4", ".avi"],
+            ext=[".mp4", ".avi", ".MP4"],
             selector="file"
         )
         self._project = MDApp.get_running_app().project
@@ -64,13 +68,14 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
         self._start_time: float = None
         self._end_time: float = None
         self._frequency: int = None
+        self._lens_position: list = None
 
     def _select_path(self, file_path: str) -> None:
         """
             Check selected file.
         """
 
-        if path.splitext(file_path)[1] in [".mp4", ".avi"]: 
+        if path.splitext(file_path)[1] in [".mp4", ".avi", ".MP4"]:
             self.exit_file_manager()
             self.load_video(file_path)
 
@@ -89,30 +94,32 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self._end_time = data["end_time"]
             self._frequency = data["frequency"]
             self._video_path = data["video"]
+            self._lens_position = data["lens_position"]
 
             Clock.schedule_once(lambda dt: self._display_loaded_configuration(data))
 
-        return 
-    
+        return
+
     def _display_loaded_configuration(self, video_configuration: dict) -> None:
         self.children[0].ids.start_time.text = str(video_configuration["start_time"])
         self.children[0].ids.end_time.text = str(video_configuration["end_time"])
         self.children[0].ids.frequency.text = str(video_configuration["frequency"])
         self.load_video(video_configuration["video"])
-        
+
         return
-        
+
     def _save_video_configuration(self) -> None:
-    
+
         MDApp.get_running_app().project.video_configuration = {
             "video": self._video_path,
             "start_time": self._start_time,
             "end_time": self._end_time,
-            "frequency": self._frequency
+            "frequency": self._frequency,
+            "lens_position": self._lens_position
         }
 
         return
-    
+
     def on_pre_enter(self, *args) -> None:
         """
             Called just before the screen appear to the user.
@@ -143,11 +150,11 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
 
     def load_video(self, video_path: str) -> None:
         self._video_reader = RiverAppVideoPlayer(
-                source=video_path,
-                size_hint= (1, None),
-                height=(self.height - 2 * dp(64)) / 2,
-                y=(self.height - 2 * dp(64)) / 2
-                )
+            source=video_path,
+            size_hint=(1, None),
+            height=(self.height - 2 * dp(64)) / 2,
+            y=(self.height - 2 * dp(64)) / 2
+        )
         self._video_path = video_path
         self.children[0].ids.video_upload.disabled = True
         self.children[0].ids.bottom_buttons.remove_is_disabled = False
@@ -173,7 +180,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.start_time.helper_text = "Start Time is required"
             self._start_time = None
             return False
-        
+
         try:
             value = float(value)
 
@@ -181,12 +188,12 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.start_time.error = True
             self.children[0].ids.start_time.helper_text = "Start Time should be a number"
             return False
-        
+
         if value < 0:
             self.children[0].ids.start_time.error = True
             self.children[0].ids.start_time.helper_text = "Start Time cannot be less than 0"
             return False
-        
+
         if self._end_time is not None and value >= self._end_time:
             self.children[0].ids.start_time.error = True
             self.children[0].ids.start_time.helper_text = "Start Time cannot be greater than End Time"
@@ -194,7 +201,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
 
         self._start_time = value
         return True
-    
+
     def set_end_time(self, value: int | float) -> bool:
 
         if value == "" or value is None:
@@ -202,7 +209,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.end_time.helper_text = "End Time is required"
             self._end_time = None
             return False
-        
+
         try:
             value = float(value)
 
@@ -210,12 +217,12 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.end_time.error = True
             self.children[0].ids.end_time.helper_text = "End Time should be a number"
             return False
-        
+
         if value < 0:
             self.children[0].ids.end_time.error = True
             self.children[0].ids.end_time.helper_text = "End Time cannot be less than 0"
             return False
-        
+
         if self._start_time is not None and value <= self._start_time:
             self.children[0].ids.end_time.error = True
             self.children[0].ids.end_time.helper_text = "End Time cannot be smaller than Start Time"
@@ -231,7 +238,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.frequency.helper_text = "Frequency is required"
             self._frequency = None
             return False
-        
+
         try:
             value = int(value)
 
@@ -239,7 +246,7 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             self.children[0].ids.frequency.error = True
             self.children[0].ids.frequency.helper_text = "Frequency should be a number"
             return False
-        
+
         if value <= 0:
             self.children[0].ids.frequency.error = True
             self.children[0].ids.frequency.helper_text = "Start Frequency cannot be less than or equal to 0"
@@ -247,7 +254,33 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
 
         self._frequency = value
         return True
-    
+
+    def set_lens_position(self, value: str | list) -> bool:
+        if isinstance(value, list):
+            return True
+        coords = value.split(",")
+        new_coords = []
+        for idx in range(len(coords)):
+            new_coords.append(float(coords[idx]))
+        if value == "" or value is None:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Lens position is required"
+            self._lens_position = None
+            return False
+
+        if len(coords) != 3:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Lens position should be in the format x,y,z"
+            return False
+
+        if " " in coords:
+            self.children[0].ids.frequency.error = True
+            self.children[0].ids.frequency.helper_text = "Lens position should not contain spaces"
+            return False
+
+        self._lens_position = new_coords
+        return True
+
     def validate_video_configuration(self) -> None:
 
         if self._video_path is None or not path.exists(self._video_path):
@@ -255,12 +288,11 @@ class VideoConfiguration(MDResponsiveLayout,MDScreen):
             revert_to_normal = Animation(md_bg_color=self._theme_cls.bg_normal, duration=0.45)
             error_flash.bind(on_complete=lambda *_: revert_to_normal.start(self.children[0].ids.video_upload))
             error_flash.start(self.children[0].ids.video_upload)
-            return 
-        
+            return
+        print("LENS POSITION", self._lens_position)
         if self.set_start_time(self._start_time) and \
-            self.set_end_time(self._end_time) and \
-            self.set_frequency(self._frequency) :
-            
+                self.set_end_time(self._end_time) and \
+                self.set_frequency(self._frequency) and self.set_lens_position(self._lens_position):
             Thread(target=self._save_video_configuration).start()
             self._need_load_from_backup = False
             self.manager.current = "bathymetry"

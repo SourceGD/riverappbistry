@@ -19,6 +19,9 @@ from libs import pyorc
 from libs.pyorc import CameraConfig
 from src.utils import utils
 from src.back import transect, mask_and_plot, saving_project_data
+from src.utils import video_to_image
+from src.front.components.widget import ShapeOnImage
+
 import xarray as xr
 
 Builder.load_file(path.join(path.dirname(__file__), "post_process.kv"))
@@ -55,6 +58,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         self.mobile_view: PostProcessMobileView = PostProcessMobileView()
         self.tablet_view: PostProcessTabletView = PostProcessTabletView()
         self.desktop_view: PostProcessDesktopView = PostProcessDesktopView()
+        self._area_selection: ShapeOnImage() = None
 
         self._project = MDApp.get_running_app().project
 
@@ -75,6 +79,8 @@ class PostProcess(MDResponsiveLayout, MDScreen):
             self.update_river_flow_label(self._project._post_process["river_flow"])
 
             return
+        if self._area_selection is None:
+            Thread(target=self._load_transect_selection()).start()
         return
 
     def on_leave(self, *args) -> None:
@@ -86,16 +92,38 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         video = self.set_video()
         river_flow = self.process_and_plot_transects(video)
         self.deactivate_display_button()
+        self.remove_image_widget()
         self.load_image()
         avg_flow = self.update_river_flow_label(river_flow)
         self._project.save_post_process(avg_flow, self._project._backup_file.strip(
-            self._project.project_name + ".json") + "plot_transect.jpg")
+            self._project.project_name + ".json") + "plot_transect.jpg", self._area_selection.get_points_coordinate())
 
+        return
+
+    def remove_image_widget(self, *args) -> None:
+        self.children[0].ids.transects_layout.clear_widgets()
         return
 
     def deactivate_display_button(self, *args) -> None:
         self.children[0].ids.display_transects_button.disabled = True
         self.children[0].ids.display_transects_button.opacity = 0
+
+    def _load_transect_selection(self):
+        image = video_to_image(self._project._video_configuration['video'],
+                               self._project._video_configuration['start_time'])
+        # arbitrary coordinates to spawn points
+        gcp = [[400, 400], [1000, 400]]
+        Clock.schedule_once(lambda dt: self._display_loaded_transects(image, gcp))
+        return
+
+    def _display_loaded_transects(self, image, gcp):
+        self.display_transect_selection(ShapeOnImage(image, gcp, shape_width=2, label_format="P"))
+        return
+
+    def display_transect_selection(self, shape_on_image):
+        self.children[0].ids.transects_layout.add_widget(shape_on_image)
+        self._area_selection = shape_on_image
+        return
 
     def go_back(self):
         print("go back to projects")
