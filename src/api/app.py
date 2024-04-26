@@ -89,7 +89,7 @@ def process_transects():
     mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
     river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/" + request_data["project_name"] + "_",
-                          request_data["bathymetry"])
+                          request_data["bathymetry"], request_data["local_points"])
     # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc") does not have the right on every computer,
     # TODO: find a way to bypass admin permissions (windows)
 

@@ -170,6 +170,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
                     "camera_config": json_camera_config
                 },
                 "bathymetry": self._project._bathymetry,
+                "local_points": self._area_selection.get_points_coordinate()
             }
             # get api key from .env file
             load_dotenv()
@@ -201,7 +202,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
                 self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
             river_flow = transect(masked_dataset, video,
                                   self._project._backup_file.strip(self._project.project_name + ".json"),
-                                  self._project._bathymetry)
+                                  self._project._bathymetry, self._area_selection.get_points_coordinate())
 
         print(np.array(river_flow))
         if np.size(np.array(river_flow)) == 0:
