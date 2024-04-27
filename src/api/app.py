@@ -5,6 +5,7 @@ from functools import wraps
 from dotenv import load_dotenv
 from flask import Flask, request, send_file, jsonify, abort
 import os
+import gc
 # import libs.pyorc path
 
 
@@ -26,7 +27,7 @@ load_dotenv()
 required_api_key = os.getenv("API_KEY")
 
 
-# TODO add tls to server
+# TODO cypher api-key
 
 def api_key_required(api_key):
     def decorator(f):
@@ -71,6 +72,7 @@ def process_piv():
         piv = da_norm_proj.frames.get_piv().to_netcdf(
             os.path.join(OUTPUT_FOLDER, data["project_name"] + "_" + 'piv.nc'))
         logging.info("PIV done")
+        gc.collect()
         return 'File processed successfully', 200
 
 
@@ -104,6 +106,7 @@ def process_transects():
         "river_flow": river_flow,
         "image": encoded_string
     }
+    gc.collect()
     return jsonify(data)
 
 

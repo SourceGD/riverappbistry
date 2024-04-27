@@ -6,6 +6,8 @@ from pprint import pprint
 
 import numpy as np
 import requests
+from requests.adapters import HTTPAdapter, Retry
+
 from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivymd.uix.screen import MDScreen
@@ -179,9 +181,14 @@ class PostProcess(MDResponsiveLayout, MDScreen):
                 "Content-Type": "application/json",
                 "X-API-KEY": api_key,
             }
-
+            # TODO add exceptions
             route_url = getenv("API_URL") + "/process-transects"
-            response = requests.get(route_url, data=json.dumps(params), headers=headers)
+            s = requests.Session()
+            retries = Retry(total=100, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+            s.mount('http://', HTTPAdapter(max_retries=retries))
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+
+            response = s.get(route_url, data=json.dumps(params), headers=headers)
 
             if response.status_code == 200:
                 data = response.json()
@@ -193,7 +200,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
                 river_flow = data["river_flow"]
 
-            response.close()
+            s.close()
         else:
             piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
             dataset = xr.open_dataset(piv_path)

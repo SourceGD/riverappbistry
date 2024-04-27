@@ -5,6 +5,8 @@ from json import load, dumps, loads
 from shutil import rmtree
 import math
 import requests
+from requests.adapters import HTTPAdapter, Retry
+
 from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
 from dotenv import load_dotenv
@@ -321,12 +323,16 @@ class SavingProjectData():
             headers = {
                 "X-API-KEY": api_key,
             }
-
-            response = requests.post(route_url, files=files, headers=headers)
+            # TODO add exceptions
+            s = requests.Session()
+            retries = Retry(total=100, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+            s.mount('http://', HTTPAdapter(max_retries=retries))
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+            response = s.post(route_url, files=files, headers=headers, timeout=(500, 500))
             if response.status_code == 401:
                 raise ValueError("The API key is not correct")
 
-            response.close()
+            s.close()
         else:
             pyorc_video: Video = Video(
                 video,
