@@ -53,7 +53,7 @@ def process_piv():
         return 'No selected file', 400
     if file:
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename.replace("_", "")))
         data = json.loads(request.files['data'].read())
         pyorc_video: Video = Video(
             # concat upload_folder+filename
@@ -80,7 +80,7 @@ def process_piv():
 @api_key_required(required_api_key)
 def process_transects():
     request_data = request.get_json()
-    video_path = request_data["video_name"].replace("/", "_").lstrip("_")
+    video_path = request_data["video_name"].replace("/", "").replace("\\", "").replace("_", "").replace(":", "").lstrip("_")
     pyorc_video: Video = Video(
         os.path.join(UPLOAD_FOLDER, video_path),
         start_frame=request_data["video"]["start_frame"],
