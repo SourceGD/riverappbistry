@@ -57,7 +57,7 @@ def process_piv():
         data = json.loads(request.files['data'].read())
         pyorc_video: Video = Video(
             # concat upload_folder+filename
-            os.path.join(app.config['UPLOAD_FOLDER'], filename),
+            os.path.join(app.config['UPLOAD_FOLDER'], filename.replace("_", "")),
             start_frame=data["start_frame"],
             end_frame=data["end_frame"],
             freq=data["freq"],
