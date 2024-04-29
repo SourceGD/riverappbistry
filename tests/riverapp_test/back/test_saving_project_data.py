@@ -1,7 +1,9 @@
 import pytest
 import json
 
-from back_fixtures import saving_project_data, empty_sdp, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
+from os import path
+
+from back_fixtures import saving_project_data, empty_spd, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
 
 
 def test_video_configuration_setter(saving_project_data, all_video_config):
@@ -179,17 +181,23 @@ def test_save_post_process(saving_project_data, check_backup_file_format):
     return
 
 
-def test_load_project(empty_sdp):
-    sdp = empty_sdp
+def test_load_project(empty_spd):
+    spd = empty_spd
     with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as f:
         default_json = json.load(f)
+    with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
+        json.dump(default_json, f, indent=4)
+
+    current_dir = path.dirname(path.abspath(__file__))
+    current_dir = path.join(current_dir, "../test_ressources/testing_project")
 
     with pytest.raises(ValueError):
-        sdp.load_project(["Not a string"])
+        spd.load_project(["Not a string"])
     with pytest.raises(FileNotFoundError):
-        sdp.load_project(["/unknown/path"])
+        spd.load_project(["/unknown/path"])
 
 
+    # spd.load_project(current_dir)
     # TODO
     pass
 

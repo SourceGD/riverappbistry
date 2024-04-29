@@ -57,7 +57,7 @@ def saving_project_data():
 
 
 @pytest.fixture
-def empty_sdp():
+def empty_spd():
     return SavingProjectData()
 
 
