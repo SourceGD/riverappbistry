@@ -44,7 +44,7 @@ class SavingProjectData():
     @video_configuration.setter
     def video_configuration(self, video_configuration: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._video_configuration == video_configuration:
             return
@@ -55,7 +55,7 @@ class SavingProjectData():
         self._check_missing_data(["video", "start_time", "end_time", "frequency"], video_configuration)
 
         if not path.exists(video_configuration["video"]):
-            raise FileExistsError(f"The video was not found : {video_configuration['video']}")
+            raise FileNotFoundError(f"The video was not found : {video_configuration['video']}")
 
         if not isinstance(video_configuration["start_time"], (int, float)):
             raise TypeError(f"start_time should be an int or a float")
@@ -91,7 +91,7 @@ class SavingProjectData():
     @bathymetry.setter
     def bathymetry(self, bathymetry: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._bathymetry == bathymetry:
             return
@@ -127,7 +127,7 @@ class SavingProjectData():
     @beacons.setter
     def beacons(self, beacons: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._beacons == beacons:
             return
@@ -337,9 +337,8 @@ class SavingProjectData():
         return True
 
     def load_project(self, project_dir: str) -> None:
-        print(project_dir)
         if not isinstance(project_dir, str):
-            raise ValueError(f"project_dir should be a str : {project_dir}")
+            raise TypeError(f"project_dir should be a str : {project_dir}")
 
         if not path.exists(project_dir) or not path.isdir(project_dir):
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")
@@ -371,10 +370,10 @@ class SavingProjectData():
 
     def create_project(self, projects_dir: str, project_name: str) -> None:
         if not isinstance(projects_dir, str):
-            raise ValueError(f"project_dir should be a str : {projects_dir}")
+            raise TypeError(f"project_dir should be a str : {projects_dir}")
 
         if not isinstance(project_name, str):
-            raise ValueError(f"project_name should be a str : {project_name}")
+            raise TypeError(f"project_name should be a str : {project_name}")
 
         if not path.exists(projects_dir) or not path.isdir(projects_dir):
             raise FileNotFoundError(f"project_dir was not found : {projects_dir}")
@@ -395,7 +394,7 @@ class SavingProjectData():
 
     def delete_project(self, project_dir: str) -> None:
         if not isinstance(project_dir, str):
-            raise ValueError(f"project_dir should be a str : {project_dir}")
+            raise TypeError(f"project_dir should be a str : {project_dir}")
 
         if not path.exists(project_dir) or not path.isdir(project_dir):
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")

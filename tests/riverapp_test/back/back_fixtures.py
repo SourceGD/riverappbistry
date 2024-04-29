@@ -57,6 +57,11 @@ def saving_project_data():
 
 
 @pytest.fixture
+def empty_spd():
+    return SavingProjectData()
+
+
+@pytest.fixture
 def all_video_config():
     return {
         "good_video_config": {
@@ -205,6 +210,25 @@ def all_bathy_config():
                 0.14
             ],
             "water_level": -0.44
+        },
+        "bad_bathy_water_level_type": {
+            "x": [
+                0.0,
+                0.35,
+                0.6,
+                0.8,
+                1.2,
+                1.5
+            ],
+            "y": [
+                1.44,
+                0.29,
+                0.28,
+                0.3,
+                0.13,
+                0.14
+            ],
+            "water_level": "Not a number"
         }
     }
 
