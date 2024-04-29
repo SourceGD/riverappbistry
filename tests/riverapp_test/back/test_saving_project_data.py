@@ -194,8 +194,9 @@ def test_generate_piv(saving_project_data, check_backup_file_format):
     pass
 
 
-def test_save_post_process(saving_project_data, check_backup_file_format):
+def test_save_post_process(empty_spd, saving_project_data, check_backup_file_format):
     spd = saving_project_data
+    assert spd.save_post_process(1.0, "string", []) is False
     spd.steps_done["piv"] = True
     expected_config = check_backup_file_format
     with pytest.raises(TypeError):
@@ -217,15 +218,18 @@ def test_load_project(empty_spd):
     with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
 
-    current_dir = path.dirname(path.abspath(__file__))
-    current_dir = path.join(current_dir, "../test_ressources/testing_project")
-    wrong_current_dir = path.join(current_dir, "../test_ressources")
+    current_dir_base = path.dirname(path.abspath(__file__))
+    current_dir = path.join(current_dir_base, "../test_ressources/testing_project")
+    wrong_dir = path.join(current_dir_base, "../test_ressources/empty_directory")
+    wrong_dir_backup_file = path.join(current_dir_base, "../test_ressources/bad_backup_file_format")
     with pytest.raises(TypeError):
         spd.load_project(["Not a string"])
     with pytest.raises(FileNotFoundError):
         spd.load_project("/unknown/path")
     with pytest.raises(FileNotFoundError):
-        spd.load_project(wrong_current_dir)
+        spd.load_project(wrong_dir)
+    with pytest.raises(ValueError):
+        spd.load_project(wrong_dir_backup_file)
     spd.load_project(current_dir)
     assert spd.video_configuration == default_json["video_configuration"]
     assert spd.bathymetry == default_json["bathymetry"]
