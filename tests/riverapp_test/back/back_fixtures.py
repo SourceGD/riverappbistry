@@ -57,6 +57,11 @@ def saving_project_data():
 
 
 @pytest.fixture
+def empty_sdp():
+    return SavingProjectData()
+
+
+@pytest.fixture
 def all_video_config():
     return {
         "good_video_config": {

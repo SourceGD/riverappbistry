@@ -7,7 +7,7 @@
         "cam_config": 0,
         "filter_video": 0,
         "piv": 0,
-        "post_process": true
+        "post_process": 0
     },
     "video_configuration": {
         "video": "",
@@ -38,7 +38,7 @@
         "need_update": 1
     },
     "post_process": {
-        "river_flow": 0.0,
+        "river_flow": 0,
         "transect_picture_path": "",
         "local_points": []
     }

@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from back_fixtures import saving_project_data, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
+from back_fixtures import saving_project_data, empty_sdp, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
 
 
 def test_video_configuration_setter(saving_project_data, all_video_config):
@@ -179,7 +179,17 @@ def test_save_post_process(saving_project_data, check_backup_file_format):
     return
 
 
-def test_load_project():
+def test_load_project(empty_sdp):
+    sdp = empty_sdp
+    with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as f:
+        default_json = json.load(f)
+
+    with pytest.raises(ValueError):
+        sdp.load_project(["Not a string"])
+    with pytest.raises(FileNotFoundError):
+        sdp.load_project(["/unknown/path"])
+
+
     # TODO
     pass
 
