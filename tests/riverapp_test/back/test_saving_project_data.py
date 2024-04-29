@@ -75,9 +75,9 @@ def test_save_step(saving_project_data):
 
 def test_check_backup_file_format(saving_project_data):
     spd = saving_project_data
-    with open("../test_ressources/test_check_backup_file_format.json", "r") as file:
+    with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as file:
         dict_format = json.load(file)
-    with open("../test_ressources/testing_project/default_config.json", "r") as file:
+    with open("tests/riverapp_test/test_ressources/testing_project/default_config.json", "r") as file:
         wanted_dict_format = json.load(file)
     with pytest.raises(TypeError):
         spd._check_backup_file_format(dict_format, [])

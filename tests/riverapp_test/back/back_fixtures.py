@@ -5,15 +5,15 @@ from src.back import SavingProjectData
 from libs import pyorc
 
 
-# FIXTURES FOR TESTING BACK/SAVING_PROJECT_DATA.PY
+# FIXTURES FOR TESTING BACK/TRANSECT.PY
 @pytest.fixture
 def directory_path():
-    return "../test_ressources/VGC1/"
+    return "tests/riverapp_test/test_ressources/VGC1/"
 
 
 @pytest.fixture
 def bathymetry():
-    with open("../test_ressources/bathy.json", "r") as f:
+    with open("tests/riverapp_test/test_ressources/bathy.json", "r") as f:
         bathymetry = json.load(f)
     return bathymetry
 
@@ -25,6 +25,10 @@ def cam_config_json(directory_path):
         cam_config = json.load(f)
     return cam_config
 
+
+@pytest.fixture
+def local_points():
+    return [[494, 427], [1391, 465]]
 
 @pytest.fixture
 def video(cam_config_json, directory_path):
@@ -41,9 +45,9 @@ def video(cam_config_json, directory_path):
 @pytest.fixture
 def saving_project_data():
     spd = SavingProjectData()
-    with open("../test_ressources/testing_project/default_config.json", "r") as f:
+    with open("tests/riverapp_test/test_ressources/testing_project/default_config.json", "r") as f:
         default_json = json.load(f)
-    with open("../test_ressources/testing_project/testing_project.json", "w") as f:
+    with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
 
     current_dir = path.dirname(path.abspath(__file__))
@@ -56,7 +60,7 @@ def saving_project_data():
 def all_video_config():
     return {
         "good_video_config": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25,
             "end_time": 30,
             "frequency": 1
@@ -74,43 +78,43 @@ def all_video_config():
             "frequency"
         ],
         "bad_start_time_format_config": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": "25",
             "end_time": 30,
             "frequency": 1
         },
         "bad_end_time_format_config": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25,
             "end_time": "25",
             "frequency": 1
         },
         "bad_frequency_format_config": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25,
             "end_time": 30,
             "frequency": "1"
         },
         "bad_start_time_value": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": -1,
             "end_time": 30,
             "frequency": 1
         },
         "bad_end_time_value": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25,
             "end_time": -1,
             "frequency": 1
         },
         "bad_frequency_value": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25,
             "end_time": 30,
             "frequency": -1
         },
         "greater_start_time_than_end_time": {
-            "video": "../test_ressources/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 30,
             "end_time": 25,
             "frequency": 1

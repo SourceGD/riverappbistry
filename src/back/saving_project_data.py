@@ -181,8 +181,8 @@ class SavingProjectData():
         if not isinstance(data, dict):
             raise TypeError(f"data should be a dict")
 
-        if str not in PROJECT_STEPS:
-            raise ValueError(f"step should be in {PROJECT_STEPS}")
+        if step not in PROJECT_STEPS:
+            raise ValueError(f"step {step} should be in {PROJECT_STEPS}")
 
 
         with open(self._backup_file, "r") as json_file:
@@ -208,7 +208,7 @@ class SavingProjectData():
         keys_data = set(dict_format.keys())
         if keys_format != keys_data:
             print("ValueError, The data format doesn't respect the wanted format")
-            raise ValueError(f"The data format doesn't respect the wanted format")
+            raise ValueError(f"The data format doesn't respect the wanted format 3")
 
         for key in keys_format:
             if key == "cam_config":
@@ -219,7 +219,7 @@ class SavingProjectData():
 
             elif ((isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key], dict))
                   or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict)):
-                raise ValueError(f"The data format doesn't respect the wanted format")
+                raise ValueError(f"The data format doesn't respect the wanted format 4")
 
         return True
 
@@ -351,7 +351,10 @@ class SavingProjectData():
             project_data: dict = load(json_file)
 
         # Check if data format is correct
-        self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
+        try:
+            self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
+        except ValueError:
+            raise ValueError(f"CRASH : The backup file format is not correct{backup_file_path}")
         self._backup_file = backup_file_path
         self._project_name = path.basename(project_dir)
         self._steps_done = project_data["steps_done"]
