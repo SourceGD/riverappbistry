@@ -89,7 +89,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         self.remove_image_widget()
         self.load_image()
         avg_flow = self.update_river_flow_label(river_flow)
-        self._project.save_post_process(avg_flow, self._project._backup_file.strip(
+        self._project.save_post_process(float(avg_flow), self._project._backup_file.strip(
             self._project.project_name + ".json") + "plot_transect.jpg", self._area_selection.get_points_coordinate())
 
         return
@@ -132,11 +132,11 @@ class PostProcess(MDResponsiveLayout, MDScreen):
         return
 
     def update_river_flow_label(self, river_flow) -> float:
-        if isinstance(river_flow, str):
+        if isinstance(river_flow, float):
             avg = river_flow
         else:
             avg = str(round(float(river_flow.mean()) * -1, 2))
-        label = Label(text="Calculated river flow is " + avg + "m³/s", color=(0, 0, 0, 1))
+        label = Label(text="Calculated river flow is " + str(avg) + "m³/s", color=(0, 0, 0, 1))
         Clock.schedule_once(lambda dt: self.children[0].ids.river_flow_label.add_widget(label))
         return avg
 

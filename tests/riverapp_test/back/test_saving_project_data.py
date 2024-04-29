@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from back_fixtures import saving_project_data, all_video_config, all_bathy_config, all_beacons_config
+from back_fixtures import saving_project_data, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
 
 
 def test_video_configuration_setter(saving_project_data, all_video_config):
@@ -68,15 +68,12 @@ def test_save_step(saving_project_data):
         spd._save_step("video_configuration", 1)
     with pytest.raises(TypeError):
         spd._save_step("video_configuration", [])
-    with pytest.raises(ValueError):
-        spd._save_step("not_existing_step", {})
     return
 
 
-def test_check_backup_file_format(saving_project_data):
+def test_check_backup_file_format(saving_project_data, check_backup_file_format):
     spd = saving_project_data
-    with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as file:
-        dict_format = json.load(file)
+    dict_format = check_backup_file_format
     with open("tests/riverapp_test/test_ressources/testing_project/default_config.json", "r") as file:
         wanted_dict_format = json.load(file)
     with pytest.raises(TypeError):
@@ -97,29 +94,89 @@ def test_check_backup_file_format(saving_project_data):
     return
 
 
-def test_check_missing_data():
-    # TODO
+def test_check_missing_data(saving_project_data, all_video_config, check_missing_data_config):
+    spd = saving_project_data
+    video_config = all_video_config["good_video_config"]
+    with pytest.raises(TypeError):
+        spd._check_missing_data("not a list", video_config)
+    with pytest.raises(TypeError):
+        spd._check_missing_data([], "not a dict")
+    with pytest.raises(ValueError):
+        spd._check_missing_data(check_missing_data_config["bad_wanted_data"], video_config)
+    with pytest.raises(ValueError):
+        spd._check_missing_data(check_missing_data_config["wanted_data"], all_video_config["missing_data"])
+
+    assert spd._check_missing_data(check_missing_data_config["wanted_data"], video_config) is True
+
+    return
+
+
+def test_convert_dist_to_dest_points(saving_project_data, all_beacons_config):
+    spd = saving_project_data
+    good_beacons = all_beacons_config["good_beacons"]
+    beacons_list = [good_beacons["p4_to_p1"], good_beacons["p1_to_p2"], good_beacons["p2_to_p3"], good_beacons["p3_to_p4"], good_beacons["p2_to_p4"], good_beacons["p1_to_p3"]]
+    expected_result = [[6.646518768729957, 7.60485294117647], [6.689999818092734, 0.0015601023017917583], [0, 0], [0, 7.82]]
+    with pytest.raises(TypeError):
+        spd._convert_dist_to_dest_points("not a list")
+    assert spd._convert_dist_to_dest_points(beacons_list) == expected_result
+    assert len(spd._convert_dist_to_dest_points(beacons_list)) == 4
+    assert isinstance(spd._convert_dist_to_dest_points(beacons_list), list) is True
+    return
+
+
+def test_generate_cam_config(saving_project_data, check_backup_file_format):
+    spd = saving_project_data
+    expected_config = check_backup_file_format
+    spd.video_configuration = expected_config["video_configuration"]
+    assert spd.generate_piv() is False
+    spd.bathymetry = expected_config["bathymetry"]
+    assert spd.generate_cam_config() is False
+    spd.beacons = expected_config["beacons"]
+    assert spd.generate_cam_config() is True
+    assert spd.cam_config.height == expected_config["cam_config"]["height"]
+    assert spd.cam_config.width == expected_config["cam_config"]["width"]
+    assert spd.cam_config.window_size == expected_config["cam_config"]["window_size"]
+    assert spd.cam_config.resolution == expected_config["cam_config"]["resolution"]
+    assert spd.cam_config.gcps == expected_config["cam_config"]["gcps"]
+    assert spd.cam_config.lens_position == expected_config["cam_config"]["lens_position"]
+    assert spd.cam_config.dist_coeffs == expected_config["cam_config"]["dist_coeffs"]
+    assert spd.cam_config.camera_matrix == expected_config["cam_config"]["camera_matrix"]
+    assert str(spd.cam_config.bbox) == expected_config["cam_config"]["bbox"]
+
+    return
+
+
+def test_generate_piv(saving_project_data, check_backup_file_format):
+    spd = saving_project_data
+    expected_config = check_backup_file_format
+    spd.video_configuration = expected_config["video_configuration"]
+    assert spd.generate_piv() is False
+    spd.bathymetry = expected_config["bathymetry"]
+    assert spd.generate_piv() is False
+    spd.beacons = expected_config["beacons"]
+    assert spd.generate_piv() is False
+    spd.filter_video = expected_config["filter_video"]
+    # assert spd.generate_piv() is True
+
+    # TODO check that the PIV is producing the expected file
+    # At the moment pytest cannot access to projects folder so it is impossible to check the file
     pass
 
 
-def test_convert_dist_to_dest_points():
-    # TODO
-    pass
-
-
-def test_generate_cam_config():
-    # TODO
-    pass
-
-
-def test_generate_piv():
-    # TODO
-    pass
-
-
-def test_save_post_process():
-    # TODO
-    pass
+def test_save_post_process(saving_project_data, check_backup_file_format):
+    spd = saving_project_data
+    spd.steps_done["piv"] = True
+    expected_config = check_backup_file_format
+    with pytest.raises(TypeError):
+        spd.save_post_process(1, ["not a string"], expected_config["post_process"]["local_points"])
+    with pytest.raises(TypeError):
+        spd.save_post_process(1, "not a string", "not a list")
+    with pytest.raises(TypeError):
+        spd.save_post_process("not a float", 1, expected_config["post_process"]["local_points"])
+    assert spd.save_post_process(float(expected_config["post_process"]["river_flow"]), expected_config["post_process"]["transect_picture_path"], expected_config["post_process"]["local_points"]) is True
+    spd.steps_done["post_process"] = 0
+    spd.save_post_process(0.0, "", [])
+    return
 
 
 def test_load_project():

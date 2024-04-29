@@ -50,7 +50,7 @@ class SavingProjectData():
             return
 
         if not isinstance(video_configuration, dict):
-            return TypeError(f"video_configuration should be a dict : {video_configuration}")
+            raise TypeError(f"video_configuration should be a dict : {video_configuration}")
 
         self._check_missing_data(["video", "start_time", "end_time", "frequency"], video_configuration)
 
@@ -181,10 +181,6 @@ class SavingProjectData():
         if not isinstance(data, dict):
             raise TypeError(f"data should be a dict")
 
-        if step not in PROJECT_STEPS:
-            raise ValueError(f"step {step} should be in {PROJECT_STEPS}")
-
-
         with open(self._backup_file, "r") as json_file:
             saved_data = load(json_file)
 
@@ -226,10 +222,10 @@ class SavingProjectData():
     def _check_missing_data(self, wanted_data: list, data: dict) -> bool:
 
         if not isinstance(wanted_data, list):
-            return TypeError(f"wanted_data should be a list : {wanted_data}")
+            raise TypeError(f"wanted_data should be a list : {wanted_data}")
 
         if not isinstance(data, dict):
-            return TypeError(f"bathymetry should be a dict : {data}")
+            raise TypeError(f"bathymetry should be a dict : {data}")
 
         missing_data = [key for key in wanted_data if key not in data.keys()]
         if missing_data:
@@ -238,6 +234,8 @@ class SavingProjectData():
         return True
 
     def _convert_dist_to_dest_points(self, dist: list) -> list:
+        if not isinstance(dist, list):
+            raise TypeError(f"dist should be a list : {dist}")
         # Points coordinates computation
         # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
         P1, P4 = [0, dist[3]], [0, 0]
@@ -247,7 +245,6 @@ class SavingProjectData():
         P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
         beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
         P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
-
         return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
 
     def generate_cam_config(self) -> bool:
@@ -302,8 +299,6 @@ class SavingProjectData():
         fps: int = VideoCapture(video).get(CAP_PROP_FPS)
         start_frame: int = int(self._video_configuration["start_time"] * fps)
         end_frame: int = int(self._video_configuration["end_time"] * fps)
-        print("=====================================")
-        print(self._cam_config)
         pyorc_video: Video = Video(
             video,
             start_frame=start_frame,
@@ -318,21 +313,28 @@ class SavingProjectData():
         da_norm = da.frames.normalize()
         da_norm_proj = da_norm.frames.project()
         piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
-        print(piv)
         self._save_step("piv", {
             "file": "piv.nc",
             "need_update": False
         })
-        print(piv)
         return True
 
-    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> None:
+    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> bool:
+        if not self._steps_done["piv"]:
+            return False
+
+        if not isinstance(river_flow, float):
+            raise TypeError(f"river_flow should be a number : {river_flow}")
+        if not isinstance(transect_picture_path, str):
+            raise TypeError(f"transect_picture_path should be a str : {transect_picture_path}")
+        if not isinstance(local_points, list):
+            raise TypeError(f"local_points should be a list : {local_points}")
         self._save_step("post_process", {
             "river_flow": river_flow,
             "transect_picture_path": transect_picture_path,
             "local_points": local_points
         })
-        return
+        return True
 
     def load_project(self, project_dir: str) -> None:
         print(project_dir)
