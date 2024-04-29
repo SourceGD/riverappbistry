@@ -1,5 +1,5 @@
 {
-    "project_name": "vgc",
+    "project_name": "bad_backup_file_format",
     "steps_done": {
         "video_configuration": true,
         "bathymetry": true,
@@ -186,10 +186,6 @@
         "bbox": "POLYGON ((6.667613781127995 7.837302559629649, 6.689716101460062 -0.0026662851704344, -0.0002573132991914 -0.0215265559639981, -0.0223596336312588 7.818442288836085, 6.667613781127995 7.837302559629649))"
     },
     "filter_video": {},
-    "piv": {
-        "file": "piv.nc",
-        "need_update": false
-    },
     "post_process": {
         "river_flow": "1.52",
         "transect_picture_path": "/media/andreas/LaCie Andreas/Memoire/riverapp/projects/vgc/plot_transect.jpg",

@@ -48,18 +48,18 @@ class SavingProjectData():
     @video_configuration.setter
     def video_configuration(self, video_configuration: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._video_configuration == video_configuration:
             return
 
         if not isinstance(video_configuration, dict):
-            return TypeError(f"video_configuration should be a dict : {video_configuration}")
+            raise TypeError(f"video_configuration should be a dict : {video_configuration}")
 
         self._check_missing_data(["video", "start_time", "end_time", "frequency"], video_configuration)
 
         if not path.exists(video_configuration["video"]):
-            raise FileExistsError(f"The video was not found : {video_configuration['video']}")
+            raise FileNotFoundError(f"The video was not found : {video_configuration['video']}")
 
         if not isinstance(video_configuration["start_time"], (int, float)):
             raise TypeError(f"start_time should be an int or a float")
@@ -95,7 +95,7 @@ class SavingProjectData():
     @bathymetry.setter
     def bathymetry(self, bathymetry: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._bathymetry == bathymetry:
             return
@@ -131,13 +131,13 @@ class SavingProjectData():
     @beacons.setter
     def beacons(self, beacons: dict) -> None:
         if self._backup_file is None:
-            raise ProjectNotLoaded(f"The project need to be loaded before adding data")
+            raise ValueError(f"The project need to be loaded before adding data")
 
         if self._beacons == beacons:
             return
 
         if not isinstance(beacons, dict):
-            return TypeError(f"beacons should be a dict : {beacons}")
+            raise TypeError(f"beacons should be a dict : {beacons}")
 
         self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"],
                                  beacons)
@@ -152,7 +152,7 @@ class SavingProjectData():
             if not isinstance(coordinates[0], (int, float)) or not isinstance(coordinates[1], (int, float)):
                 raise ValueError(f"Point coordinates should be numbers")
 
-        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or beacons["p4_to_p1"] <= 0:
+        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or beacons["p4_to_p1"] <= 0 or beacons["p1_to_p3"] <= 0 or beacons["p2_to_p4"] <= 0:
             raise ValueError(f"Distance between points cannot be lass than or equal to 0")
 
         self._beacons = beacons
@@ -208,7 +208,7 @@ class SavingProjectData():
         keys_data = set(dict_format.keys())
         if keys_format != keys_data:
             print("ValueError, The data format doesn't respect the wanted format")
-            raise ValueError(f"The data format doesn't respect the wanted format")
+            raise ValueError(f"The data format doesn't respect the wanted format 3")
 
         for key in keys_format:
             if key == "cam_config":
@@ -217,20 +217,19 @@ class SavingProjectData():
             if isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 self._check_backup_file_format(wanted_dict_format[key], dict_format[key])
 
-            elif (isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key],
-                                                                               dict)) or not isinstance(
-                wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
-                raise ValueError(f"The data format doesn't respect the wanted format")
+            elif ((isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key], dict))
+                  or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict)):
+                raise ValueError(f"The data format doesn't respect the wanted format 4")
 
         return True
 
     def _check_missing_data(self, wanted_data: list, data: dict) -> bool:
 
         if not isinstance(wanted_data, list):
-            return TypeError(f"wanted_data should be a list : {wanted_data}")
+            raise TypeError(f"wanted_data should be a list : {wanted_data}")
 
         if not isinstance(data, dict):
-            return TypeError(f"bathymetry should be a dict : {data}")
+            raise TypeError(f"bathymetry should be a dict : {data}")
 
         missing_data = [key for key in wanted_data if key not in data.keys()]
         if missing_data:
@@ -239,6 +238,8 @@ class SavingProjectData():
         return True
 
     def _convert_dist_to_dest_points(self, dist: list) -> list:
+        if not isinstance(dist, list):
+            raise TypeError(f"dist should be a list : {dist}")
         # Points coordinates computation
         # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
         P1, P4 = [0, dist[3]], [0, 0]
@@ -248,7 +249,6 @@ class SavingProjectData():
         P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
         beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
         P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
-
         return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
 
     def generate_cam_config(self) -> bool:
@@ -356,18 +356,26 @@ class SavingProjectData():
 
         return True
 
-    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> None:
+    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> bool:
+        if not self._steps_done["piv"]:
+            return False
+
+        if not isinstance(river_flow, float):
+            raise TypeError(f"river_flow should be a number : {river_flow}")
+        if not isinstance(transect_picture_path, str):
+            raise TypeError(f"transect_picture_path should be a str : {transect_picture_path}")
+        if not isinstance(local_points, list):
+            raise TypeError(f"local_points should be a list : {local_points}")
         self._save_step("post_process", {
             "river_flow": river_flow,
             "transect_picture_path": transect_picture_path,
             "local_points": local_points
         })
-        return
+        return True
 
     def load_project(self, project_dir: str) -> None:
-        print(project_dir)
         if not isinstance(project_dir, str):
-            raise ValueError(f"project_dir should be a str : {project_dir}")
+            raise TypeError(f"project_dir should be a str : {project_dir}")
 
         if not path.exists(project_dir) or not path.isdir(project_dir):
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")
@@ -381,7 +389,10 @@ class SavingProjectData():
             project_data: dict = load(json_file)
 
         # Check if data format is correct
-        self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
+        try:
+            self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
+        except ValueError:
+            raise ValueError(f"CRASH : The backup file format is not correct{backup_file_path}")
         self._backup_file = backup_file_path
         self._project_name = path.basename(project_dir)
         self._steps_done = project_data["steps_done"]
@@ -396,10 +407,10 @@ class SavingProjectData():
 
     def create_project(self, projects_dir: str, project_name: str) -> None:
         if not isinstance(projects_dir, str):
-            raise ValueError(f"project_dir should be a str : {projects_dir}")
+            raise TypeError(f"project_dir should be a str : {projects_dir}")
 
         if not isinstance(project_name, str):
-            raise ValueError(f"project_name should be a str : {project_name}")
+            raise TypeError(f"project_name should be a str : {project_name}")
 
         if not path.exists(projects_dir) or not path.isdir(projects_dir):
             raise FileNotFoundError(f"project_dir was not found : {projects_dir}")
@@ -420,7 +431,7 @@ class SavingProjectData():
 
     def delete_project(self, project_dir: str) -> None:
         if not isinstance(project_dir, str):
-            raise ValueError(f"project_dir should be a str : {project_dir}")
+            raise TypeError(f"project_dir should be a str : {project_dir}")
 
         if not path.exists(project_dir) or not path.isdir(project_dir):
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")

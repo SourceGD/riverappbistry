@@ -51,5 +51,6 @@
             0.06,
             1.44
         ],
-        "water_level": 0.44
+        "water_level": 0.44,
+        "surface_coefficient": 0.85
     }
