@@ -192,6 +192,7 @@ class PostProcess(MDResponsiveLayout, MDScreen):
 
             if response.status_code == 200:
                 data = response.json()
+                print("PROCESS TRANSECTS DURATION :", data["Message"])
                 # the image is encoded in base64 and decoded in utf8, transform it back to jpg
                 image = base64.b64decode(data["image"].encode('utf-8'))
                 with open(self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg",

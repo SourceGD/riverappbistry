@@ -331,7 +331,7 @@ class SavingProjectData():
             response = s.post(route_url, files=files, headers=headers, timeout=(500, 500))
             if response.status_code == 401:
                 raise ValueError("The API key is not correct")
-
+            print("PROCESS PIV DURATION: ", response.text)
             s.close()
         else:
             pyorc_video: Video = Video(
