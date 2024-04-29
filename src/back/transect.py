@@ -8,16 +8,17 @@ from matplotlib.colors import Normalize
 
 # todo add user input interface to get the two points, defining the edge points of the transect,
 #  one on each side of the river
-def delimiter_points_bathy(cam_config):
+def delimiter_points_bathy(cam_config, local_points):
     # two points that delimit the transect for the VGC1 example
-    local_points = [[494, 427], [1391, 465]]
-
+    #local_points = [[600, 1080], [2800, 1080]]
+    # local_points = [[600, 1200], [2800, 1200]] # Petit bocq 90 degrees
+    # local_points = [[494, 427], [1391, 465]]
     # convert local_points to the orthorectified referential
-    transformMatrix = cam_config.get_M(reverse=False)
     M = np.array(cv2.getPerspectiveTransform(np.float32(cam_config.gcps['src']),
                                              np.float32(cam_config.gcps['dst'])))
+    ret = cv2.perspectiveTransform(np.float32([local_points]), M)[0]
 
-    return cv2.perspectiveTransform(np.float32([local_points]), M)[0]
+    return ret
 
 
 def all_points_bathy(bathy, bathy_delimeters, ds):
@@ -40,8 +41,8 @@ def all_points_bathy(bathy, bathy_delimeters, ds):
 
 # todo add user input to precise the factor correlation of how much varies
 #  the velocity with the depth (v_corr variable)
-def transect_plot(ds_points, video, ds, directory):
-    ds_points_q = ds_points.transect.get_q(v_corr=0.80, fill_method="log_interp")
+def transect_plot(ds_points, video, ds, directory, v_corr):
+    ds_points_q = ds_points.transect.get_q(v_corr=v_corr, fill_method="log_interp")
     ax = plt.axes()
     ds_points_q["v_eff"].isel(quantile=2).plot(ax=ax, label="q")
     plt.legend()
@@ -106,12 +107,12 @@ def transect_plot(ds_points, video, ds, directory):
     return ds_points_q
 
 
-def transect(ds, video, directory, bathy_file):
+def transect(ds, video, directory, bathy_file, local_points):
     # video.camera_config = ds.velocimetry.camera_config
-    bathy_delimiters = delimiter_points_bathy(video.camera_config)
+    bathy_delimiters = delimiter_points_bathy(video.camera_config, local_points)
 
     ds_points = all_points_bathy(bathy_file, bathy_delimiters, ds)
-    ds_points_q = transect_plot(ds_points, video, ds, directory)
+    ds_points_q = transect_plot(ds_points, video, ds, directory, bathy_file["surface_coefficient"])
 
     # print discharge for this transect
     ds_points_q.transect.get_river_flow()

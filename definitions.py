@@ -20,13 +20,15 @@ PROJECT_DEFAULT_STRUCT = {
         "video" : "",
         "start_time": 0,
         "end_time": 0,
-        "frequency": 0
+        "frequency": 0,
+        "lens_position": []
     },
 
     "bathymetry" : {
         "x": [],
         "y": [],
-        "water_level": 0
+        "water_level": 0,
+        "surface_coefficient": 0
     },
 
     "beacons" : {
@@ -51,12 +53,8 @@ PROJECT_DEFAULT_STRUCT = {
     "post_process": {
         "river_flow": 0,
         "transect_picture_path": "",
+        "local_points": []
     },
-
-    "transect": {
-        "points": [],
-        "transect_file_data": ""
-    }
 }
 
 PROJECT_STEPS = ["video_configuration", "bathymetry", "beacons", "filter_video", "piv", "post_process"]

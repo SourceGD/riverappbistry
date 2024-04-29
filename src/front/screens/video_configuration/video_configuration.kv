@@ -50,6 +50,9 @@
                         id: frequency
                         input_filter: "int"
 
+                    LensPositionInput:
+                        id: lens_position
+
                 MDBoxLayout:
 
                     MDBoxLayout:
@@ -98,6 +101,9 @@
                     id: frequency
                     input_filter: "int"
 
+                LensPositionInput:
+                    id: lens_position
+
         VideoConfigurationBottomButtons:
             id: bottom_buttons
 
@@ -139,6 +145,9 @@
                 FrequencyInput:
                     id: frequency
                     input_filter: "int"
+
+                LensPositionInput:
+                    id: lens_position
 
         VideoConfigurationBottomButtons:
             id: bottom_buttons
@@ -208,6 +217,14 @@
     hint_text: "Frequency [frame / s]"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_frequency(self.text) if not self.focus else None
+
+<LensPositionInput@MDTextField>:
+    mode: "rectangle"
+    line_color_normal: app.theme_cls.primary_color
+    text_color_normal: app.theme_cls.primary_color
+    hint_text: "Lens Position [x, y, z]"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("video_configuration").set_lens_position(self.text) if not self.focus else None
 
 <VideoConfigurationBottomButtons@MDBoxLayout>:
     padding: dp(10)
