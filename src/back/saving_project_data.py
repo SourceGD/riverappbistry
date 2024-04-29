@@ -255,9 +255,6 @@ class SavingProjectData():
         init_frame = get_video_frame(self.video_configuration["video"], self.video_configuration["start_time"])
 
         height, width = init_frame.shape[0:2]
-        print("=================================================================================")
-        print(height," " ,width)
-        print("=================================================================================")
         dst: list = self._convert_dist_to_dest_points([
             self._beacons["p4_to_p1"],
             self._beacons["p1_to_p2"],

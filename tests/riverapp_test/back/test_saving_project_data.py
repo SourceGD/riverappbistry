@@ -2,7 +2,7 @@ import os
 
 import pytest
 import json
-
+from definitions import PROJECTS_DIR
 from os import path
 
 from back_fixtures import saving_project_data, empty_spd, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
@@ -53,7 +53,6 @@ def test_bathymetry_setter(empty_spd, saving_project_data, all_bathy_config):
     with pytest.raises(TypeError):
         spd.bathymetry = all_bathy_config["bad_bathy_water_level_type"]
 
-
     spd.bathymetry = all_bathy_config["good_bathy"]
     assert spd.bathymetry == all_bathy_config["good_bathy"]
     return
@@ -89,11 +88,10 @@ def test_save_step(saving_project_data):
     return
 
 
-def test_properties(empty_spd, saving_project_data):
+def test_properties(empty_spd, saving_project_data, check_backup_file_format):
     assert empty_spd.piv is None
     spd = empty_spd
-    with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as f:
-        default_json = json.load(f)
+    default_json = check_backup_file_format
     with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
     spd.load_project("tests/riverapp_test/test_ressources/testing_project")
@@ -178,6 +176,11 @@ def test_generate_cam_config(saving_project_data, check_backup_file_format):
 
 
 def test_generate_piv(saving_project_data, check_backup_file_format):
+    if path.exists(PROJECTS_DIR + "/testing_project"):
+        for file in os.listdir(PROJECTS_DIR + "/testing_project"):
+            os.remove(PROJECTS_DIR + "/testing_project/" + file)
+        os.rmdir(PROJECTS_DIR + "/testing_project")
+    os.mkdir(PROJECTS_DIR + "/testing_project")
     spd = saving_project_data
     expected_config = check_backup_file_format
     spd.video_configuration = expected_config["video_configuration"]
@@ -187,10 +190,7 @@ def test_generate_piv(saving_project_data, check_backup_file_format):
     spd.beacons = expected_config["beacons"]
     assert spd.generate_piv() is False
     spd.filter_video = expected_config["filter_video"]
-    # assert spd.generate_piv() is True
-
-    # TODO check that the PIV is producing the expected file
-    # At the moment pytest cannot access to projects folder so it is impossible to check the file
+    assert spd.generate_piv() is True
     pass
 
 
@@ -211,10 +211,9 @@ def test_save_post_process(empty_spd, saving_project_data, check_backup_file_for
     return
 
 
-def test_load_project(empty_spd):
+def test_load_project(empty_spd, check_backup_file_format):
     spd = empty_spd
-    with open("tests/riverapp_test/test_ressources/test_check_backup_file_format.json", "r") as f:
-        default_json = json.load(f)
+    default_json = check_backup_file_format
     with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
 
