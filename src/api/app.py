@@ -1,6 +1,7 @@
 import base64
 import json
 from functools import wraps
+import time
 
 from dotenv import load_dotenv
 from flask import Flask, request, send_file, jsonify, abort
@@ -64,6 +65,8 @@ def process_piv():
             h_a=data["h_a"],
             camera_config=data["camera_config"]
         )
+        # get start time
+        start_time = time.time()
         da = pyorc_video.get_frames()
         # Apply previous steps filter here
         da_norm = da.frames.normalize()
@@ -71,9 +74,10 @@ def process_piv():
         logging.info("Starting PIV")
         piv = da_norm_proj.frames.get_piv().to_netcdf(
             os.path.join(OUTPUT_FOLDER, data["project_name"] + "_" + 'piv.nc'))
+        end_time = time.time()
         logging.info("PIV done")
         gc.collect()
-        return 'File processed successfully', 200
+        return f'File processed successfully, piv lasted {end_time-start_time} seconds', 200
 
 
 @app.route('/process-transects', methods=['GET'])
@@ -87,6 +91,7 @@ def process_transects():
         end_frame=request_data["video"]["end_frame"],
         camera_config=request_data["video"]["camera_config"]
     )
+    start_time = time.time()
     dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'piv.nc')
     mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
     masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
@@ -94,7 +99,7 @@ def process_transects():
                           request_data["bathymetry"], request_data["local_points"])
     # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc") does not have the right on every computer,
     # TODO: find a way to bypass admin permissions (windows)
-
+    end_time = time.time()
     river_flow = river_flow.values.tolist()
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
     # converting image to base64 to send it with other responses
@@ -102,7 +107,7 @@ def process_transects():
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
 
     data = {
-        "Message": "Transect processed successfully",
+        "Message": f"Transect processed successfully in {end_time - start_time} seconds",
         "river_flow": river_flow,
         "image": encoded_string
     }
