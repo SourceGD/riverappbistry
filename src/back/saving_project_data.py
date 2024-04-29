@@ -337,9 +337,8 @@ class SavingProjectData():
         return True
 
     def load_project(self, project_dir: str) -> None:
-        print(project_dir)
         if not isinstance(project_dir, str):
-            raise ValueError(f"project_dir should be a str : {project_dir}")
+            raise TypeError(f"project_dir should be a str : {project_dir}")
 
         if not path.exists(project_dir) or not path.isdir(project_dir):
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")

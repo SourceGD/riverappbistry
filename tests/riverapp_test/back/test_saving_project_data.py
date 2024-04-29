@@ -191,10 +191,30 @@ def test_load_project(empty_spd):
     current_dir = path.dirname(path.abspath(__file__))
     current_dir = path.join(current_dir, "../test_ressources/testing_project")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         spd.load_project(["Not a string"])
     with pytest.raises(FileNotFoundError):
-        spd.load_project(["/unknown/path"])
+        spd.load_project("/unknown/path")
+
+    spd.load_project(current_dir)
+    assert spd.video_configuration == default_json["video_configuration"]
+    assert spd.bathymetry == default_json["bathymetry"]
+    assert spd.beacons == default_json["beacons"]
+    assert spd.filter_video == default_json["filter_video"]
+    assert spd.cam_config["height"] == default_json["cam_config"]["height"]
+    assert spd.cam_config["width"] == default_json["cam_config"]["width"]
+    assert spd.cam_config["window_size"] == default_json["cam_config"]["window_size"]
+    assert spd.cam_config["resolution"] == default_json["cam_config"]["resolution"]
+    assert spd.cam_config["gcps"] == default_json["cam_config"]["gcps"]
+    assert spd.cam_config["lens_position"] == default_json["cam_config"]["lens_position"]
+    assert spd.cam_config["dist_coeffs"] == default_json["cam_config"]["dist_coeffs"]
+    assert spd.cam_config["camera_matrix"] == default_json["cam_config"]["camera_matrix"]
+    assert str(spd.cam_config["bbox"]) == default_json["cam_config"]["bbox"]
+    assert spd.steps_done == default_json["steps_done"]
+    assert spd.project_name == default_json["project_name"]
+    assert spd.project_path == current_dir
+    assert spd.backup_file == default_json["backup_file"]
+    assert spd.post_process == default_json["post_process"]
 
 
     # spd.load_project(current_dir)
