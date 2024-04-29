@@ -5,7 +5,8 @@ import json
 from definitions import PROJECTS_DIR
 from os import path
 
-from back_fixtures import saving_project_data, empty_spd, all_video_config, all_bathy_config, all_beacons_config, check_missing_data_config, check_backup_file_format
+from back_fixtures import (saving_project_data, empty_spd, all_video_config, all_bathy_config, all_beacons_config,
+                           check_missing_data_config, check_backup_file_format, testing_project_path)
 
 
 def test_video_configuration_setter(empty_spd, saving_project_data, all_video_config):
@@ -88,22 +89,22 @@ def test_save_step(saving_project_data):
     return
 
 
-def test_properties(empty_spd, saving_project_data, check_backup_file_format):
+def test_properties(empty_spd, saving_project_data, check_backup_file_format, testing_project_path):
     assert empty_spd.piv is None
     spd = empty_spd
     default_json = check_backup_file_format
-    with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
+    with open(testing_project_path + "/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
-    spd.load_project("tests/riverapp_test/test_ressources/testing_project")
+    spd.load_project(testing_project_path)
     piv = spd.piv["file"].split("/")
-    assert piv[len(piv)-1] == default_json["piv"]["file"]
+    assert piv[len(piv) - 1] == default_json["piv"]["file"]
     assert spd.project_name == "testing_project"
 
 
-def test_check_backup_file_format(saving_project_data, check_backup_file_format):
+def test_check_backup_file_format(saving_project_data, check_backup_file_format, testing_project_path):
     spd = saving_project_data
     dict_format = check_backup_file_format
-    with open("tests/riverapp_test/test_ressources/testing_project/default_config.json", "r") as file:
+    with open(testing_project_path + "/default_config.json", "r") as file:
         wanted_dict_format = json.load(file)
     with pytest.raises(TypeError):
         spd._check_backup_file_format(1, dict_format)
@@ -143,8 +144,12 @@ def test_check_missing_data(saving_project_data, all_video_config, check_missing
 def test_convert_dist_to_dest_points(saving_project_data, all_beacons_config):
     spd = saving_project_data
     good_beacons = all_beacons_config["good_beacons"]
-    beacons_list = [good_beacons["p4_to_p1"], good_beacons["p1_to_p2"], good_beacons["p2_to_p3"], good_beacons["p3_to_p4"], good_beacons["p2_to_p4"], good_beacons["p1_to_p3"]]
-    expected_result = [[6.646518768729957, 7.60485294117647], [6.689999818092734, 0.0015601023017917583], [0, 0], [0, 7.82]]
+    beacons_list = [good_beacons["p4_to_p1"], good_beacons["p1_to_p2"], good_beacons["p2_to_p3"],
+                    good_beacons["p3_to_p4"], good_beacons["p2_to_p4"], good_beacons["p1_to_p3"]]
+    expected_result = [[6.646518768729957, 7.60485294117647],
+                       [6.689999818092734, 0.0015601023017917583],
+                       [0, 0],
+                       [0, 7.82]]
     with pytest.raises(TypeError):
         spd._convert_dist_to_dest_points("not a list")
     assert spd._convert_dist_to_dest_points(beacons_list) == expected_result
@@ -205,16 +210,18 @@ def test_save_post_process(empty_spd, saving_project_data, check_backup_file_for
         spd.save_post_process("not a float", 1, expected_config["post_process"]["local_points"])
     with pytest.raises(TypeError):
         spd.save_post_process(1.0, ["not a string"], expected_config["post_process"]["local_points"])
-    assert spd.save_post_process(float(expected_config["post_process"]["river_flow"]), expected_config["post_process"]["transect_picture_path"], expected_config["post_process"]["local_points"]) is True
+    assert spd.save_post_process(float(expected_config["post_process"]["river_flow"]),
+                                 expected_config["post_process"]["transect_picture_path"],
+                                 expected_config["post_process"]["local_points"]) is True
     spd.steps_done["post_process"] = 0
     spd.save_post_process(0.0, "", [])
     return
 
 
-def test_load_project(empty_spd, check_backup_file_format):
+def test_load_project(empty_spd, check_backup_file_format, testing_project_path):
     spd = empty_spd
     default_json = check_backup_file_format
-    with open("tests/riverapp_test/test_ressources/testing_project/testing_project.json", "w") as f:
+    with open(testing_project_path + "/testing_project.json", "w") as f:
         json.dump(default_json, f, indent=4)
 
     current_dir_base = path.dirname(path.abspath(__file__))
@@ -247,11 +254,11 @@ def test_load_project(empty_spd, check_backup_file_format):
     return
 
 
-def test_create_project(empty_spd):
-    if path.exists("tests/riverapp_test/test_ressources/testing_project/testing_create_project"):
-        os.remove("tests/riverapp_test/test_ressources/testing_project/testing_create_project/testing_create_project"
-                  ".json")
-        os.rmdir("tests/riverapp_test/test_ressources/testing_project/testing_create_project/")
+def test_create_project(empty_spd, testing_project_path):
+    if path.exists(testing_project_path + "/testing_create_project"):
+        os.remove(testing_project_path + "/testing_create_project/testing_create_project"
+                                         ".json")
+        os.rmdir(testing_project_path + "/testing_create_project/")
     spd = empty_spd
     with pytest.raises(TypeError):
         spd.create_project(1, "")
@@ -259,32 +266,32 @@ def test_create_project(empty_spd):
         spd.create_project("", 1)
     with pytest.raises(FileNotFoundError):
         spd.create_project("/unknown/path", "testing_project")
-    spd.create_project("tests/riverapp_test/test_ressources/testing_project", "testing_create_project")
-    assert path.exists("tests/riverapp_test/test_ressources/testing_project/testing_create_project") is True
+    spd.create_project(testing_project_path, "testing_create_project")
+    assert path.exists(testing_project_path + "/testing_create_project") is True
 
     sp2 = empty_spd
     with pytest.raises(FileExistsError):
-        sp2.create_project("tests/riverapp_test/test_ressources/testing_project", "testing_create_project")
+        sp2.create_project(testing_project_path, "testing_create_project")
 
-    os.remove("tests/riverapp_test/test_ressources/testing_project/testing_create_project/testing_create_project.json")
-    os.rmdir("tests/riverapp_test/test_ressources/testing_project/testing_create_project/")
+    os.remove(testing_project_path + "/testing_create_project/testing_create_project.json")
+    os.rmdir(testing_project_path + "/testing_create_project/")
     return
 
 
-def test_delete_project(empty_spd):
-    if path.exists("tests/riverapp_test/test_ressources/testing_project/testing_create_project"):
-        os.remove("tests/riverapp_test/test_ressources/testing_project/testing_create_project/testing_create_project"
-                  ".json")
-        os.rmdir("tests/riverapp_test/test_ressources/testing_project/testing_create_project/")
+def test_delete_project(empty_spd, testing_project_path):
+    if path.exists(testing_project_path + "/testing_create_project"):
+        os.remove(testing_project_path + "/testing_create_project/testing_create_project"
+                                         ".json")
+        os.rmdir(testing_project_path + "/testing_create_project/")
 
     spd = empty_spd
-    spd.create_project("tests/riverapp_test/test_ressources/testing_project", "testing_create_project")
+    spd.create_project(testing_project_path, "testing_create_project")
     with pytest.raises(TypeError):
         spd.delete_project(1)
     with pytest.raises(FileNotFoundError):
         spd.delete_project("/unknown/path")
     with pytest.raises(FileNotFoundError):
         spd.delete_project("tests/riverapp_test/test_ressources/empty_directory")
-    spd.delete_project("tests/riverapp_test/test_ressources/testing_project/testing_create_project")
-    assert path.exists("tests/riverapp_test/test_ressources/testing_project/testing_create_project") is False
+    spd.delete_project(testing_project_path + "/testing_create_project")
+    assert path.exists(testing_project_path + "/testing_create_project") is False
     return
