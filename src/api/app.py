@@ -99,6 +99,7 @@ def process_transects():
                           request_data["bathymetry"], request_data["local_points"])
     # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc") does not have the right on every computer,
     # TODO: find a way to bypass admin permissions (windows)
+    masked_dataset.close()
     end_time = time.time()
     river_flow = river_flow.values.tolist()
     send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
