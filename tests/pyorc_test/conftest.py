@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 import shutil
 from shapely import wkt
-import pyorc
+from libs import pyorc
 import sys
 from click.testing import CliRunner
 

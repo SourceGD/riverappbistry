@@ -1,5 +1,5 @@
 import pytest
-import pyorc
+from libs import pyorc
 import numpy as np
 
 
