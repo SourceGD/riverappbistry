@@ -1,38 +1,26 @@
 {
     "project_name": "testing",
     "steps_done": {
-        "video_configuration": true,
-        "bathymetry": true,
+        "video_configuration": 0,
+        "bathymetry": 0,
         "beacons": 0,
         "cam_config": 0,
         "filter_video": 0,
         "piv": 0,
-        "post_process": 0
+        "post_process": true
     },
     "video_configuration": {
         "video": "",
         "start_time": 0,
         "end_time": 0,
-        "frequency": 0
+        "frequency": 0,
+        "lens_position": []
     },
     "bathymetry": {
-        "x": [
-            0.0,
-            0.35,
-            0.6,
-            0.8,
-            1.2,
-            1.5
-        ],
-        "y": [
-            1.44,
-            0.29,
-            0.28,
-            0.3,
-            0.13,
-            0.14
-        ],
-        "water_level": 0.44
+        "x": [],
+        "y": [],
+        "water_level": 0,
+        "surface_coefficient": 0
     },
     "beacons": {
         "points": [],
@@ -50,11 +38,8 @@
         "need_update": 1
     },
     "post_process": {
-        "river_flow": 0,
-        "transect_picture_path": ""
-    },
-    "transect": {
-        "points": [],
-        "transect_file_data": ""
+        "river_flow": 0.0,
+        "transect_picture_path": "",
+        "local_points": []
     }
 }
