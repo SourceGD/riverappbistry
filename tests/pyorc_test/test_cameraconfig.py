@@ -1,6 +1,6 @@
 import numpy as np
 import os
-import pyorc
+from libs import pyorc
 import pytest
 
 from cartopy.mpl.geoaxes import GeoAxesSubplot

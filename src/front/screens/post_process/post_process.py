@@ -1,6 +1,12 @@
-from os import path
+import base64
+import json
+from os import path, environ, getenv
 from threading import Thread, Event
 from pprint import pprint
+
+import numpy as np
+import requests
+from requests.adapters import HTTPAdapter, Retry
 
 from kivy.clock import Clock
 from kivy.uix.label import Label
@@ -10,8 +16,10 @@ from kivymd.app import MDApp
 from kivy.uix.image import Image
 
 from kivy.lang import Builder
-
+from dotenv import load_dotenv
 from libs import pyorc
+from libs.pyorc import CameraConfig
+from src.utils import utils
 from src.back import transect, mask_and_plot, saving_project_data
 from src.utils import video_to_image
 from src.front.components.widget import ShapeOnImage
@@ -143,17 +151,68 @@ class PostProcess(MDResponsiveLayout, MDScreen):
     def set_video(self):
         start_frame = int(5 * self._project._video_configuration['start_time'])
         end_frame = int(5 * self._project._video_configuration['end_time'])
-        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame)
-        video.camera_config = self._project.cam_config
+        video = pyorc.Video(self._project._video_configuration['video'], start_frame=start_frame, end_frame=end_frame,
+                            camera_config=self._project.cam_config)
         return video
 
     def process_and_plot_transects(self, video):
-        piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
-        dataset = xr.open_dataset(piv_path)
-        mask_and_plot(self._project._backup_file.strip(self._project.project_name + ".json"), dataset, video)
-        masked_dataset = xr.open_dataset(
-            self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
-        river_flow = transect(masked_dataset, video,
-                              self._project._backup_file.strip(self._project.project_name + ".json"),
-                              self._project._bathymetry, self._area_selection.get_points_coordinate())
-        return river_flow
+        river_flow = []
+        if utils.check_internet():
+            # Convert cameraconfig to json, if not done request will not be able to convert the params to json
+            json_camera_config = json.loads(video.camera_config.to_json()) if isinstance(video.camera_config,
+                                                                                         CameraConfig) else video.camera_config
+            params = {
+                "video_name": video.fn,
+                "project_name": self._project.project_name,
+                "video": {
+                    "start_frame": int(video.start_frame),
+                    "end_frame": int(video.end_frame),
+                    "freq": int(video.freq),
+                    "h_a": video.h_a,
+                    "camera_config": json_camera_config
+                },
+                "bathymetry": self._project._bathymetry,
+                "local_points": self._area_selection.get_points_coordinate()
+            }
+            # get api key from .env file
+            load_dotenv()
+            api_key = getenv("API_KEY")
+            headers = {
+                "Content-Type": "application/json",
+                "X-API-KEY": api_key,
+            }
+            # TODO add exceptions
+            route_url = getenv("API_URL") + "/process-transects"
+            s = requests.Session()
+            retries = Retry(total=100, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+            s.mount('http://', HTTPAdapter(max_retries=retries))
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+
+            response = s.get(route_url, data=json.dumps(params), headers=headers)
+
+            if response.status_code == 200:
+                data = response.json()
+                print("PROCESS TRANSECTS DURATION :", data["Message"])
+                # the image is encoded in base64 and decoded in utf8, transform it back to jpg
+                image = base64.b64decode(data["image"].encode('utf-8'))
+                with open(self._project._backup_file.strip(self._project.project_name + ".json") + "plot_transect.jpg",
+                          "wb") as f:
+                    f.write(image)
+
+                river_flow = data["river_flow"]
+
+            s.close()
+        else:
+            piv_path = self._project._backup_file.strip(self._project.project_name + ".json") + "piv.nc"
+            dataset = xr.open_dataset(piv_path)
+            mask_and_plot(self._project._backup_file.strip(self._project.project_name + ".json"), dataset, video)
+            masked_dataset = xr.open_dataset(
+                self._project._backup_file.strip(self._project.project_name + ".json") + "piv_masked.nc")
+            river_flow = transect(masked_dataset, video,
+                                  self._project._backup_file.strip(self._project.project_name + ".json"),
+                                  self._project._bathymetry, self._area_selection.get_points_coordinate())
+
+        print(np.array(river_flow))
+        if np.size(np.array(river_flow)) == 0:
+            raise ValueError("Error while processing transects, no river flow returned")
+        return np.array(river_flow)

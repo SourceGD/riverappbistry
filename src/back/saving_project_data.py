@@ -1,14 +1,18 @@
+import json
 import time
-from os import path, mkdir
+from os import path, mkdir, getenv
 from json import load, dumps, loads
 from shutil import rmtree
 import math
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
 from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
+from dotenv import load_dotenv
+from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
 
-from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR, PROJECT_STEPS
-
-from src.utils import get_video_frame
+from src.utils import get_video_frame, utils
 from libs.pyorc import CameraConfig, Video
 
 
@@ -296,24 +300,60 @@ class SavingProjectData():
         fps: int = VideoCapture(video).get(CAP_PROP_FPS)
         start_frame: int = int(self._video_configuration["start_time"] * fps)
         end_frame: int = int(self._video_configuration["end_time"] * fps)
-        pyorc_video: Video = Video(
-            video,
-            start_frame=start_frame,
-            end_frame=end_frame,
-            freq=self._video_configuration["frequency"],
-            h_a=self._bathymetry["water_level"],
-            camera_config=self._cam_config
-        )
 
-        da = pyorc_video.get_frames()
-        #Apply previous steps filter here
-        da_norm = da.frames.normalize()
-        da_norm_proj = da_norm.frames.project()
-        piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+        if utils.check_internet():
+            self._cam_config = loads(self._cam_config.to_json()) if isinstance(self._cam_config,
+                                                                               CameraConfig) else self._cam_config
+            params = {
+                "fps": fps,
+                "start_frame": start_frame,
+                "end_frame": end_frame,
+                "freq": self._video_configuration["frequency"],
+                "h_a": self._bathymetry["water_level"],
+                "camera_config": self._cam_config,
+                "project_name": self._project_name
+            }
+            load_dotenv()
+            api_key = getenv("API_KEY")
+            route_url = getenv("API_URL") + "/process-piv"
+            files = {
+                "file": (video, open(video, "rb"), 'application/octet-stream'),
+                "data": ('data', dumps(params), 'application/json')
+            }
+            headers = {
+                "X-API-KEY": api_key,
+            }
+            # TODO add exceptions
+            s = requests.Session()
+            retries = Retry(total=100, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+            s.mount('http://', HTTPAdapter(max_retries=retries))
+            s.mount('https://', HTTPAdapter(max_retries=retries))
+            response = s.post(route_url, files=files, headers=headers, timeout=(500, 500))
+            if response.status_code == 401:
+                raise ValueError("The API key is not correct")
+            print("PROCESS PIV DURATION: ", response.text)
+            s.close()
+        else:
+            pyorc_video: Video = Video(
+                video,
+                start_frame=start_frame,
+                end_frame=end_frame,
+                freq=self._video_configuration["frequency"],
+                h_a=self._bathymetry["water_level"],
+                camera_config=self._cam_config
+            )
+
+            da = pyorc_video.get_frames()
+            # Apply previous steps filter here
+            da_norm = da.frames.normalize()
+            da_norm_proj = da_norm.frames.project()
+            piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+
         self._save_step("piv", {
             "file": "piv.nc",
             "need_update": False
         })
+
         return True
 
     def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> bool:

@@ -111,10 +111,11 @@ class ShapeOnImage(MDRelativeLayout):
         coordinate: list = []
 
         for point in self.points:
-            print("point.x:", point.x)
-            print("point.y:", point.y)
             x = int((point.x + 25) / self. width * self.image_default_norm_size[0])
-            y = int(self.image_default_norm_size[1]) - (int((point.y + 25) / self. height * self.image_default_norm_size[1]))
+            if(len(coordinate) == 2):
+                y = (point.y + 25) / self.height * self.image_default_norm_size[1]
+            else:
+                y = int(self.image_default_norm_size[1]) - (int((point.y + 25) / self. height * self.image_default_norm_size[1]))
 
             coordinate.append([x,y])
         return coordinate
