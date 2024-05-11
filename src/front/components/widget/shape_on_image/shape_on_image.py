@@ -115,6 +115,6 @@ class ShapeOnImage(MDRelativeLayout):
             y = int(self.image_default_norm_size[1]) - (
                 int((point.y + 25) / self.height * self.image_default_norm_size[1]))
 
-            coordinate.append([x,y])
+            coordinate.append([x, y])
         return coordinate
     
