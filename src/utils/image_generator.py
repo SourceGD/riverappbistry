@@ -42,13 +42,14 @@ def get_video_frame(video_path: str, time: int | float = 0) -> list:
 
     if not isinstance(video_path, str):
         raise ValueError(f"video_path must be a string: {video_path}")
-    
+
+    if not isinstance(time, (float, int)):
+        raise ValueError(f"time must be an int or a float: {time}")
+
     if not exists(video_path):
         raise FileNotFoundError(f"Could not find {video_path}")
     
-    if not isinstance(time, (float,int)):
-        raise ValueError(f"time must be an int or a flaot: {time}")
-    
+
     video_capture: VideoCapture = VideoCapture(video_path)
     
     if not video_capture.isOpened():
@@ -62,7 +63,7 @@ def get_video_frame(video_path: str, time: int | float = 0) -> list:
 
     if not success:
         raise IOError(f"Could not read {video_path}")
-    
+
     return frame
 
 def video_to_image(video_path: str, time: int | float = 0) -> Image:

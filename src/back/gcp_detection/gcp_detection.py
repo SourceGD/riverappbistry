@@ -65,7 +65,6 @@ def GCP_detect(video_path: str) -> list:
 
     # y value has to be first
     GCPs = np.flip([(np.mean(np.argwhere(objects == i), axis=0)).astype(int) for i in scores.keys()])
-
     return GCPs.tolist()
 
 
@@ -146,5 +145,6 @@ def sort_src(src):
     sorted_src = np.append(sorted_src[-1:], sorted_src[:-1], axis=0)
     # switch first and third beacons to match good order for PIV
     sorted_src[[0, 2]] = sorted_src[[2, 0]]
-
+    print("sorted src", sorted_src.tolist())
+    print(type(sorted_src.tolist()))
     return sorted_src.tolist()

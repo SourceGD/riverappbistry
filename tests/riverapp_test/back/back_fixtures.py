@@ -2,6 +2,7 @@ import pytest
 import json
 from os import path
 from src.back import SavingProjectData
+from src.utils import video_to_image
 from libs import pyorc
 
 
@@ -44,9 +45,23 @@ def video(cam_config_json, directory_path):
     return video
 
 
+# FIXTURES FOR TESTING BACK/gcp_detection/gcp_detection.py
+@pytest.fixture
+def expected_gcp():
+    return [[212, 665], [193, 236], [958, 51], [989, 572]]
+
+
+@pytest.fixture
+def expected_sorted_gcp():
+    return [[989, 572], [958, 51], [193, 236], [212, 665]]
+
+
+# TODO Find why this fixture generates a segfault
+@pytest.fixture
+def expected_image(expected_gcp):
+    return video_to_image("tests/riverapp_test/test_ressources/PB.mp4", 19)
+
 # FIXTURES FOR TESTING BACK/SAVING_PROJECT_DATA.PY
-
-
 @pytest.fixture
 def saving_project_data():
     spd = SavingProjectData()

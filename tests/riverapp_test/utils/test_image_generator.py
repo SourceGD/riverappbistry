@@ -7,25 +7,26 @@ import numpy as np
 
 @pytest.fixture
 def sample_video_path():
-    return path.join(path.dirname(path.abspath(__file__)), "test_ressources/VGC1/VGC1.mp4")
+    return "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4"
 
 
-def test_get_video_frame_invalid_video_path():
+def test_get_video_frame():
     with pytest.raises(ValueError):
-        get_video_frame(55)
+        get_video_frame(55, 55)
 
     with pytest.raises(FileNotFoundError):
-        get_video_frame("invalid_video_path.mp4")
+        get_video_frame("invalid_video_path.mp4", 55)
 
-
-def test_get_video_frame_invalid_time(sample_video_path):
     with pytest.raises(ValueError):
-        get_video_frame(sample_video_path, "invalid_time")
+        get_video_frame("string", "not an int or float")
+
+    with pytest.raises(IOError):
+        get_video_frame("invalid_video_path.mp4", 5.0)
 
 
 def test_get_video_frame_valid_input(sample_video_path):
     frame = get_video_frame(sample_video_path)
-    assert isinstance(frame, list)
+    assert isinstance(frame, np.ndarray) is True
 
 
 def test_get_video_frame_time(sample_video_path):
