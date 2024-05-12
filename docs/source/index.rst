@@ -20,4 +20,12 @@ This is the documentation welcome page
    installation
    dev_guide/index.rst
    dev_guide/gitlab_runner.rst
+   dev_guide/api.rst
+   user_guide/index.rst
+   user_guide/projects.rst
+   user_guide/video.rst
+   user_guide/bathymetry.rst
+   user_guide/beacons.rst
+   user_guide/piv.rst
+   user_guide/transect.rst
 
