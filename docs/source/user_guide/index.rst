@@ -1,3 +1,5 @@
+.. _user_guide:
+
 User guide
 ============
 The user guide is intended for anyone who wants to use RiverApp without necessarily wanting to get involved in development. The various screens are presented:
@@ -8,3 +10,16 @@ The user guide is intended for anyone who wants to use RiverApp without necessar
 * Beacon configuration
 * PIV analysis
 * Display of transects and calculated flow
+
+
+.. toctree::
+   :hidden:
+   :caption: User guide contents:
+
+   projects
+   video
+   bathymetry
+   beacons
+   piv
+   transects
+   measurements_guide

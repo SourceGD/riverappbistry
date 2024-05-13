@@ -186,6 +186,13 @@ In case of Windows does not recognise the command, go through these steps:
 
 .. _ClockDoc : https://kivy.org/doc/stable/api-kivy.clock.html
 
+.. toctree::
+   :hidden:
+   :caption: Dev guide contents:
+
+   api
+   gitlab_runner
+
 
 
 

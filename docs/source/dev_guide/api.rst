@@ -156,6 +156,10 @@ Currently, the API is not using any other security measures, but there is some i
 * Use a more secure way to store the API key
 * Secure server using a TLS certificate
 
+.. image:: ../images/filters.png
+    :width: 800
+    :align: center
+    :alt: Filters
 
 
 
