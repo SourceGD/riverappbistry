@@ -25,9 +25,14 @@ To take measures you first need to define your research area.
 This area should cover an consequent section so that the application has enough data to calculate the river discharge.
 
 #. Measure the bathymetry of the designated area. Since radar technologies are not available for the general public, you will need to measure the depth of the river manually.
+#. Measure the river discharge using current meter or other device.
 #. Place GCPs at the four corners of the area you want to measure. These GCPs should be visible in the images you take.
 #. Measure the distance between the GCPs.
 #. Measure the distance between the camera and the bottom left GCP.
 #. Take pictures of the river from different angles while throwing wooden chips from higher up the river. The more pictures you take, the better you can compare results
 #. Take a video of the river from a drone if possible, still while throwing wooden chips.
 
+.. note::
+    It is important to note that if you have already done all these measurements, you can go directly to point 6 & 7 **but** you have to take in account that bathymetry is evolving with the life of the river. So, if you have done these measurements a long time ago, it is recommended to do them again.
+
+    If you only want to get a theoretical discharge, you can skip the point 2. If you want to test the accuracy of the application, it is recommended to do it.
