@@ -20,6 +20,7 @@ The user guide is intended for anyone who wants to use RiverApp without necessar
    video
    bathymetry
    beacons
+   filters
    piv
-   transects
+   transect
    measurements_guide
