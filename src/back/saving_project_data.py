@@ -1,5 +1,3 @@
-import json
-import time
 from os import path, mkdir, getenv
 from json import load, dumps, loads
 from shutil import rmtree
@@ -7,7 +5,6 @@ import math
 import requests
 from requests.adapters import HTTPAdapter, Retry
 
-from dask.diagnostics import ProgressBar
 from cv2 import VideoCapture, CAP_PROP_FPS
 from dotenv import load_dotenv
 from definitions import PROJECT_DEFAULT_STRUCT, PROJECTS_DIR
@@ -20,7 +17,7 @@ class ProjectNotLoaded(Exception):
     pass
 
 
-class SavingProjectData():
+class SavingProjectData:
     def __init__(self) -> None:
         self._post_process: dict = None
         self._backup_file: str = None
@@ -48,7 +45,7 @@ class SavingProjectData():
     @video_configuration.setter
     def video_configuration(self, video_configuration: dict) -> None:
         if self._backup_file is None:
-            raise ValueError(f"The project need to be loaded before adding data")
+            raise ValueError("The project need to be loaded before adding data")
 
         if self._video_configuration == video_configuration:
             return
@@ -56,28 +53,29 @@ class SavingProjectData():
         if not isinstance(video_configuration, dict):
             raise TypeError(f"video_configuration should be a dict : {video_configuration}")
 
-        self._check_missing_data(["video", "start_time", "end_time", "frequency"], video_configuration)
+        self._check_missing_data(["video", "start_time", "end_time", "frequency"],
+                                 video_configuration)
 
         if not path.exists(video_configuration["video"]):
             raise FileNotFoundError(f"The video was not found : {video_configuration['video']}")
 
         if not isinstance(video_configuration["start_time"], (int, float)):
-            raise TypeError(f"start_time should be an int or a float")
+            raise TypeError("start_time should be an int or a float")
 
         if not isinstance(video_configuration["end_time"], (int, float)):
-            raise TypeError(f"end_time should be an int or a float")
+            raise TypeError("end_time should be an int or a float")
 
         if not isinstance(video_configuration["frequency"], (int, float)):
-            raise TypeError(f"frequency should be an int or a float")
+            raise TypeError("frequency should be an int or a float")
 
         if video_configuration["start_time"] < 0:
-            raise ValueError(f"start_time cannot be less than 0")
+            raise ValueError("start_time cannot be less than 0")
 
         if video_configuration["end_time"] < 0:
-            raise ValueError(f"end_time cannot be less than 0")
+            raise ValueError("end_time cannot be less than 0")
 
         if video_configuration["frequency"] <= 0:
-            raise ValueError(f"start_time cannot be less than or equal to 0")
+            raise ValueError("start_time cannot be less than or equal to 0")
 
         if video_configuration["start_time"] >= video_configuration["end_time"]:
             raise ValueError("start_time cannot be greater than end_time")
@@ -95,7 +93,7 @@ class SavingProjectData():
     @bathymetry.setter
     def bathymetry(self, bathymetry: dict) -> None:
         if self._backup_file is None:
-            raise ValueError(f"The project need to be loaded before adding data")
+            raise ValueError("The project need to be loaded before adding data")
 
         if self._bathymetry == bathymetry:
             return
@@ -109,7 +107,8 @@ class SavingProjectData():
             raise ValueError("There are not as many x-coordinates as y-coordinates")
 
         for i in range(len(bathymetry["x"])):
-            if not isinstance(bathymetry["x"][i], (int, float)) or not isinstance(bathymetry["y"][i], (int, float)):
+            if (not isinstance(bathymetry["x"][i], (int, float))
+                    or not isinstance(bathymetry["y"][i], (int, float))):
                 raise ValueError("All coordinates must be numbers")
 
         if not isinstance(bathymetry["water_level"], (float, int)):
@@ -131,7 +130,7 @@ class SavingProjectData():
     @beacons.setter
     def beacons(self, beacons: dict) -> None:
         if self._backup_file is None:
-            raise ValueError(f"The project need to be loaded before adding data")
+            raise ValueError("The project need to be loaded before adding data")
 
         if self._beacons == beacons:
             return
@@ -139,21 +138,31 @@ class SavingProjectData():
         if not isinstance(beacons, dict):
             raise TypeError(f"beacons should be a dict : {beacons}")
 
-        self._check_missing_data(["points", "p1_to_p2", "p2_to_p3", "p3_to_p4", "p4_to_p1", "p1_to_p3", "p2_to_p4"],
-                                 beacons)
+        self._check_missing_data(
+            [
+                "points",
+                "p1_to_p2",
+                "p2_to_p3",
+                "p3_to_p4",
+                "p4_to_p1",
+                "p1_to_p3",
+                "p2_to_p4"],
+            beacons)
 
         if len(beacons["points"]) != 4:
             raise ValueError("Points should have 4 pairs of coordinates ")
 
         for coordinates in beacons["points"]:
             if len(coordinates) != 2:
-                raise ValueError(f"A point lacks the x-coordinate or y-coordinates or both")
+                raise ValueError("A point lacks the x-coordinate or y-coordinates or both")
 
-            if not isinstance(coordinates[0], (int, float)) or not isinstance(coordinates[1], (int, float)):
-                raise ValueError(f"Point coordinates should be numbers")
+            if not isinstance(coordinates[0], (int, float)) or not isinstance(coordinates[1],
+                                                                              (int, float)):
+                raise ValueError("Point coordinates should be numbers")
 
-        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or beacons["p4_to_p1"] <= 0 or beacons["p1_to_p3"] <= 0 or beacons["p2_to_p4"] <= 0:
-            raise ValueError(f"Distance between points cannot be lass than or equal to 0")
+        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or \
+                beacons["p4_to_p1"] <= 0 or beacons["p1_to_p3"] <= 0 or beacons["p2_to_p4"] <= 0:
+            raise ValueError("Distance between points cannot be lass than or equal to 0")
 
         self._beacons = beacons
         self._save_step("beacons", beacons)
@@ -168,9 +177,8 @@ class SavingProjectData():
         return self._filter_video
 
     @filter_video.setter
-    def filter_video(self, filter_video: dict) -> None:
+    def filter_video(self, filters: dict):
         self._save_step("filter_video", {})
-        return
 
     @property
     def piv(self) -> dict:
@@ -183,7 +191,7 @@ class SavingProjectData():
 
     def _save_step(self, step: str, data: dict) -> None:
         if not isinstance(data, dict):
-            raise TypeError(f"data should be a dict")
+            raise TypeError("data should be a dict")
 
         with open(self._backup_file, "r") as json_file:
             saved_data = load(json_file)
@@ -208,7 +216,7 @@ class SavingProjectData():
         keys_data = set(dict_format.keys())
         if keys_format != keys_data:
             print("ValueError, The data format doesn't respect the wanted format")
-            raise ValueError(f"The data format doesn't respect the wanted format 3")
+            raise ValueError("The data format doesn't respect the wanted format 3")
 
         for key in keys_format:
             if key == "cam_config":
@@ -217,9 +225,11 @@ class SavingProjectData():
             if isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict):
                 self._check_backup_file_format(wanted_dict_format[key], dict_format[key])
 
-            elif ((isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key], dict))
-                  or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key], dict)):
-                raise ValueError(f"The data format doesn't respect the wanted format 4")
+            elif ((isinstance(wanted_dict_format[key], dict) and not isinstance(dict_format[key],
+                                                                                dict))
+                  or not isinstance(wanted_dict_format[key], dict) and isinstance(dict_format[key],
+                                                                                  dict)):
+                raise ValueError("The data format doesn't respect the wanted format 4")
 
         return True
 
@@ -242,21 +252,23 @@ class SavingProjectData():
             raise TypeError(f"dist should be a list : {dist}")
         # Points coordinates computation
         # We consider first that P1 and P4 are vertically aligned and P4 as the  origin
-        P1, P4 = [0, dist[3]], [0, 0]
+        p1, p4 = [0, dist[3]], [0, 0]
 
         # Then we compute other coordinates using cosine law
         alpha = math.acos((dist[3] ** 2 + dist[5] ** 2 - dist[0] ** 2) / (2 * dist[3] * dist[5]))
-        P2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
+        p2 = [dist[5] * math.sin(alpha), dist[5] * math.cos(alpha)]
         beta = math.acos((dist[3] ** 2 + dist[2] ** 2 - dist[4] ** 2) / (2 * dist[3] * dist[2]))
-        P3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
-        return [[P2[0], P2[1]], [P3[0], P3[1]], [P4[0], P4[1]], [P1[0], P1[1]]]
+        p3 = [dist[2] * math.sin(beta), dist[2] * math.cos(beta)]
+        return [[p2[0], p2[1]], [p3[0], p3[1]], [p4[0], p4[1]], [p1[0], p1[1]]]
 
     def generate_cam_config(self) -> bool:
-        if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] or not self._steps_done[
-            "beacons"]:
+        if (not self._steps_done["video_configuration"]
+                or not self._steps_done["bathymetry"]
+                or not self._steps_done["beacons"]):
             return False
 
-        init_frame = get_video_frame(self.video_configuration["video"], self.video_configuration["start_time"])
+        init_frame = get_video_frame(self.video_configuration["video"],
+                                     self.video_configuration["start_time"])
 
         height, width = init_frame.shape[0:2]
         dst: list = self._convert_dist_to_dest_points([
@@ -282,7 +294,8 @@ class SavingProjectData():
             # lens_position=[1.25, 1.5, 3], # Position for PB from 45 degrees
             # lens_position=[1.25, 0.75, 3] # Position for PB from above at 90 degrees
             # lens_position=[7, -2, 3] # Position for VGC
-            # the lens_position does not seem to be used for the process but has to be indicated to avoid error/warnings
+            # the lens_position does not seem to be used for the process but has to be indicated
+            # to avoid error/warnings
         )
 
         cam_config.set_bbox_from_corners(self._beacons["points"])
@@ -302,8 +315,9 @@ class SavingProjectData():
         end_frame: int = int(self._video_configuration["end_time"] * fps)
 
         if utils.check_internet():
-            self._cam_config = loads(self._cam_config.to_json()) if isinstance(self._cam_config,
-                                                                               CameraConfig) else self._cam_config
+            self._cam_config = loads(self._cam_config.to_json()) \
+                if isinstance(self._cam_config, CameraConfig) \
+                else self._cam_config
             params = {
                 "fps": fps,
                 "start_frame": start_frame,
@@ -347,7 +361,8 @@ class SavingProjectData():
             # Apply previous steps filter here
             da_norm = da.frames.normalize()
             da_norm_proj = da_norm.frames.project()
-            piv = da_norm_proj.frames.get_piv().to_netcdf(path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
+            da_norm_proj.frames.get_piv().to_netcdf(
+                path.join(PROJECTS_DIR, self._project_name, "piv.nc"))
 
         self._save_step("piv", {
             "file": "piv.nc",
@@ -356,7 +371,8 @@ class SavingProjectData():
 
         return True
 
-    def save_post_process(self, river_flow: float, transect_picture_path: str, local_points: list) -> bool:
+    def save_post_process(self, river_flow: float, transect_picture_path: str,
+                          local_points: list) -> bool:
         if not self._steps_done["piv"]:
             return False
 
@@ -391,8 +407,9 @@ class SavingProjectData():
         # Check if data format is correct
         try:
             self._check_backup_file_format(PROJECT_DEFAULT_STRUCT, project_data)
-        except ValueError:
-            raise ValueError(f"CRASH : The backup file format is not correct{backup_file_path}")
+        except ValueError as exc:
+            raise ValueError(f'CRASH : The backup file format is not correct{backup_file_path}') \
+                from exc
         self._backup_file = backup_file_path
         self._project_name = path.basename(project_dir)
         self._steps_done = project_data["steps_done"]
@@ -405,7 +422,7 @@ class SavingProjectData():
         self._post_process = project_data["post_process"]
         return
 
-    def create_project(self, projects_dir: str, project_name: str) -> None:
+    def create_project(self, projects_dir: str, project_name: str):
         if not isinstance(projects_dir, str):
             raise TypeError(f"project_dir should be a str : {projects_dir}")
 
@@ -427,9 +444,7 @@ class SavingProjectData():
             data["project_name"] = project_name
             json_file.write(dumps(data, indent=4))
 
-        return
-
-    def delete_project(self, project_dir: str) -> None:
+    def delete_project(self, project_dir: str):
         if not isinstance(project_dir, str):
             raise TypeError(f"project_dir should be a str : {project_dir}")
 
@@ -437,8 +452,7 @@ class SavingProjectData():
             raise FileNotFoundError(f"project_dir was not found : {project_dir}")
 
         if not path.exists(path.join(project_dir, f"{path.basename(project_dir)}.json")):
-            raise FileNotFoundError(f"the directory is not a RiverApp project directory")
+            raise FileNotFoundError("the directory is not a RiverApp project directory")
 
         rmtree(project_dir)
 
-        return

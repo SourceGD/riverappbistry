@@ -1,7 +1,7 @@
-from cv2 import VideoCapture, flip, CAP_PROP_POS_FRAMES, CAP_PROP_FPS
 from os.path import exists
-from matplotlib import pyplot as plt
 from io import BytesIO
+from cv2 import VideoCapture, flip, CAP_PROP_POS_FRAMES, CAP_PROP_FPS
+from matplotlib import pyplot as plt
 import numpy as np
 
 from kivy.uix.image import Image
@@ -48,23 +48,23 @@ def get_video_frame(video_path: str, time: int | float = 0) -> list:
 
     if not exists(video_path):
         raise FileNotFoundError(f"Could not find {video_path}")
-    
 
     video_capture: VideoCapture = VideoCapture(video_path)
-    
+
     if not video_capture.isOpened():
         raise IOError(f"Could not load {video_path}")
-    
+
     video_capture.set(CAP_PROP_POS_FRAMES, int(time * video_capture.get(CAP_PROP_FPS)))
-    
+
     success, frame = video_capture.read()
-    
+
     video_capture.release()
 
     if not success:
         raise IOError(f"Could not read {video_path}")
 
     return frame
+
 
 def video_to_image(video_path: str, time: int | float = 0) -> Image:
     """Convert a video frame to a kivy Image
@@ -97,9 +97,9 @@ def video_to_image(video_path: str, time: int | float = 0) -> Image:
     IOError
         If the video can not be loaded or read
     """
-    
+
     frame = get_video_frame(video_path, time)
-    
+
     flipped_frame = flip(frame, 0)
     height, width, _ = flipped_frame.shape
     texture = Texture.create(size=(width, height))
@@ -125,9 +125,9 @@ def plot_to_image(plot: plt) -> Image:
         The plot converted into a kivy Image
 
     """
-    
+
     image_buffer: BytesIO = BytesIO()
-    
+
     plot.savefig(image_buffer, format="png")
     plot.close()
     image_buffer.seek(0)
@@ -139,18 +139,13 @@ def plot_to_image(plot: plt) -> Image:
     # Invert the image vertically
     image_data = np.flipud(image_data)
 
-    # Convert the image into values from 0 to 255 (8 bits) 
+    # Convert the image into values from 0 to 255 (8 bits)
     image_data = (image_data * 255).astype(np.uint8)
 
     # Create texture from image data
     texture = Texture.create(size=(width, height), colorfmt='rgba')
     texture.blit_buffer(image_data.flatten(), colorfmt='rgba', bufferfmt='ubyte')
-    
+
     image_buffer.close()
 
     return Image(texture=texture, size=(width, height), fit_mode="contain")
-    
-
-    
-
-    
