@@ -88,8 +88,6 @@ src/back/video_filters.py:57:69: E1101: Module 'cv2' has no 'COLOR_GRAY2BGR' mem
 src/back/video_filters.py:59:4: C0116: Missing function or method docstring (missing-function-docstring)
 src/back/video_filters.py:75:4: C0116: Missing function or method docstring (missing-function-docstring)
 src/back/video_filters.py:75:4: R1711: Useless return at end of function or method (useless-return)
-************* Module src.back.__init__
-src/back/__init__.py:1:0: C0301: Line too long (110/100) (line-too-long)
 ************* Module src.back
 src/back/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module src.utils.image_generator
@@ -102,11 +100,9 @@ src/utils/image_generator.py:8:0: E0611: No name 'Texture' in module 'kivy.graph
 ************* Module src.utils.utils
 src/utils/utils.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 src/utils/utils.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module src.utils.__init__
-src/utils/__init__.py:1:0: C0304: Final newline missing (missing-final-newline)
 ************* Module src.utils
 src/utils/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 
 ------------------------------------------------------------------
-Your code has been rated at 6.28/10 (previous run: 6.26/10, +0.02)
+Your code has been rated at 6.31/10 (previous run: 6.28/10, +0.04)
 
