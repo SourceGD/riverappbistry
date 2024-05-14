@@ -14,9 +14,9 @@ def delimiter_points_bathy(cam_config, local_points):
     # local_points = [[600, 1200], [2800, 1200]] # Petit bocq 90 degrees
     # local_points = [[494, 427], [1391, 465]]
     # convert local_points to the orthorectified referential
-    M = np.array(cv2.getPerspectiveTransform(np.float32(cam_config.gcps['src']),
+    m = np.array(cv2.getPerspectiveTransform(np.float32(cam_config.gcps['src']),
                                              np.float32(cam_config.gcps['dst'])))
-    ret = cv2.perspectiveTransform(np.float32([local_points]), M)[0]
+    ret = cv2.perspectiveTransform(np.float32([local_points]), m)[0]
 
     return ret
 
@@ -26,14 +26,14 @@ def all_points_bathy(bathy, bathy_delimeters, ds):
     x_bath = bathy["x"].values
     z_bath = bathy["y"].values
 
-    C1, C2 = bathy_delimeters
+    c1, c2 = bathy_delimeters
 
     # interpolate points between both bathy_delimeters points
     x, y, z = np.empty((3, len(x_bath)))
     for idx, xb in enumerate(x_bath):
         lambd = xb / np.amax(x_bath)
-        x[idx] = C1[0] + lambd * np.abs(C2[0] - C1[0])
-        y[idx] = C1[1] + lambd * np.abs(C2[1] - C1[1])
+        x[idx] = c1[0] + lambd * np.abs(c2[0] - c1[0])
+        y[idx] = c1[1] + lambd * np.abs(c2[1] - c1[1])
         z[idx] = z_bath[idx]
 
     return ds.velocimetry.get_transect(x, y, z, rolling=4)

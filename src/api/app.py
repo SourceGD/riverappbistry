@@ -2,21 +2,21 @@ import base64
 import json
 from functools import wraps
 import time
+import logging
+import os
+import gc
 
 from dotenv import load_dotenv
 from flask import Flask, request, send_file, jsonify, abort
-import os
-import gc
-# import libs.pyorc path
-
-
-from libs.pyorc import CameraConfig, Video
-from src.back.transect import transect
-from src.back.mask import mask_and_plot
-import xarray as xr
 
 from werkzeug.utils import secure_filename
-import logging
+
+import xarray as xr
+
+from libs.pyorc import Video
+from src.back.transect import transect
+from src.back.mask import mask_and_plot
+
 
 app = Flask(__name__)
 
@@ -36,8 +36,7 @@ def api_key_required(api_key):
         def decorated_function(*args, **kwargs):
             if request.headers.get('X-API-KEY') and request.headers.get('X-API-KEY') == api_key:
                 return f(*args, **kwargs)
-            else:
-                abort(401)
+            abort(401)
 
         return decorated_function
 
@@ -72,19 +71,22 @@ def process_piv():
         da_norm = da.frames.normalize()
         da_norm_proj = da_norm.frames.project()
         logging.info("Starting PIV")
-        piv = da_norm_proj.frames.get_piv().to_netcdf(
+        da_norm_proj.frames.get_piv().to_netcdf(
             os.path.join(OUTPUT_FOLDER, data["project_name"] + "_" + 'piv.nc'))
         end_time = time.time()
         logging.info("PIV done")
         gc.collect()
         return f'File processed successfully, piv lasted {end_time-start_time} seconds', 200
 
+    return 'No file part', 400
+
 
 @app.route('/process-transects', methods=['GET'])
 @api_key_required(required_api_key)
 def process_transects():
     request_data = request.get_json()
-    video_path = request_data["video_name"].replace("/", "").replace("\\", "").replace("_", "").replace(":", "").lstrip("_")
+    video_path = (request_data["video_name"].replace("/", "")
+                  .replace("\\", "").replace("_", "").replace(":", "").lstrip("_"))
     pyorc_video: Video = Video(
         os.path.join(UPLOAD_FOLDER, video_path),
         start_frame=request_data["video"]["start_frame"],
@@ -92,19 +94,29 @@ def process_transects():
         camera_config=request_data["video"]["camera_config"]
     )
     start_time = time.time()
-    dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'piv.nc')
-    mask_and_plot(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_", dataset, pyorc_video)
-    masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + "piv_masked.nc")
-    river_flow = transect(masked_dataset, pyorc_video, OUTPUT_FOLDER + "/" + request_data["project_name"] + "_",
-                          request_data["bathymetry"], request_data["local_points"])
-    # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc") does not have the right on every computer,
+    formatted_output_folder = OUTPUT_FOLDER + "/" + request_data["project_name"] + "_"
+    dataset = xr.open_dataset(OUTPUT_FOLDER + "/"
+                              + request_data["project_name"]
+                              + "_" + 'piv.nc')
+    mask_and_plot(formatted_output_folder, dataset, pyorc_video)
+    masked_dataset = xr.open_dataset(OUTPUT_FOLDER + "/"
+                                     + request_data["project_name"]
+                                     + "_" + "piv_masked.nc")
+    river_flow = transect(masked_dataset,
+                          pyorc_video,
+                          formatted_output_folder,
+                          request_data["bathymetry"],
+                          request_data["local_points"])
+    # os.remove(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_piv_masked.nc")
+    # does not have the right on every computer,
     # TODO: find a way to bypass admin permissions (windows)
     masked_dataset.close()
     end_time = time.time()
     river_flow = river_flow.values.tolist()
-    send_file(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', mimetype='image/jpeg')
+    send_file(formatted_output_folder + 'plot_transect.jpg', mimetype='image/jpeg')
     # converting image to base64 to send it with other responses
-    with open(OUTPUT_FOLDER + "/" + request_data["project_name"] + "_" + 'plot_transect.jpg', "rb") as image_file:
+    with (open(formatted_output_folder + 'plot_transect.jpg', "rb")
+          as image_file):
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
 
     data = {

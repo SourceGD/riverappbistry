@@ -1,5 +1,5 @@
-import numpy as np
 import copy
+import numpy as np
 from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 
