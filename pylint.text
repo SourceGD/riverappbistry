@@ -104,5 +104,5 @@ src/utils/utils.py:4:0: C0116: Missing function or method docstring (missing-fun
 src/utils/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 
 ------------------------------------------------------------------
-Your code has been rated at 6.31/10 (previous run: 6.28/10, +0.04)
+Your code has been rated at 6.31/10 (previous run: 6.31/10, +0.00)
 
