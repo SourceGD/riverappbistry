@@ -45,7 +45,7 @@ class ProjectDetails(MDResponsiveLayout, MDScreen):
         self.desktop_view: ProjectDetailsDesktopView = ProjectDetailsDesktopView()
         self.next_step = PROJECT_STEPS[0]
 
-    def _display_setps_done(self) -> None:
+    def _display_steps_done(self) -> None:
         self.next_step = next((key for key in PROJECT_STEPS if not MDApp.get_running_app().project.steps_done[key]), None)
         print(self.next_step)
         if self.next_step is None and MDApp.get_running_app().project.steps_done["post_process"]:
@@ -57,7 +57,7 @@ class ProjectDetails(MDResponsiveLayout, MDScreen):
         return
     
     def on_enter(self, *args) -> None:
-        Thread(target=self._display_setps_done).start()    
+        Thread(target=self._display_steps_done).start()
 
     def continue_project(self, *args) -> None:
         if self.next_step is None and not MDApp.get_running_app().project.steps_done["post_process"]:

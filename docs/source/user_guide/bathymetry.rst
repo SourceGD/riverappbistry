@@ -63,4 +63,4 @@ In the example below, the deepest point was 0.83m, so the water level is 0.83m.
 .. figure:: ../_static/bathy_configuration.png
     :alt: Bathymetry configuration
 
-    Bathymetry configuration screen example, after loading the batymetry
+    Bathymetry configuration screen example, after loading the bathymetry

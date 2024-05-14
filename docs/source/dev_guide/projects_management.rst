@@ -199,6 +199,8 @@ Here is an example of a project configuration file (some fields have been reduce
 Each screen has its own object in the project configuration file.
 The ``steps_done`` allows the application to know where the user stopped the last time he worked on the project.
 
+Also, the root directory has a definitions.py, which acts as a .env file, containing the project data skeleton to check if files have good format, the projects steps to know where the user is and some paths.
+
 For each screen we will develop what means each field of the current screen section.
 
 How does the projects management screen works
