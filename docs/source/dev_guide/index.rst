@@ -4,12 +4,14 @@
 Dev Guide
 =========
 
-This part contains useful information for the developers who wish or are working on RiverApp such as how to generate 
+This part contains useful information for the developers who wish or are working on RiverApp such as how to generate
 documentation or how to add new screens to the app.
+This documentation also contain a page for each screen to know how each screen is working.
 
 .. note::
 
-    This is not a code documentation
+    #. It is suggested to read the screens documentation in the right order to understand how the application works.
+    #. It is important to know that the back-end files do not really follow any logic, some functions should have their own file and some classes does not make sens at the moment. That is why this documentation is here to help you understand the code.
 
 Coding Standard
 ===============
@@ -23,7 +25,7 @@ Coding Standard
 - function naming : ``snake_case``
 
 .. note::
-    This is a non-exhaustive list of coding standards. 
+    This is a non-exhaustive list of coding standards.
 
 .. note::
     By using ``pylint``, you can test if the standard are respected or not with this line :
@@ -192,6 +194,7 @@ In case of Windows does not recognise the command, go through these steps:
 
    api
    gitlab_runner
+   projects_management
 
 
 
