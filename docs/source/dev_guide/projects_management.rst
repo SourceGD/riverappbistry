@@ -220,7 +220,7 @@ When the user has clicked on a project that loaded successfully, the application
 
 To sum up the different functions used in this screen:
 
-For the front-end:
+From the front-end:
 
 * **open_del_project_dialogs**: opens the new project modal
 * **_check_and_create_new_project**: checks if the project name is not already taken and creates a new project
@@ -232,6 +232,6 @@ For the front-end:
 * **select_download_destination**: used in open_download_file_manager to select the download destination
 * **exit_download_file_manager**: same thing
 
-For the back-end:
+From the back-end:
 
 * **download_project**: function from project_data_management to download the project, but not working.
