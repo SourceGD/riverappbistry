@@ -22,4 +22,4 @@ testing:
         - echo $PYTHONPATH
         - python3.10 -m pip install -r requirements.txt
         - cd ..
-        - python -m pytest --ignore=tests/pyorc_test
+        - python -m pytest --ignore=tests/pyorc_test/
