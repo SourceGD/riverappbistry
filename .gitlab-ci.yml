@@ -8,8 +8,6 @@ before_script:
     - apt update
     - python3.10 -m pip install pylint
     - python3.10 -m pip install pytest
-    - ls
-    - python3.10 -m pip install -e .
     - cd ..
 
 code-analysis:
@@ -22,4 +20,5 @@ testing:
     stage: testing
     script:
         - cd riverapp
+        - python3.10 -m pip install .
         - python -m pytest tests/riverapp_test/
