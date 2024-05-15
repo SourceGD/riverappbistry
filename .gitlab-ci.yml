@@ -19,5 +19,7 @@ code-analysis:
 testing:
     stage: testing
     script:
+        - echo $PYTHONPATH
         - python3.10 -m pip install -r requirements.txt
-        - python -m pytest tests/riverapp_test/
+        - cd ..
+        - python -m pytest riverapp/tests/riverapp_test/
