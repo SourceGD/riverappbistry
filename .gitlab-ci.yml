@@ -8,19 +8,17 @@ before_script:
     - apt update
     - python3.10 -m pip install pylint
     - python3.10 -m pip install pytest
-    - python3.10 -m pip install -r requirements.txt
     - export PYTHONPATH=src/back:$PYTHONPATH
-    - cd ..
 
 code-analysis:
     stage: code-check
     script :
-        - pylint --recursive=y riverapp/src --disable=R0901,W0613,C0114,E0611 --fail-under=6 --class-attribute-naming-style=snake_case
+        - pylint --recursive=y src --disable=R0901,W0613,C0114,E0611 --fail-under=6 --class-attribute-naming-style=snake_case
 
 
 testing:
     stage: testing
     script:
-        - cd riverapp
+        - python3.10 -m pip install -r requirements.txt
         - python3.10 -m pip install .
         - python -m pytest tests/riverapp_test/
