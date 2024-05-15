@@ -20,5 +20,4 @@ testing:
     stage: testing
     script:
         - python3.10 -m pip install -r requirements.txt
-        - python3.10 -m pip install .
         - python -m pytest tests/riverapp_test/
