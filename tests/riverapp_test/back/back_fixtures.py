@@ -407,7 +407,7 @@ def check_backup_file_format():
             "post_process": True
         },
         "video_configuration": {
-            "video": "/home/andreas/examples/riverapp_examples/VGC1/VGC1.mp4",
+            "video": "tests/riverapp_test/test_ressources/VGC1/VGC1.mp4",
             "start_time": 25.0,
             "end_time": 30.0,
             "frequency": 1,

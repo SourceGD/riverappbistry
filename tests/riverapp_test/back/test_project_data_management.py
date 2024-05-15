@@ -26,6 +26,6 @@ def test_is_directory_valid(testing_project_path):
 
 def test_get_project_save_file(testing_project_path):
     with pytest.raises(FileNotFoundError):
-        get_project_save_file(testing_project_path+"/../empty_directory")
+        get_project_save_file("tests/riverapp_test/test_ressources/mask_testing")
     assert get_project_save_file(testing_project_path) == f"{testing_project_path}/testing_project.json"
     return

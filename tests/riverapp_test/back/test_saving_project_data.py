@@ -180,6 +180,8 @@ def test_generate_cam_config(saving_project_data, check_backup_file_format):
     return
 
 
+@pytest.mark.skip(
+    reason="Test is too heavy for the API server to handle this request for every pipeline job")
 def test_generate_piv(saving_project_data, check_backup_file_format):
     if path.exists(PROJECTS_DIR + "/testing_project"):
         for file in os.listdir(PROJECTS_DIR + "/testing_project"):
