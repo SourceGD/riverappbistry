@@ -3,6 +3,7 @@ from src.back.gcp_detection.gcp_detection import beacons_detection, GCP_detect, 
 from back_fixtures import expected_gcp, expected_sorted_gcp
 import numpy as np
 
+
 def test_beacons_detection():
     with pytest.raises(ValueError):
         beacons_detection(1, 1)
