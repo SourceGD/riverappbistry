@@ -8,7 +8,6 @@ before_script:
     - apt update
     - python3.10 -m pip install pylint
     - python3.10 -m pip install pytest
-    - export PYTHONPATH=$PYTHONPATH:$(pwd)/src/back
 
 code-analysis:
     stage: code-check
@@ -19,7 +18,6 @@ code-analysis:
 testing:
     stage: testing
     script:
-        - echo $PYTHONPATH
         - python3.10 -m pip install -r requirements.txt
         - echo $PWD
         - python -m pytest --ignore=tests/pyorc_test/
