@@ -13,4 +13,4 @@ code-analysis:
     stage: code-check
     script :
         - pylint --recursive=y riverapp/src --disable=R0901,W0613,C0114,E0611 --fail-under=3 --class-attribute-naming-style=snake_case
-        - python -m pytest tests/riverapp_test/
+        - python -m pytest riverapp/tests/riverapp_test/
