@@ -202,6 +202,7 @@ In case of Windows does not recognise the command, go through these steps:
    project_details
    video_configuration
    bathymetry_configuration
+   beacons_configuration
 
 
 

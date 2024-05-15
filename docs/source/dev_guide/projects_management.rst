@@ -5,6 +5,7 @@ Projects Management
 ########################################
 
 Before beginning, here is how the application generally works:
+
 Each project is a directory containing a ``project.json`` file, which contains
 the project's metadata. The project's files are stored in the ``projects`` directory.
 
