@@ -1,7 +1,7 @@
 import pytest
 from os import path
 from cv2 import VideoCapture, CAP_PROP_FPS, CAP_PROP_POS_FRAMES
-from src.utils import get_video_frame, video_to_image, plot_to_image
+from src.utils.image_generator import get_video_frame, video_to_image, plot_to_image
 import numpy as np
 from kivy.uix.image import Image
 

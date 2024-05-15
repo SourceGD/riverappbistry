@@ -22,7 +22,7 @@ def is_directory_valid(directory: str) -> bool:
         raise ValueError("Invalid path")
 
     if not path.exists(directory) or not path.isdir(directory):
-        raise ValueError(f"Directory not found : {path}")
+        raise ValueError(f"Directory not found : {directory}")
 
     return True
 
