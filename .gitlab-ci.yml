@@ -8,7 +8,8 @@ before_script:
     - apt update
     - python3.10 -m pip install pylint
     - python3.10 -m pip install pytest
-    - python3.10 -m pip install -r riverapp/requirements.txt
+    - ls
+    - python3.10 -m pip install -r requirements.txt
     - cd ..
 
 code-analysis:
