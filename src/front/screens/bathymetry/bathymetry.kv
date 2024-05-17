@@ -145,7 +145,7 @@
         on_release: app.root.ids.screen_manager.get_screen("bathymetry").validate_bathymetry()
 
 <WaterLevelInput@DefaultTextInput>:
-    hint_text: "water level [m]"
+    hint_text: "mean water level [m]"
     input_filter: "float"
     helper_text_mode: "on_error"
     on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_water_level(self.text) if not self.focus else None

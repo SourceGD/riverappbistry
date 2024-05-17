@@ -56,9 +56,9 @@ As you can see, there is a measurement every 20 cm, and the first line is the he
 When you measure the bathymetry of a river, you will have measures of the depth at different points, and you will have to convert these measures to the format above.
 
 To do so, you have to take the deepest point of the bathymetry and subtract all the other points to this value to obtain a valid y value.
-The water level you have to enter is the water level at the time of the bathymetry measurement, which correspond to you first deepest value.
+The mean water level you have to enter is the water level at the time of the bathymetry measurement, which correspond to you first deepest value.
 
-In the example below, the deepest point was 0.83m, so the water level is 0.83m.
+In the example below, the deepest point was 0.83m, so the mean water level is 0.83m.
 
 .. figure:: ../_static/bathy_configuration.png
     :alt: Bathymetry configuration

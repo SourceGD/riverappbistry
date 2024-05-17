@@ -4,7 +4,7 @@
 Bathymetry Configuration
 ######################################
 
-The bathymetry configuration screen allows the user to configure the bathymetry data, as well as the water level at the time of the measurements.
+The bathymetry configuration screen allows the user to configure the bathymetry data, as well as the mean water level at the time of the measurements.
 This screen also lets the user select the surface coefficient, which can make the results vary.
 
 When entering the screen, the application checks if the bathymetry data is already loaded by calling ``_load_bathymetry``.
@@ -15,7 +15,7 @@ If not, the user is prompted to upload the bathymetry data.
 When the user clicks on the "Upload bathymetry" button, the application opens the file manager using ``open_file_manager``.
 When the user has chosen the file, the application calls ``_select_path``, which will load the graph of the bathymetry data and display it as a widget.
 
-The user can then select the water level at the time of the measurements by entering the value in the text box.
+The user can then select the mean water level at the time of the measurements by entering the value in the text box.
 
 When validating the entered data, the application calls ``validate_bathymetry``.
 

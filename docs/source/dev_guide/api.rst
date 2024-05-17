@@ -26,7 +26,7 @@ The endpoint expects a JSON object with the following structure as query paramet
 * **start_frame** - The frame number to start the PIV analysis
 * **end_frame** - The frame number to end the PIV analysis
 * **freq** - The frequency of the PIV analysis
-* **h_a** - The water level at the moment of the video
+* **h_a** - The mean water level at the moment of the video
 * **camera_config** - The camera configuration used to record the video
 * **project_name** - The name of the project to process the PIV data
 
