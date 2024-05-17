@@ -1,5 +1,13 @@
 .. _measurements_guide:
 
+.. |uncheck| raw:: html
+
+    <input type="checkbox">
+
+.. |uncheck_| raw:: html
+
+    <input disabled="" type="checkbox">
+
 #########################################################
 Measurements Guide
 #########################################################
@@ -36,3 +44,18 @@ This area should cover an consequent section so that the application has enough 
     It is important to note that if you have already done all these measurements, you can go directly to point 6 & 7 **but** you have to take in account that bathymetry is evolving with the life of the river. So, if you have done these measurements a long time ago, it is recommended to do them again.
 
     If you only want to get a theoretical discharge, you can skip the point 2. If you want to test the accuracy of the application, it is recommended to do it.
+
+Measurements checklist
+======================
+
+Here is a checklist to help you keep track of the measurements you have taken:
+
+|uncheck| Bathymetry
+
+|uncheck| Hand measured River discharge
+
+|uncheck| Distance between GCPs
+
+|uncheck| Distance between camera and bottom left GCP
+
+|uncheck| Video of the river
