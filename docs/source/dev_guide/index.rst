@@ -203,6 +203,9 @@ In case of Windows does not recognise the command, go through these steps:
    video_configuration
    bathymetry_configuration
    beacons_configuration
+   filters_configuration
+   piv_analysis
+   transect_and_discharge
 
 
 
