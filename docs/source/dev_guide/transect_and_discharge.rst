@@ -40,3 +40,4 @@ To sum up the functions used in this screen:
 
 This screen calls back function from src/back/transect.py, which will step-by-step process the transects and calculate the river discharge.
 An very important point is the local_points parameter in the ``delimiter_points_bathy`` function, these points will define the vector on which the river discharge will be calculated. Before this year it was hardcoded, but in no way it can be done like that.
+

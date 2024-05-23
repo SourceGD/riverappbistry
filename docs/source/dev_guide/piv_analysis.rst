@@ -21,7 +21,7 @@ It checks if internet is available, if so, it will use the API to process the PI
 If so, it prepares all the data needed and sends it to the ``/process-piv`` route. An API key is needed from the .env file to access this route. The IP of the API host machine is also needed, these are set in a .env file in the root of the application.
 The content of the env file is presented as follows:
 
-.. code-block:: env
+.. code-block:: text
 
     API_URL=http://93.127.202.193:5000
     API_KEY=qborm0w93U5UTKwomMp4MGjq0ivgY/QJIXkGVOWZUIA=
