@@ -39,8 +39,6 @@ def all_points_bathy(bathy, bathy_delimeters, ds):
     return ds.velocimetry.get_transect(x, y, z, rolling=4)
 
 
-# todo add user input to precise the factor correlation of how much varies
-#  the velocity with the depth (v_corr variable)
 def transect_plot(ds_points, video, ds, directory, v_corr):
     ds_points_q = ds_points.transect.get_q(v_corr=v_corr, fill_method="log_interp")
     ax = plt.axes()

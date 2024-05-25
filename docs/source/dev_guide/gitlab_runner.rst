@@ -42,9 +42,22 @@ Running the gitlab-runner in a docker container
 Register the runner
 ===================
 
+In the gitlab project, you need the rights to create runners.
+When you have the rights, go in the Settings -> CI/CD -> Runners and click on Expand button.
+Create a new runner and set it with the following parameters:
+
+* OS: Linux
+* Tags: no tags, check the "Run untagged jobs" checkbox
+* Details: explain what your runner is doing (if you want)
+* Maximum job timeout: 600 (or more if you need, currently not needed for the project)
+
+
 .. code-block:: console
 
     docker exec -it gitlab-runner gitlab-runner register
+
+Copy the url and token given at the creation of the runner in the gitlab project.
+For the executor choose docker and the default image is python:3.10 (The project cannot work with another version of python)
 
 After completing the register the runner is now available. Look at the ci/cd setting in the runner section
 

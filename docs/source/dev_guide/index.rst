@@ -13,6 +13,10 @@ This documentation also contain a page for each screen to know how each screen i
     #. It is suggested to read the screens documentation in the right order to understand how the application works.
     #. It is important to know that the back-end files do not really follow any logic, some functions should have their own file and some classes does not make sens at the moment. That is why this documentation is here to help you understand the code.
 
+.. note::
+    The project uses Kivy in the following way: each screen has a python file linked to a Kivy file, the python file contains all the dynamic part of the screen, as well as project data management, and the Kivy file contains the static part of the screen (in some way, the "skeleton" which contains the basic components of the screen).
+
+
 Coding Standard
 ===============
 
@@ -192,9 +196,18 @@ In case of Windows does not recognise the command, go through these steps:
    :hidden:
    :caption: Dev guide contents:
 
+   diagram
    api
    gitlab_runner
    projects_management
+   project_details
+   video_configuration
+   bathymetry_configuration
+   beacons_configuration
+   filters_configuration
+   piv_analysis
+   transect_and_discharge
+   back_files
 
 
 

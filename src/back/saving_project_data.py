@@ -112,7 +112,7 @@ class SavingProjectData:
                 raise ValueError("All coordinates must be numbers")
 
         if not isinstance(bathymetry["water_level"], (float, int)):
-            raise TypeError("Water Level should be a number")
+            raise TypeError("Mean water Level should be a number")
 
         if bathymetry["water_level"] <= 0:
             raise ValueError("Water Level cannot be less than or equal to 0")

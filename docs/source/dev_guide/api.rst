@@ -26,7 +26,7 @@ The endpoint expects a JSON object with the following structure as query paramet
 * **start_frame** - The frame number to start the PIV analysis
 * **end_frame** - The frame number to end the PIV analysis
 * **freq** - The frequency of the PIV analysis
-* **h_a** - The water level at the moment of the video
+* **h_a** - The mean water level at the moment of the video
 * **camera_config** - The camera configuration used to record the video
 * **project_name** - The name of the project to process the PIV data
 
@@ -108,14 +108,14 @@ To install the API, you need to follow the steps below:
 
 1. Clone the repository on the machine/server that will host the API
 2. Install docker and docker-compose on the machine (https://docs.docker.com/engine/install/) (https://docs.docker.com/compose/install/)
-3. Create a .env file in the root of the repository with the following content:
+3. Create a .env file in the src/api/ folder with the following content:
 
 .. code-block:: bash
 
     # You might want to change the API_KEY to a more secure one, it's up to you.
     API_KEY=qborm0w93U5UTKwomMp4MGjq0ivgY/QJIXkGVOWZUIA=
 
-4. run the following command to build the docker image, container and start the container:
+4. run the following command to build the docker image, container and start the container (if you did not add docker to the sudoers group, put "sudo" in front of every docker command):
 
 .. code-block:: bash
 
@@ -130,19 +130,21 @@ To install the API, you need to follow the steps below:
     lsof -i :5000
     # If something is running on port 5000, it should be the api.
 
-7. IF the API is not running, run the api using the following command and launch a piv to test the api:
+7. Create two folders in the api folder on the container: uploads and outputs
+
+8. IF the API is not running, run the api using the following command and launch a piv to test the api:
 
 .. code-block:: bash
 
     python app.py
 
-8. If the app runs correctly, you can access the API on the machine url on port 5000. To run the api in container background and be able to exit the container, run the following command:
+9. If the app runs correctly, you can access the API on the machine url on port 5000. To run the api in container background and be able to exit the container, run the following command:
 
 .. code-block:: bash
 
     nohup python app.py &
 
-9. Since Flask tends to produce a memory leak on heavy requests, the only solution found at the moment is to use a cron to restart the api every X hours (The owner chooses which suits the best). To do so, run the following command:
+10. Since Flask tends to produce a memory leak on heavy requests, the only solution found at the moment is to use a cron to restart the api every X hours (The owner chooses which suits the best). To do so, run the following command:
 
 .. code-block:: bash
 
