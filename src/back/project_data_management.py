@@ -3,7 +3,8 @@ File and Archiving Utilities
 
 This module provides functions for archiving and managing project directories.
 
-**Functions:**
+Functions
+---------
 
 * `download_project(project_dir: str, output_zip_path: str)`:
     - Creates a ZIP archive of a project directory.
@@ -17,7 +18,8 @@ This module provides functions for archiving and managing project directories.
     - Potentially retrieves or validates a project's save file path.
     - The specific behavior depends on the implementation.
 
-**Notes:**
+Notes
+-----
 
 - This module relies on the following external libraries:
     - `os`
@@ -61,32 +63,29 @@ def download_project(project_dir: str, output_zip_path: str):
                    reflecting their original location in the project directory.
                 - Adds the file to the ZIP archive using `zipfile.write(file_path, arcname)`.
 
-        **Returns:**
+        Returns
+        -------
 
         - None
 
-        **Raises:**
+        Raises
+        ------
 
         - Exceptions potentially raised by `get_project_save_file` and `is_directory_valid`
         functions (depends on their implementations).
         - `OSError` or related exceptions in case of file system errors during ZIP creation or
         file access.
 
-        **Notes:**
+        Notes
+        -----
 
         - This function relies on the `os` module for file system operations and
         path manipulation.
 
-        **Example Usage:**
+        Examples
+        --------
 
-        ```python
-        import os  # Assuming os is imported
-
-        project_dir = "/path/to/project"
-        output_zip_path = "/output/folder"
-
-        download_project(project_dir, output_zip_path)
-        ```
+        >>> download_project(project_dir, output_zip_path)
         """
     get_project_save_file(project_dir)
     is_directory_valid(output_zip_path)
@@ -117,43 +116,33 @@ def is_directory_valid(directory: str) -> bool:
         from the `os.path` module to verify if the path points to an existing directory.
         If not, it raises a `ValueError` indicating the directory cannot be found.
 
-        **Parameters:**
+        Parameters
+        ----------
 
         - `directory` (str): The path to the directory to be validated.
 
-        **Returns:**
+        Returns
+        -------
 
         - `bool`: True if the directory path is valid and exists, False otherwise
         (though the function always raises an exception on invalidity).
 
-        **Raises:**
+        Raises
+        ------
 
         - `ValueError`: Raised with an informative message if the directory path is invalid
         (due to character restrictions or non-existence).
 
-        **Notes:**
+        Notes
+        -----
 
         - This function relies on the `os.path` module for path validation and checks.
 
-        **Example Usage:**
+        Examples
+        --------
 
-        ```python
-        from os import path  # Assuming os is imported
-
-        valid_dir = "/path/to/valid/directory"
-        invalid_dir = "/invalid/path/with*special#characters"
-
-        if is_directory_valid(valid_dir):
-            print("Valid directory")
-        else:
-            print("Unexpected error (should not happen with valid directory)")
-
-        try:
-            is_directory_valid(invalid_dir)
-        except ValueError as e:
-            print(f"Invalid directory: {e}")
-        ```
-        """
+        >>> is_directory_valid(directory)
+    """
     if not match(r'^[a-zA-Z0-9-._/:\\]+$', directory):
         raise ValueError("Invalid path")
 
@@ -181,39 +170,34 @@ def get_project_save_file(project_dir: str) -> str:
         file path actually exists. If not, it raises a `FileNotFoundError` indicating the file could
          not be found.
 
-        **Parameters:**
+        Parameters
+        ----------
 
         - `project_dir` (str): The path to the project directory.
 
-        **Returns:**
+        Returns
+        -------
 
         - `str`: The path to the project's save file (if it exists and is valid).
 
-        **Raises:**
+        Raises
+        ------
 
         - `ValueError`: Potentially raised by `is_directory_valid` if the project directory path
         is invalid.
         - `FileNotFoundError`: Raised if the constructed save file path does not exist.
 
-        **Notes:**
+        Notes
+        -----
 
         - The specific behavior and purpose of this function might require clarification based on
         its actual implementation.
         - This function relies on the `os.path` module for path manipulation and existence checks.
 
-        **Example Usage (placeholder):**
+        Examples
+        --------
 
-        ```python
-        from os import path  # Assuming os is imported
-
-        project_dir = "/path/to/project"
-
-        try:
-            save_file_path = get_project_save_file(project_dir)
-            print(f"Save file path: {save_file_path}")
-        except (ValueError, FileNotFoundError) as e:
-            print(f"Error getting save file: {e}")
-        ```
+        >>> save_file_path = get_project_save_file(project_dir)
         """
     print(project_dir)
     is_directory_valid(project_dir)

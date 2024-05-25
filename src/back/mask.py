@@ -4,7 +4,8 @@
     visualizing the results. It aims to assist in identifying and removing erroneous data points
     to improve data quality.
 
-    The module includes the following functions:
+    Functions
+    ---------
 
     - `apply_mask(ds)`: Applies a series of masking techniques to a velocimetry dataset (`ds`) to
     identify and remove potentially erroneous data points.
@@ -58,13 +59,11 @@ def apply_mask(ds):
         (e.g., correlation threshold, window size for rolling mean) based on your specific dataset
         and data quality requirements.
 
-        Example Usage:
-        ```python
-        import xarray as xr
+        Examples
+        --------
 
-        # Assuming your velocimetry data is stored in an xarray Dataset named 'ds'
-        ds_masked = apply_mask(ds.copy())  # Create a copy to avoid modifying original data
-        ```
+        >>> ds_masked = apply_mask(ds.copy())  # Create a copy to avoid modifying original data
+
         """
     ds_mask = copy.deepcopy(ds)
     ds_mask.velocimetry.mask.corr(inplace=True)
@@ -115,6 +114,16 @@ def plot_result(da_rgb_proj, mask):
             - `add_colorbar=True`: Adds a colorbar to the plot for interpreting masked region
             intensities.
         4. **(Optional)** Displays the plot using `plt.show()` (uncomment only during development).
+        Parameters:
+        ----------
+        da_rgb_proj : xarray.DataArray
+            An xarray DataArray representing the first RGB frame from a projected dataset.
+            It's assumed to have dimensions (frames, height, width, channels) and contain RGB color
+            information.
+        mask : xarray.DataArray
+            An xarray DataArray representing the masked velocimetry data.
+            It's assumed to have dimensions compatible with the velocimetry data in `da_rgb_proj`,
+            with values indicating masked (NaN) and unmasked regions.
 
         Returns:
         -------
@@ -179,21 +188,31 @@ def mask_and_plot(directory, ds, video):
         5. Set encoding for the masked velocimetry data and save it to a NetCDF file in the project
         folder
 
-        **Notes:**
+        Parameters
+        ----------
+        directory : str
+            The directory path where the masked data will be saved.
+        ds : xarray.Dataset
+            The velocimetry dataset containing the data to be masked.
+        video : pyorc Video
+            A video object representing the data source for visualization.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
 
         - This function relies on the `pyorc` library for video and velocimetry functionalities.
         - The user interface for selecting filters and saving results is yet to be implemented.
 
-        **Example Usage (placeholder):**
+        Examples
+        --------
 
-        ```python
-        import pyorc  # Assuming pyorc is installed
-
-        # Assuming you have a velocimetry dataset 'ds', video object 'video', and a directory path
-        'directory'
-        mask_and_plot(directory, ds, video)
-        ```
+        >>> mask_and_plot(directory, ds, video)
     """
+
     video.camera_config = ds.velocimetry.camera_config
     da_rgb_proj = video.get_frames(method="rgb").frames.project()
     mask = apply_mask(ds)
