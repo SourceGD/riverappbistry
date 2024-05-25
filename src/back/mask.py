@@ -1,7 +1,25 @@
+""" Module for masking and visualizing velocimetry data.
+
+    This module provides functions for applying masking techniques to velocimetry data and
+    visualizing the results. It aims to assist in identifying and removing erroneous data points
+    to improve data quality.
+
+    The module includes the following functions:
+
+    - `apply_mask(ds)`: Applies a series of masking techniques to a velocimetry dataset (`ds`) to
+    identify and remove potentially erroneous data points.
+
+    - `plot_result(da_rgb_proj, mask)`: Visualizes the masked velocimetry data overlaid on the first
+    RGB frame of a projected dataset.
+
+    - `mask_and_plot(directory, ds, video)`: Iteratively masks and visualizes velocimetry data,
+    allowing user interaction to refine masking and save results.
+"""
+
 import copy
 import numpy as np
 from matplotlib.colors import Normalize
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 # File from debray thesis
