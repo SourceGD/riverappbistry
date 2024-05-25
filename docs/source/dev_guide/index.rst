@@ -196,6 +196,7 @@ In case of Windows does not recognise the command, go through these steps:
    :hidden:
    :caption: Dev guide contents:
 
+   diagram
    api
    gitlab_runner
    projects_management
