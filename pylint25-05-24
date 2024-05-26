@@ -1,14 +1,9 @@
 ************* Module src.api.app
-src/api/app.py:31:1: W0511: TODO cypher api-key (fixme)
-src/api/app.py:112:5: W0511: TODO: find a way to bypass admin permissions (windows) (fixme)
-src/api/app.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-src/api/app.py:33:0: C0116: Missing function or method docstring (missing-function-docstring)
-src/api/app.py:48:0: C0116: Missing function or method docstring (missing-function-docstring)
-src/api/app.py:86:0: C0116: Missing function or method docstring (missing-function-docstring)
+src/api/app.py:92:1: W0511: TODO cypher api-key (fixme)
+src/api/app.py:337:5: W0511: TODO: find a way to bypass admin permissions (windows) (fixme)
 ************* Module src.back.mask
 src/back/mask.py:163:1: W0511: todo add interface to select filters the users wants to add and see the resulting plot (fixme)
 ************* Module src.back.saving_project_data
-src/back/saving_project_data.py:458:0: C0305: Trailing newlines (trailing-newlines)
 src/back/saving_project_data.py:340:13: W0511: TODO add exceptions (fixme)
 src/back/saving_project_data.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 src/back/saving_project_data.py:16:0: C0115: Missing class docstring (missing-class-docstring)
@@ -58,11 +53,8 @@ src/back/video_filters.py:75:4: R1711: Useless return at end of function or meth
 ************* Module src.back
 src/back/__init__.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module src.utils.utils
-src/utils/utils.py:5:5: W0511: TODO uncomment this code if you want to use the API version (fixme)
-src/utils/utils.py:1:0: C0114: Missing module docstring (missing-module-docstring)
-src/utils/utils.py:4:0: C0116: Missing function or method docstring (missing-function-docstring)
-src/utils/utils.py:1:0: W0611: Unused import requests (unused-import)
+src/utils/utils.py:60:5: W0511: TODO uncomment this code if you want to use the API version (fixme)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.94/10 (previous run: 8.94/10, +0.00)
+Your code has been rated at 9.09/10 (previous run: 9.04/10, +0.05)
 

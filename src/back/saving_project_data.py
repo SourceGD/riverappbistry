@@ -455,4 +455,3 @@ class SavingProjectData:
             raise FileNotFoundError("the directory is not a RiverApp project directory")
 
         rmtree(project_dir)
-

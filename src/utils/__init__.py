@@ -1,9 +1,10 @@
 """
-Init file for the image_generator module.
+Init file for the image_generator and front-end utils module.
 Video and Image Processing Utilities for Kivy Applications
 
 This module provides functions for working with videos and converting them to Kivy Image objects.
 It also offers a utility to convert matplotlib plots to Kivy Images.
+It also offers a utility to check for an active internet connection.
 
 Functions
 ---------
@@ -17,5 +18,9 @@ Functions
 
 * `plot_to_image(plot: plt) -> Image`:
     - Converts a matplotlib plot into a Kivy Image object.
+
+* `check_internet() -> bool`:
+    - Checks for an active internet connection.
 """
 from .image_generator import video_to_image, plot_to_image, get_video_frame
+from .utils import check_internet
