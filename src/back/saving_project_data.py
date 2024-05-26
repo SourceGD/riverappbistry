@@ -203,7 +203,6 @@ class SavingProjectData:
         with open(self._backup_file, "w") as json_file:
             json_file.write(dumps(saved_data, indent=4))
 
-        return
 
     def _check_backup_file_format(self, wanted_dict_format: dict, dict_format: dict) -> bool:
         if not isinstance(wanted_dict_format, dict):
@@ -420,7 +419,6 @@ class SavingProjectData:
         self._filter_video = project_data["filter_video"]
         self._piv = project_data["piv"]
         self._post_process = project_data["post_process"]
-        return
 
     def create_project(self, projects_dir: str, project_name: str):
         if not isinstance(projects_dir, str):

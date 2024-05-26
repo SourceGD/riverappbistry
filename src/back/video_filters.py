@@ -51,7 +51,6 @@ class Filters:
             out.write(frame)
 
         self._release(cap, out)
-        return
 
     def black_white_filter_on_image(self, image) -> list:
         return cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2BGR)
@@ -91,4 +90,3 @@ class Filters:
             out.write(frame)
 
         self._release(cap, out)
-        return
