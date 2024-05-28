@@ -1,3 +1,6 @@
+"""
+This is the back module of the application. It contains all the functions that are used to process the data.
+"""
 from .gcp_detection.gcp_detection import (GCP_detect,
                                           beacons_detection,
                                           sort_src,
