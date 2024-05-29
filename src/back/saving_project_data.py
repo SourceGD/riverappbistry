@@ -1,3 +1,29 @@
+"""
+Module for managing RiverApp project data
+
+This module provides functionalities for loading, saving, and manipulating data
+associated with RiverApp projects. It includes the `SavingProjectData` class
+for managing project data in a structured and validated manner.
+
+The module also utilizes functionalities from various external libraries
+like `os`, `json`, `shutil`, `math`, `requests`, `cv2`, `dotenv`, and potentially
+custom functions from `src.utils`.
+
+Classes
+-------
+
+- `SavingProjectData`: Class for managing and validating RiverApp project data.
+
+Notes
+-----
+
+- This module is designed to be used within the RiverApp ecosystem for project
+  data management.
+- Refer to the docstring of the `SavingProjectData` class for detailed
+  information about its functionalities.
+
+"""
+
 from os import path, mkdir, getenv
 from json import load, dumps, loads
 from shutil import rmtree
@@ -13,11 +39,90 @@ from src.utils import get_video_frame, utils
 from libs.pyorc import CameraConfig, Video
 
 
-class ProjectNotLoaded(Exception):
-    pass
-
-
 class SavingProjectData:
+    """
+    Class for saving and managing RiverApp project data
+
+    This class provides methods for loading, saving, and accessing data associated
+    with a RiverApp project. It stores project data internally using attributes
+    and provides methods to get and set the data in a controlled manner. The class
+    also handles saving project data to a backup file and validating the data
+    format during loading and updates.
+
+    Attributes
+    ----------
+
+    - `_post_process` (`dict`, optional): Stores data related to post-processing
+      (likely after video analysis). Not used in provided methods.
+    - `_backup_file` (`str`, optional): Path to the project backup file. Set
+      during project loading.
+    - `_project_name` (`str`): Name of the currently loaded project.
+    - `_steps_done` (`dict`): Dictionary containing completion flags for
+      different project workflow steps (step name as key, boolean value
+      indicating completion).
+    - `_video_configuration` (`dict`): Dictionary containing video configuration
+      data (path, start/end times, frame rate).
+    - `_bathymetry` (`dict`): Dictionary containing bathymetry data (water level,
+      potentially x/y coordinates for reference points).
+    - `_beacons` (`dict`): Dictionary containing beacon data (likely locations
+      and other relevant information).
+    - `_cam_config` (`CameraConfig`, optional): Stores camera configuration
+      data (assumed to be from a separate module). Not used in provided methods.
+    - `_filter_video` (`dict`, optional): Stores video filter data (likely
+      parameters for video processing). Not used in provided methods.
+    - `_piv` (`dict`, optional): Stores PIV analysis data (likely results
+      after processing). Not used in provided methods.
+
+    Properties
+    ----------
+
+    - `project_name` (-> `str`): Gets the name of the current project.
+    - `steps_done` (-> `dict`): Gets the completion status for project workflow steps.
+    - `video_configuration` (-> `dict`): Gets the video configuration data.
+    - `video_configuration` (`dict`): Sets the video configuration data with validation.
+    - `bathymetry` (-> `dict`): Gets the bathymetry data.
+    - `bathymetry` (`dict`): Sets the bathymetry data with validation.
+    - `beacons` (-> `dict`): Gets the beacon data.
+    - `beacons` (`dict`): Sets the beacon data with validation.
+    - `cam_config` (-> `CameraConfig`): Gets the camera configuration data.
+    - `filter_video` (-> `dict`, optional): Gets the video filter data
+      (not used in provided methods).
+    - `filter_video` (`dict`): Sets the video filter data (not used in provided methods).
+    - `piv` (-> `dict`, optional): Gets the PIV analysis data (not used in provided methods).
+
+    Methods
+    -------
+
+    - `load_project` (**`project_dir` (`str`**) -> `None`): Loads a RiverApp project
+      from the specified directory and initializes internal data structures.
+    - `create_project` (**`projects_dir` (`str`**, **`project_name` (`str`**) -> `None`):
+      Creates a new RiverApp project directory and initializes basic project data.
+    - `delete_project` (**`project_dir` (`str`**) -> `None`): Deletes the specified
+      RiverApp project directory and its contents.
+
+    Internal Helper Methods (not intended for external use)
+    -------------------------------------------------------
+
+    - `_save_step` (**`step` (`str`**), **`data` (`dict`**) -> `None`): Saves a specific project
+      step data and updates its completion status in the internal storage.
+    - `_check_backup_file_format` (**`wanted_dict_format` (`dict`**),
+      **`dict_format` (`dict`**) -> `bool`):
+                Validates the format of a project data dictionary against an expected format.
+    - `_check_missing_data` (**`wanted_data` (`list`**), **`data` (`dict`**) -> `bool`):
+                    Checks if a data dictionary contains all required keys specified in a list.
+    - `_convert_dist_to_dest_points` (**`dist` (`list`**) -> `list`):
+                    Converts a list of beacon distances to destination points in image coordinates.
+
+    Notes
+    -----
+
+    - The class is designed to manage and validate RiverApp project data in a structured manner.
+    - It provides methods to load, save, and access project data, ensuring data integrity.
+    - The class includes internal helper methods for data validation and format checks.
+    - The provided properties allow controlled access to project data attributes.
+
+
+    """
     def __init__(self) -> None:
         self._post_process: dict = None
         self._backup_file: str = None
@@ -32,18 +137,129 @@ class SavingProjectData:
 
     @property
     def project_name(self) -> str:
+        """
+        Gets the name of the current RiverApp project
+
+        This property retrieves the name of the currently loaded RiverApp project.
+
+        Returns
+        -------
+
+        - `str`: The name of the RiverApp project.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._project_name
 
     @property
     def steps_done(self) -> dict:
+        """
+        Gets the dictionary indicating completion status of project workflow steps
+
+        This property retrieves a dictionary that represents the completion status of
+        various steps within the RiverApp project workflow. Each key in the
+        dictionary corresponds to a step name, and the value is a boolean indicating
+        whether that step has been completed (True) or not (False).
+
+        Returns
+        -------
+
+        - `dict`: The dictionary containing completion flags for project workflow steps.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._steps_done
 
     @property
     def video_configuration(self) -> dict:
+        """
+        Gets the video configuration data for the project
+
+        This property retrieves the dictionary containing video configuration data
+        associated with the current RiverApp project. The video configuration data
+        likely includes:
+
+        - Path to the video file (`"video"` key)
+        - Start time for the video segment to be processed (`"start_time"` key)
+        - End time for the video segment to be processed (`"end_time"` key)
+        - Frame rate (frequency) for capturing frames from the video (`"frequency"` key)
+
+        Returns
+        -------
+
+        - `dict`: The dictionary containing video configuration data for the project.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._video_configuration
 
     @video_configuration.setter
     def video_configuration(self, video_configuration: dict) -> None:
+        """
+        Sets the video configuration data for the project
+
+        This setter method updates the video configuration data associated with
+        the current RiverApp project. It performs the following checks and
+        validations before updating the data:
+
+        - **Project Loaded Check:** Ensures the project has been loaded (by checking
+          `_backup_file` is not None) before allowing video configuration update.
+        - **Data Change Check:** Avoids unnecessary updates by comparing the new
+          data with the existing data (`_video_configuration`).
+        - **Data Type Check:** Ensures the provided `video_configuration` data is a dictionary.
+        - **Missing Data Check:** Uses the `_check_missing_data` function to verify
+          that all required keys (listed as a list) are present in the new data.
+        - **Video File Check:** Ensures the specified video file path exists using
+          `os.path.exists`.
+        - **Data Type Checks:** Ensures `"start_time"`, `"end_time"`, and
+          `"frequency"` are numerical (int or float).
+        - **Value Checks:** Ensures all time values (start, end, frequency) are
+          greater than zero and that start time is less than end time.
+
+        If all checks pass, the function updates the internal
+        `_video_configuration` attribute with the new data, saves the updated data
+        to the project configuration file using the `_save_step` function, and
+        triggers the generation of camera configuration data by calling
+        `generate_cam_config`.
+
+        Parameters
+        ----------
+
+        - `video_configuration` (`dict`): The new video configuration data dictionary
+          containing information about the video file to be processed, including
+          start and end times for the desired video segment, and the frame rate
+          (frequency) for capturing frames.
+
+        Raises
+        ------
+
+        - `ValueError`:
+            - If the project is not loaded.
+            - If the provided data is the same as the existing data.
+            - If any required key is missing from the data.
+            - If the video file is not found at the specified path.
+            - If start time, end time, or frequency are not positive numbers.
+            - If start time is greater than or equal to end time.
+        - `TypeError`:
+            - If `video_configuration` is not a dictionary.
+            - If start time, end time, or frequency are not integers or floats.
+
+        Notes
+        -----
+
+        - This setter utilizes the internal `_check_missing_data` function for
+          data validation.
+        - It uses the `os.path` module to check for the existence of the video file.
+        """
         if self._backup_file is None:
             raise ValueError("The project need to be loaded before adding data")
 
@@ -88,10 +304,82 @@ class SavingProjectData:
 
     @property
     def bathymetry(self) -> dict:
+        """
+        Gets the bathymetry data for the project
+
+        This property retrieves the dictionary containing bathymetry data (underwater
+        topography) associated with the current RiverApp project. The bathymetry data
+        likely includes:
+
+        - Water level (e.g., `"water_level"` key)
+        - Potentially x and y coordinates for reference points (e.g., `"x"` and `"y"` keys)
+
+        Returns
+        -------
+
+        - `dict`: The dictionary containing bathymetry data for the project.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._bathymetry
 
     @bathymetry.setter
     def bathymetry(self, bathymetry: dict) -> None:
+        """
+        Sets the bathymetry data for the project
+
+        This setter method updates the bathymetry data associated with the current
+        RiverApp project. It performs the following checks and validations before
+        updating the data:
+
+        - **Project Loaded Check:** Ensures the project has been loaded (by checking
+          `_backup_file` is not None) before allowing bathymetry data update.
+        - **Data Change Check:** Avoids unnecessary updates by comparing the new
+          data with the existing data (`_bathymetry`).
+        - **Data Type Check:** Ensures the provided `bathymetry` data is a dictionary.
+        - **Missing Data Check:** Uses the `_check_missing_data` function to verify
+          that all required keys (listed as a list) are present in the new data.
+        - **Bathymetry Data Format Check:**
+            - Ensures that the lengths of `"x"` and `"y"` lists are equal (same
+              number of corresponding coordinates).
+            - Ensures all coordinates (both `"x"` and `"y"`) are numerical values.
+        - **Water Level Check:** Ensures the `"water_level"` value is a number
+          (float or int) and greater than zero.
+
+        If all checks pass, the function updates the internal `_bathymetry` attribute
+        with the new data, saves the updated data to the project configuration
+        file using the `_save_step` function, and triggers the generation of camera
+        configuration data by calling `generate_cam_config`.
+
+        Parameters
+        ----------
+
+        - `bathymetry` (`dict`): The new bathymetry data dictionary containing
+          information about the bathymetry (underwater topography) of the river
+          section, likely including water level and potentially x and y coordinates
+          for additional reference points.
+
+        Raises
+        ------
+
+        - `ValueError`:
+            - If the project is not loaded.
+            - If the provided data is the same as the existing data.
+            - If `bathymetry` is not a dictionary.
+            - If the numbers of x-coordinates and y-coordinates don't match.
+            - If any coordinate value is not a number.
+            - If the water level is not a number or less than or equal to zero.
+        - `TypeError`: If the water level is not a float or int.
+
+        Notes
+        -----
+
+        - This setter utilizes the internal `_check_missing_data` function for
+          data validation.
+        """
         if self._backup_file is None:
             raise ValueError("The project need to be loaded before adding data")
 
@@ -125,10 +413,74 @@ class SavingProjectData:
 
     @property
     def beacons(self) -> dict:
+        """
+        Gets the beacon data for the project
+
+        This property retrieves the dictionary containing beacon data associated
+        with the current RiverApp project. The beacon data likely includes information
+        about the beacon locations and potentially other relevant details.
+
+        Returns
+        -------
+
+        - `dict`: The dictionary containing beacon data for the project.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._beacons
 
     @beacons.setter
     def beacons(self, beacons: dict) -> None:
+        """
+        Sets the beacons data for the project
+
+        This setter method updates the beacon data associated with the current
+        RiverApp project. It performs the following checks and validations before
+        updating the data:
+
+        - **Project Loaded Check:** Ensures the project has been loaded (by checking
+          `_backup_file` is not None) before allowing beacon data update.
+        - **Data Change Check:** Avoids unnecessary updates by comparing the new
+          data with the existing data (`_beacons`).
+        - **Data Type Check:** Ensures the provided `beacons` data is a dictionary.
+        - **Missing Data Check:** Uses the `_check_missing_data` function to verify
+          that all required keys (listed as a list) are present in the new data.
+        - **Beacon Points Format Check:** Ensures the `"points"` key in the data
+          contains exactly four pairs of numerical coordinates (x and y).
+        - **Distance Values Check:** Ensures all distance values (between beacon points)
+          stored in the data are positive numbers (greater than 0).
+
+        If all checks pass, the function updates the internal `_beacons` attribute
+        with the new data, saves the updated data to the project configuration
+        file using the `_save_step` function, and triggers the generation of camera
+        configuration data by calling `generate_cam_config`.
+
+        Parameters
+        ----------
+
+        - `beacons` (`dict`): The new beacon data dictionary containing information
+          about beacon locations and potentially other relevant details.
+
+        Raises
+        ------
+
+        - `ValueError`:
+            - If the project is not loaded.
+            - If the provided data is the same as the existing data.
+            - If `beacons` is not a dictionary.
+            - If any required key is missing from the data.
+            - If the `"points"` key does not contain four valid coordinate pairs.
+            - If any distance value between beacon points is not positive.
+
+        Notes
+        -----
+
+        - This setter utilizes the internal `_check_missing_data` function for
+          data validation.
+        """
         if self._backup_file is None:
             raise ValueError("The project need to be loaded before adding data")
 
@@ -170,10 +522,48 @@ class SavingProjectData:
 
     @property
     def cam_config(self) -> dict:
+        """
+        Gets the camera configuration data for the project
+
+        This property retrieves the camera configuration data associated with the
+        current RiverApp project. It simply returns the value stored in the
+        internal `_cam_config` attribute, which is a `CameraConfig` object
+        (likely from a separate module) containing information about the camera
+        setup for image processing.
+
+        Returns
+        -------
+
+        - `CameraConfig` object: The camera configuration data for the project.
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._cam_config
 
     @property
     def filter_video(self) -> dict:
+        """
+        Gets the video filter configuration data for the project
+
+        This property retrieves the video filter configuration data associated with
+        the current RiverApp project. It simply returns the value stored in the
+        internal `_filter_video` attribute, which likely holds a dictionary
+        containing filter parameters or configuration details.
+
+        Returns
+        -------
+
+        - `dict`: The video filter configuration data dictionary (content depends
+          on the implementation of video filtering).
+
+        Notes
+        -----
+
+        - No additional processing or checks are performed within this property.
+        """
         return self._filter_video
 
     @filter_video.setter
@@ -182,6 +572,38 @@ class SavingProjectData:
 
     @property
     def piv(self) -> dict:
+        """
+        Gets the PIV data for the project (if available)
+
+        This property retrieves the PIV (Particle Image Velocimetry) data associated
+        with the current RiverApp project. It performs the following:
+
+        - **Data Check:** Checks if the internal `_piv` attribute is not `None`
+          (indicating PIV data is not available).
+
+        If the data is available, the property returns a dictionary containing
+        the following:
+
+        - `file` (`str`): The absolute path to the PIV data file (typically
+          located within the project directory using `PROJECTS_DIR`, project name,
+          and the filename stored in `_piv["file"]`).
+        - Other data (if present): The property might return additional
+          PIV-related data stored in the `_piv` dictionary (implementation
+          dependent).
+
+        If the data is not available, the property returns `None`.
+
+        Returns
+        -------
+
+        - `dict` containing PIV data (if available) or `None` (if not available).
+
+        Notes
+        -----
+
+        - This property utilizes the `os.path` module to construct the absolute
+          path for the PIV data file.
+        """
         if self._piv is None:
             return None
 
@@ -190,6 +612,47 @@ class SavingProjectData:
         return data
 
     def _save_step(self, step: str, data: dict) -> None:
+        """
+        Saves project data and updates step completion status
+
+        This internal function saves data for a specific step in the RiverApp project
+        workflow and updates the project's step completion status.
+
+        - **Data Type Check:** Ensures the provided `data` is a dictionary.
+
+        **Process:**
+
+        1. Opens the project configuration file (`_backup_file`) in read mode.
+        2. Loads the existing project data from the JSON file using `json.load`.
+        3. Updates the data for the specified `step` in the loaded project data
+           using the provided `data` dictionary.
+        4. Updates the `steps_done` key within the loaded project data to mark the
+           specified `step` as completed (value set to True).
+        5. Updates the internal `_steps_done` attribute to reflect the completion
+           of the specified step.
+        6. Opens the project configuration file again in write mode.
+        7. Saves the updated project data (including the new step data and completion
+           status) to the project configuration file using `json.dumps` with indentation
+           for readability.
+
+        Parameters
+        ----------
+
+        - `step` (`str`): The name of the project workflow step for which data is
+          being saved.
+        - `data` (`dict`): The data dictionary to be saved for the specified step.
+
+        Raises
+        ------
+
+        - `TypeError`: If `data` is not a dictionary.
+
+        Notes
+        -----
+
+        - This function utilizes the `json` module to read and write JSON data
+          to/from the project configuration file.
+        """
         if not isinstance(data, dict):
             raise TypeError("data should be a dict")
 
@@ -205,6 +668,53 @@ class SavingProjectData:
 
 
     def _check_backup_file_format(self, wanted_dict_format: dict, dict_format: dict) -> bool:
+        """
+        Checks the format of a project configuration dictionary
+
+        This internal function verifies if the format of a project configuration
+        dictionary (loaded from a backup file) matches the expected format defined
+        by another dictionary.
+
+        - **Data Type Checks:** Ensures both `wanted_dict_format` and `dict_format`
+          are dictionaries.
+
+        **Process:**
+
+        1. Converts the keys of both dictionaries to sets for efficient comparison.
+        2. Checks if the sets of keys (`keys_format` and `keys_data`) are equal. If not,
+           raises a `ValueError` indicating a format mismatch.
+        3. Iterates through the keys in the expected format (`keys_format`).
+           - Skips the `"cam_config"` key as it might have a different validation process.
+           - For each key:
+             - If both values in the dictionaries are dictionaries, performs a recursive
+               format check using the same function (`_check_backup_file_format`).
+             - If the data types for the values in the dictionaries don't match
+               (e.g., expected dictionary but got a different type), raises a
+               `ValueError` indicating a format mismatch.
+
+        Returns
+        -------
+
+        - `bool`: True if the format of the data dictionary matches the expected
+          format, False otherwise (triggers the exception).
+
+        Raises
+        ------
+
+        - `TypeError`:
+            - If `wanted_dict_format` is not a dictionary.
+            - If `dict_format` is not a dictionary.
+        - `ValueError`:
+            - If the data dictionary format does not match the expected format
+              (key mismatch or mismatched data types for nested structures).
+
+        Notes
+        -----
+
+        - This function uses recursion to validate the format of nested dictionary
+          structures within the project configuration data.
+        - Set comparison is used for efficient key existence checks.
+        """
         if not isinstance(wanted_dict_format, dict):
             raise TypeError(f"wanted_dict_format should be a dict : {wanted_dict_format}")
 
@@ -233,7 +743,47 @@ class SavingProjectData:
         return True
 
     def _check_missing_data(self, wanted_data: list, data: dict) -> bool:
+        """
+        Checks for missing data keys in a dictionary
 
+        This internal function verifies if a dictionary contains all the required
+        data keys specified in a provided list.
+
+        - **Data Type Checks:** Ensures both `wanted_data` and `data` are of type
+          list and dictionary respectively.
+
+        **Process:**
+
+        1. Creates a list `missing_data` to store any missing key names.
+        2. Iterates through the `wanted_data` list and checks if each key exists in
+           the `data` dictionary using the `in` operator.
+        3. If any keys are missing, adds their names to the `missing_data` list.
+
+        Parameters
+        ----------
+        - `wanted_data` (`list`): A list of required data keys.
+        - `data` (`dict`): A dictionary containing data to be checked.
+
+        Raises
+        ------
+
+        - `TypeError`:
+            - If `wanted_data` is not a list.
+            - If `data` is not a dictionary.
+        - `ValueError`: If any keys from `wanted_data` are missing in the `data` dictionary.
+
+        Returns
+        -------
+
+        - `bool`: True if all required data keys are present in the dictionary,
+           False otherwise (triggers the exception).
+
+        Notes
+        -----
+
+        - This function utilizes list comprehension for iterating through the
+          `wanted_data` list and checking for missing keys.
+        """
         if not isinstance(wanted_data, list):
             raise TypeError(f"wanted_data should be a list : {wanted_data}")
 
@@ -247,6 +797,41 @@ class SavingProjectData:
         return True
 
     def _convert_dist_to_dest_points(self, dist: list) -> list:
+        """
+        Converts beacon distances to destination points in image coordinates
+
+        This internal function converts a list of distances between beacons in a
+        RiverApp project to a list of destination points within the image coordinate
+        system. It performs the following:
+
+        - **Data Type Check:** Ensures the provided `dist` argument is a list.
+
+        **Assumptions:**
+
+        - The function assumes that P1 and P4 are vertically aligned with P4 being
+          the origin (0, 0) in the image coordinate system.
+
+        **Conversion Process:**
+
+        1. Calculates the coordinates of P2 and P3 using the cosine law based on the
+           provided distances and the assumed positions of P1 and P4.
+
+        Returns
+        -------
+
+        - `list`: A list of destination points in image coordinates for each beacon.
+          The order corresponds to the order of distances provided in the input list.
+
+        Raises
+        ------
+
+        - `TypeError`: If `dist` is not a list.
+
+        Notes
+        -----
+
+        - This function uses the `math` module for trigonometric calculations.
+        """
         if not isinstance(dist, list):
             raise TypeError(f"dist should be a list : {dist}")
         # Points coordinates computation
@@ -261,6 +846,55 @@ class SavingProjectData:
         return [[p2[0], p2[1]], [p3[0], p3[1]], [p4[0], p4[1]], [p1[0], p1[1]]]
 
     def generate_cam_config(self) -> bool:
+        """
+        Generates camera configuration data for a RiverApp project
+
+        This function generates camera configuration data for a RiverApp project
+        based on previously completed steps. It performs the following checks
+        before proceeding:
+
+        - **Completion Check:** Ensures all prerequisite steps
+          (`video_configuration`, `bathymetry`, and `beacons`) have been completed
+          in the project workflow (`_steps_done` dictionary).
+
+        If all checks pass, the function performs the following steps:
+
+        1. **Retrieves initial video frame:** Extracts a frame from the video specified
+           in the project configuration (`video_configuration` key).
+        2. **Extracts image dimensions:** Gets the height and width of the retrieved
+           frame.
+        3. **Converts beacon distances to destination points:** Converts the distances
+           provided in the beacon data (`_beacons` dictionary) to destination points
+           using an internal function (`_convert_dist_to_dest_points`).
+        4. **Creates ground control points (GCPs):** Constructs a dictionary containing
+           source points (beacon locations from project data) and the calculated
+           destination points along with the water level (from `bathymetry` data).
+        5. **Generates camera configuration:** Creates a `CameraConfig` object using
+           the image dimensions, GCPs, and lens position (from `video_configuration`
+           data).  **Note:** While the lens position is included, the docstring
+           mentions it may not be used in the current process.
+        6. **Sets bounding box:** Sets the bounding box for the camera configuration
+           using the beacon locations.
+        7. **Saves and updates data:** Saves the generated camera configuration data
+           as a JSON string using the internal `_save_step` function. Updates the
+           internal `_cam_config` attribute to reference the created camera
+           configuration object.
+
+        Returns
+        -------
+
+        - `bool`: True if the camera configuration data is generated successfully,
+          False otherwise (typically due to missing prerequisites).
+
+        Notes
+        -----
+
+        - This function utilizes an internal function (`_convert_dist_to_dest_points`)
+          for distance to point conversion (details not provided).
+        - The function uses the `CameraConfig` class (likely from a separate module)
+          to store and manage camera configuration data.
+
+        """
         if (not self._steps_done["video_configuration"]
                 or not self._steps_done["bathymetry"]
                 or not self._steps_done["beacons"]):
