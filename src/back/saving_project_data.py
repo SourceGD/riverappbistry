@@ -303,6 +303,58 @@ class SavingProjectData:
         return True
 
     def generate_piv(self) -> bool:
+        """
+        Generates PIV data for a RiverApp project (potentially using an API)
+
+        This function attempts to generate PIV (Particle Image Velocimetry) data
+        for a RiverApp project. It performs the following checks before proceeding:
+
+        - **Completion Check:** Ensures all prerequisite steps (`video_configuration`,
+          `bathymetry`, `beacons`, `cam_config`, and `filter_video`) have been
+          completed in the project workflow (`_steps_done` dictionary).
+
+        If all checks pass, the function extracts video configuration data
+        (including FPS, start and end frame) and performs PIV analysis using one
+        of two methods:
+
+          - **API Method (if internet available):**
+            - Leverages an external API service (requires internet connection).
+            - Uploads the project video file and configuration data (including FPS,
+              start/end frames, frequency, water level, camera configuration, and
+              project name) to the API.
+            - The API service processes the PIV analysis on the video.
+          - **Local Processing Method (if no internet):**
+            - Uses the PyOrc library to process the video locally.
+            - Performs normalization, projection, and PIV analysis on the video frames.
+            - Saves the PIV data to a NetCDF file (`piv.nc`) within the project directory.
+
+        Parameters
+        ----------
+
+        - None (function utilizes project data loaded from configuration file).
+
+        Returns
+        -------
+
+        - `bool`: True if the PIV data is generated successfully, False otherwise
+
+        Raises
+        ------
+
+        - `ValueError`: If the API key used for the external service is not correct
+          (applicable only if the API method is used).
+
+        Notes
+        -----
+
+        - This function utilizes the `requests` library for API communication (if applicable).
+        - The function uses exponential backoff retry logic with a timeout for the API call.
+        - This function utilizes the PyOrc library for local PIV processing (if no internet).
+        - The function saves the PIV data (`"piv.nc"` file) and updates the project
+          data structure (`_steps_done` and potentially others) to reflect completion
+          of the PIV step.
+
+        """
         if not self._steps_done["video_configuration"] or not self._steps_done["bathymetry"] \
                 or not self._steps_done["beacons"] or not self._steps_done["cam_config"] \
                 or not self._steps_done["filter_video"]:
@@ -372,6 +424,53 @@ class SavingProjectData:
 
     def save_post_process(self, river_flow: float, transect_picture_path: str,
                           local_points: list) -> bool:
+        """
+        Saves post-processing results for a RiverApp project
+
+        This function attempts to save the results of the post-processing step
+        for a RiverApp project. It performs the following checks before saving:
+
+        - **PIV Completion Check:** Ensures the PIV analysis step (`"piv"` key in
+          `_steps_done`) has been completed before saving post-processing data.
+          This is because post-processing typically relies on results from PIV analysis.
+        - **Data Type Verification:** Ensures `river_flow` is a float,
+          `transect_picture_path` is a string, and `local_points` is a list.
+
+        If all checks pass, the function calls the internal `_save_step` function
+        to save the provided post-processing data (`river_flow`, `transect_picture_path`,
+        and `local_points`) under the `"post_process"` key in the project data
+        structure. The saved data is likely stored in the project configuration
+        file.
+
+        Parameters
+        ----------
+
+        - `river_flow` (`float`): The calculated river flow rate.
+        - `transect_picture_path` (`str`): Path to the image file representing the
+          analyzed transect.
+        - `local_points` (`list`): A list of local points extracted during
+          post-processing (data format may vary).
+
+        Returns
+        -------
+
+        - `bool`: True if the post-processing data is saved successfully, False
+          otherwise (specifically if the PIV step was not completed).
+
+        Raises
+        ------
+
+        - `TypeError`:
+            - If `river_flow` is not a float.
+            - If `transect_picture_path` is not a string.
+            - If `local_points` is not a list.
+
+        Notes
+        -----
+
+        - This function relies on the internal `_save_step` function to handle
+          saving the data to the project configuration file.
+        """
         if not self._steps_done["piv"]:
             return False
 
@@ -389,6 +488,63 @@ class SavingProjectData:
         return True
 
     def load_project(self, project_dir: str) -> None:
+        """
+        Loads a RiverApp project from a project directory
+
+        This function loads the configuration data for a RiverApp project from a
+        specified project directory. It performs the following checks before loading
+        the data:
+
+        - **Data Type Verification:** Ensures `project_dir` is a string type.
+        - **Directory Existence:** Verifies if the provided `project_dir` exists
+          and is a directory.
+        - **Project Configuration File:** Checks if the expected project configuration
+          file (`project_name.json`) exists within `project_dir`.
+
+        If all checks pass, the function opens the project configuration file and
+        reads the project data as a JSON dictionary. The function then performs a
+        format check using an internal function (`_check_backup_file_format`) to
+        ensure the data structure matches the expected format (defined in
+        `PROJECT_DEFAULT_STRUCT`).
+
+        If the data format is valid, the function populates various class attributes
+        with the loaded project data:
+
+        - `_backup_file`: Path to the project configuration file.
+        - `_project_name`: Name of the project (extracted from the directory name).
+        - `_steps_done`: Steps completed in the project workflow (from loaded data).
+        - `_video_configuration`: Video configuration data (from loaded data).
+        - `_bathymetry`: Bathymetry data (from loaded data).
+        - `_beacons`: Beacons data (from loaded data).
+        - `_cam_config`: Camera configuration data (from loaded data).
+        - `_filter_video`: Video filter configuration data (from loaded data).
+        - `_piv`: PIV analysis configuration data (from loaded data).
+        - `_post_process`: Post-processing configuration data (from loaded data).
+
+        Parameters
+        ----------
+
+        - `project_dir` (`str`): The path to the directory containing the RiverApp project.
+
+        Raises
+        ------
+
+        - `TypeError`: If `project_dir` is not a string type.
+        - `FileNotFoundError`:
+            - If the provided `project_dir` does not exist.
+            - If the project configuration file is not found within `project_dir`.
+        - `ValueError`: If the loaded project data format is invalid.
+
+        Notes
+        -----
+
+        - This function utilizes the `os.path` module for path manipulation.
+        - The function uses the `json` module to read and parse the project
+          configuration file (JSON format).
+        - An internal function (`_check_backup_file_format`) is used to validate
+          the loaded data structure.
+
+        """
         if not isinstance(project_dir, str):
             raise TypeError(f"project_dir should be a str : {project_dir}")
 
@@ -421,6 +577,55 @@ class SavingProjectData:
         self._post_process = project_data["post_process"]
 
     def create_project(self, projects_dir: str, project_name: str):
+        """
+        Creates a new RiverApp project directory
+
+        This function creates a new directory structure for a RiverApp project
+        within a specified projects directory. It performs the following checks
+        before creating the project:
+
+        - **Data Type Verification:** Ensures both `projects_dir` and
+          `project_name` are strings.
+        - **Directory Existence:** Verifies if the provided `projects_dir` exists
+          and is a directory.
+
+        If all checks pass, the function creates the project directory structure:
+
+        1. Creates a new directory within `projects_dir` named according to
+           the provided `project_name`.
+        2. Creates a project configuration file (`project_name.json`) within the
+           newly created project directory.
+        3. Writes the default project configuration data (stored in
+           `PROJECT_DEFAULT_STRUCT`) to the project configuration file.
+           The `project_name` key in the default data is updated with the
+           provided `project_name`.
+
+        Parameters
+        ----------
+
+        - `projects_dir` (`str`): The path to the directory containing RiverApp projects.
+        - `project_name` (`str`): The name for the new RiverApp project.
+
+        Raises
+        ------
+
+        - `TypeError`:
+            - If `projects_dir` is not a string type.
+            - If `project_name` is not a string type.
+        - `FileNotFoundError`: If the provided `projects_dir` does not exist
+          or is not a directory.
+        - `FileExistsError`: If a directory with the provided `project_name`
+          already exists within `projects_dir`.
+
+        Notes
+        -----
+
+        - This function utilizes the `os.path` module for path manipulation.
+        - The function uses `mkdir` to create the project directory.
+        - The function writes the project configuration data to a JSON file
+          using the `json` module with indentation for readability.
+
+        """
         if not isinstance(projects_dir, str):
             raise TypeError(f"project_dir should be a str : {projects_dir}")
 
@@ -443,6 +648,43 @@ class SavingProjectData:
             json_file.write(dumps(data, indent=4))
 
     def delete_project(self, project_dir: str):
+        """
+        Deletes a RiverApp project directory
+
+        This function attempts to delete a directory containing a RiverApp project.
+        It performs the following checks before deletion:
+
+        - **Data Type Verification:** Ensures `project_dir` is a string type.
+        - **Directory Existence:** Verifies if the provided `project_dir` exists and
+          is a directory.
+        - **Project Confirmation:** Checks if a project configuration file
+          (.json file with the same name as the directory) exists within
+          `project_dir`. This is used to confirm it's a valid RiverApp project directory.
+
+        If all checks pass, the function removes the entire `project_dir` using
+        `rmtree`.
+
+        Parameters
+        ----------
+
+        - `project_dir` (`str`): The path to the directory containing the RiverApp project.
+
+        Raises
+        ------
+
+        - `TypeError`: If `project_dir` is not a string type.
+        - `FileNotFoundError`:
+            - If the provided `project_dir` does not exist.
+            - If the directory does not contain the expected project configuration file.
+
+        Notes
+        -----
+
+        - This function utilizes the `os.path` module for path manipulation.
+        - The function uses `rmtree` to recursively delete the project directory
+          and its contents. Caution should be exercised as this is a permanent deletion.
+
+        """
         if not isinstance(project_dir, str):
             raise TypeError(f"project_dir should be a str : {project_dir}")
 
