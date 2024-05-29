@@ -511,10 +511,12 @@ class SavingProjectData:
             if not isinstance(coordinates[0], (int, float)) or not isinstance(coordinates[1],
                                                                               (int, float)):
                 raise ValueError("Point coordinates should be numbers")
-
-        if beacons["p1_to_p2"] <= 0 or beacons["p2_to_p3"] <= 0 or beacons["p3_to_p4"] <= 0 or \
-                beacons["p4_to_p1"] <= 0 or beacons["p1_to_p3"] <= 0 or beacons["p2_to_p4"] <= 0:
-            raise ValueError("Distance between points cannot be lass than or equal to 0")
+        print("BEACONS", beacons)
+        for key in beacons.keys():
+            if key == "points":
+                continue
+            if beacons[key] <= 0:
+                raise ValueError("Distance between points cannot be less than or equal to 0")
 
         self._beacons = beacons
         self._save_step("beacons", beacons)
@@ -656,14 +658,14 @@ class SavingProjectData:
         if not isinstance(data, dict):
             raise TypeError("data should be a dict")
 
-        with open(self._backup_file, "r") as json_file:
+        with open(self._backup_file, "r", encoding='utf-8') as json_file:
             saved_data = load(json_file)
 
         saved_data[step] = data
         saved_data["steps_done"][step] = True
         self._steps_done[step] = True
 
-        with open(self._backup_file, "w") as json_file:
+        with open(self._backup_file, "w", encoding='utf-8') as json_file:
             json_file.write(dumps(saved_data, indent=4))
 
 
@@ -1190,7 +1192,7 @@ class SavingProjectData:
         if not path.exists(backup_file_path):
             raise FileNotFoundError(f"the backup file was not found : {backup_file_path}")
 
-        with open(backup_file_path, "r") as json_file:
+        with open(backup_file_path, "r", encoding='utf-8') as json_file:
             project_data: dict = load(json_file)
 
         # Check if data format is correct
@@ -1276,7 +1278,7 @@ class SavingProjectData:
 
         mkdir(project_directory)
 
-        with open(path.join(project_directory, f"{project_name}.json"), "w") as json_file:
+        with open(path.join(project_directory, f"{project_name}.json"), "w", encoding='utf-8') as json_file:
             data = PROJECT_DEFAULT_STRUCT
             data["project_name"] = project_name
             json_file.write(dumps(data, indent=4))

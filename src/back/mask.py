@@ -20,7 +20,7 @@
 import copy
 import numpy as np
 from matplotlib.colors import Normalize
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 # File from debray thesis
@@ -154,7 +154,7 @@ def plot_result(da_rgb_proj, mask):
         add_colorbar=True
     )
     # UNCOMMENT ONLY WHEN DEVELOPING
-    # plt.show()
+    plt.show()
 
 
 # here the idea is that the user can choose which filter he wants to apply

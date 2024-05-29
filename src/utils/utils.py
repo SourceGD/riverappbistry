@@ -4,16 +4,19 @@ Frontend Utility Functions Module
 This module contains utility functions intended for use in the frontend
 (client-side) of your application.
 
-**Current Functionality:**
+Current Functionality
+---------------------
 
 - `check_internet()`: Checks for an active internet connection.
 
-**Dependencies:**
+Dependencies
+------------
 
 - `requests` (optional): Required if enabling the API-based internet check
   functionality (currently commented out).
 
-**Notes:**
+Notes
+-----
 
 - This module provides helper functions to enhance the frontend user experience.
 - Functions are designed to be easily integrated into your frontend code.
