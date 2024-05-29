@@ -52,66 +52,48 @@ class SavingProjectData:
     Attributes
     ----------
 
-    - `_post_process` (`dict`, optional): Stores data related to post-processing
-      (likely after video analysis). Not used in provided methods.
-    - `_backup_file` (`str`, optional): Path to the project backup file. Set
-      during project loading.
-    - `_project_name` (`str`): Name of the currently loaded project.
-    - `_steps_done` (`dict`): Dictionary containing completion flags for
-      different project workflow steps (step name as key, boolean value
-      indicating completion).
-    - `_video_configuration` (`dict`): Dictionary containing video configuration
-      data (path, start/end times, frame rate).
-    - `_bathymetry` (`dict`): Dictionary containing bathymetry data (water level,
-      potentially x/y coordinates for reference points).
-    - `_beacons` (`dict`): Dictionary containing beacon data (likely locations
-      and other relevant information).
-    - `_cam_config` (`CameraConfig`, optional): Stores camera configuration
-      data (assumed to be from a separate module). Not used in provided methods.
-    - `_filter_video` (`dict`, optional): Stores video filter data (likely
-      parameters for video processing). Not used in provided methods.
-    - `_piv` (`dict`, optional): Stores PIV analysis data (likely results
-      after processing). Not used in provided methods.
-
-    Properties
-    ----------
-
-    - `project_name` (-> `str`): Gets the name of the current project.
-    - `steps_done` (-> `dict`): Gets the completion status for project workflow steps.
-    - `video_configuration` (-> `dict`): Gets the video configuration data.
-    - `video_configuration` (`dict`): Sets the video configuration data with validation.
-    - `bathymetry` (-> `dict`): Gets the bathymetry data.
-    - `bathymetry` (`dict`): Sets the bathymetry data with validation.
-    - `beacons` (-> `dict`): Gets the beacon data.
-    - `beacons` (`dict`): Sets the beacon data with validation.
-    - `cam_config` (-> `CameraConfig`): Gets the camera configuration data.
-    - `filter_video` (-> `dict`, optional): Gets the video filter data
-      (not used in provided methods).
-    - `filter_video` (`dict`): Sets the video filter data (not used in provided methods).
-    - `piv` (-> `dict`, optional): Gets the PIV analysis data (not used in provided methods).
+    - `_post_process` : `dict`, optional
+        Stores data related to post-processing
+        (likely after video analysis). Not used in provided methods.
+    - `_backup_file` : `str`, optional
+        Path to the project backup file. Set
+        during project loading.
+    - `_project_name` : `str`:
+        Name of the currently loaded project.
+    - `_steps_done` : `dict`
+        Dictionary containing completion flags for
+        different project workflow steps (step name as key, boolean value
+        indicating completion).
+    - `_video_configuration` : `dict`
+        Dictionary containing video configuration
+        data (path, start/end times, frame rate).
+    - `_bathymetry` : `dict`:
+        Dictionary containing bathymetry data (water level,
+        potentially x/y coordinates for reference points).
+    - `_beacons` : `dict`
+        Dictionary containing beacon data (likely locations
+        and other relevant information).
+    - `_cam_config` : `CameraConfig`, optional
+        Stores camera configuration
+        data (assumed to be from a separate module). Not used in provided methods.
+    - `_filter_video` : `dict`, optional
+        Stores video filter data (likely
+        parameters for video processing). Not used in provided methods.
+    - `_piv` : `dict`, optional
+        Stores PIV analysis data (likely results
+        after processing). Not used in provided methods.
 
     Methods
     -------
 
-    - `load_project` (**`project_dir` (`str`**) -> `None`): Loads a RiverApp project
-      from the specified directory and initializes internal data structures.
-    - `create_project` (**`projects_dir` (`str`**, **`project_name` (`str`**) -> `None`):
-      Creates a new RiverApp project directory and initializes basic project data.
-    - `delete_project` (**`project_dir` (`str`**) -> `None`): Deletes the specified
-      RiverApp project directory and its contents.
+    - load_project :
+        Loads a RiverApp project
+        from the specified directory and initializes internal data structures.
+    - `create_project` :
+        Creates a new RiverApp project directory and initializes basic project data.
+    - `delete_project` :
+        Deletes the specified RiverApp project directory and its contents.
 
-    Internal Helper Methods (not intended for external use)
-    -------------------------------------------------------
-
-    - `_save_step` (**`step` (`str`**), **`data` (`dict`**) -> `None`): Saves a specific project
-      step data and updates its completion status in the internal storage.
-    - `_check_backup_file_format` (**`wanted_dict_format` (`dict`**),
-      **`dict_format` (`dict`**) -> `bool`):
-                Validates the format of a project data dictionary against an expected format.
-    - `_check_missing_data` (**`wanted_data` (`list`**), **`data` (`dict`**) -> `bool`):
-                    Checks if a data dictionary contains all required keys specified in a list.
-    - `_convert_dist_to_dest_points` (**`dist` (`list`**) -> `list`):
-                    Converts a list of beacon distances to destination points in image coordinates.
 
     Notes
     -----
@@ -145,7 +127,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `str`: The name of the RiverApp project.
+        - `str`:
+            The name of the RiverApp project.
 
         Notes
         -----
@@ -167,7 +150,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict`: The dictionary containing completion flags for project workflow steps.
+        - `dict`:
+            The dictionary containing completion flags for project workflow steps.
 
         Notes
         -----
@@ -193,7 +177,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict`: The dictionary containing video configuration data for the project.
+        - `dict`:
+            The dictionary containing video configuration data for the project.
 
         Notes
         -----
@@ -234,7 +219,7 @@ class SavingProjectData:
         Parameters
         ----------
 
-        - `video_configuration` (`dict`): The new video configuration data dictionary
+        - dict video_configuration : The new video configuration data dictionary
           containing information about the video file to be processed, including
           start and end times for the desired video segment, and the frame rate
           (frequency) for capturing frames.
@@ -317,7 +302,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict`: The dictionary containing bathymetry data for the project.
+        - `dict`:
+            The dictionary containing bathymetry data for the project.
 
         Notes
         -----
@@ -423,7 +409,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict`: The dictionary containing beacon data for the project.
+        - `dict`:
+            The dictionary containing beacon data for the project.
 
         Notes
         -----
@@ -536,7 +523,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `CameraConfig` object: The camera configuration data for the project.
+        - `CameraConfig`:
+            The camera configuration data for the project.
 
         Notes
         -----
@@ -558,8 +546,9 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict`: The video filter configuration data dictionary (content depends
-          on the implementation of video filtering).
+        - `dict`:
+            The video filter configuration data dictionary (content depends
+            on the implementation of video filtering).
 
         Notes
         -----
@@ -598,7 +587,8 @@ class SavingProjectData:
         Returns
         -------
 
-        - `dict` containing PIV data (if available) or `None` (if not available).
+        - `dict` :
+            PIV data (if available) or `None` (if not available).
 
         Notes
         -----
@@ -697,8 +687,9 @@ class SavingProjectData:
         Returns
         -------
 
-        - `bool`: True if the format of the data dictionary matches the expected
-          format, False otherwise (triggers the exception).
+        - `bool`:
+            True if the format of the data dictionary matches the expected
+            format, False otherwise (triggers the exception).
 
         Raises
         ------
@@ -777,8 +768,9 @@ class SavingProjectData:
         Returns
         -------
 
-        - `bool`: True if all required data keys are present in the dictionary,
-           False otherwise (triggers the exception).
+        - `bool`:
+            True if all required data keys are present in the dictionary,
+            False otherwise (triggers the exception).
 
         Notes
         -----
@@ -821,8 +813,9 @@ class SavingProjectData:
         Returns
         -------
 
-        - `list`: A list of destination points in image coordinates for each beacon.
-          The order corresponds to the order of distances provided in the input list.
+        - `list`:
+            A list of destination points in image coordinates for each beacon.
+            The order corresponds to the order of distances provided in the input list.
 
         Raises
         ------
@@ -885,8 +878,9 @@ class SavingProjectData:
         Returns
         -------
 
-        - `bool`: True if the camera configuration data is generated successfully,
-          False otherwise (typically due to missing prerequisites).
+        - `bool`:
+            True if the camera configuration data is generated successfully,
+            False otherwise (typically due to missing prerequisites).
 
         Notes
         -----
@@ -967,12 +961,14 @@ class SavingProjectData:
         Parameters
         ----------
 
-        - None (function utilizes project data loaded from configuration file).
+        - `None`
+            (function utilizes project data loaded from configuration file).
 
         Returns
         -------
 
-        - `bool`: True if the PIV data is generated successfully, False otherwise
+        - `bool`:
+            True if the PIV data is generated successfully, False otherwise
 
         Raises
         ------
@@ -1080,26 +1076,30 @@ class SavingProjectData:
         Parameters
         ----------
 
-        - `river_flow` (`float`): The calculated river flow rate.
-        - `transect_picture_path` (`str`): Path to the image file representing the
-          analyzed transect.
-        - `local_points` (`list`): A list of local points extracted during
-          post-processing (data format may vary).
+        - float `river_flow`:
+            The calculated river flow rate.
+        - str `transect_picture_path`:
+            Path to the image file representing the analyzed transect.
+        - list `local_points`:
+            A list of local points extracted during post-processing (data format may vary).
 
         Returns
         -------
 
-        - `bool`: True if the post-processing data is saved successfully, False
-          otherwise (specifically if the PIV step was not completed).
+        - `bool`:
+            True if the post-processing data is saved successfully, False
+            otherwise (specifically if the PIV step was not completed).
 
         Raises
         ------
 
         - `TypeError`:
-            - If `river_flow` is not a float.
-            - If `transect_picture_path` is not a string.
-            - If `local_points` is not a list.
 
+            - If `river_flow` is not a float.
+
+            - If `transect_picture_path` is not a string.
+
+            - If `local_points` is not a list.
         Notes
         -----
 
@@ -1159,7 +1159,8 @@ class SavingProjectData:
         Parameters
         ----------
 
-        - `project_dir` (`str`): The path to the directory containing the RiverApp project.
+        - str `project_dir` :
+            The path to the directory containing the RiverApp project.
 
         Raises
         ------
@@ -1237,8 +1238,10 @@ class SavingProjectData:
 
         Parameters
         ----------
-        - `projects_dir` (`str`): The path to the directory containing RiverApp projects.
-        - `project_name` (`str`): The name for the new RiverApp project.
+        - str `projects_dir` :
+            The path to the directory containing RiverApp projects.
+        - str `project_name` :
+            The name for the new RiverApp project.
 
         Raises
         ------
@@ -1302,7 +1305,8 @@ class SavingProjectData:
         Parameters
         ----------
 
-        - `project_dir` (`str`): The path to the directory containing the RiverApp project.
+        - str `project_dir` :
+            The path to the directory containing the RiverApp project.
 
         Raises
         ------
