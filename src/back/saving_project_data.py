@@ -1015,21 +1015,20 @@ class SavingProjectData:
                 "project_name": self._project_name
             }
             load_dotenv()
-            api_key = getenv("API_KEY")
-            route_url = getenv("API_URL") + "/process-piv"
             files = {
                 "file": (video, open(video, "rb"), 'application/octet-stream'),
                 "data": ('data', dumps(params), 'application/json')
             }
-            headers = {
-                "X-API-KEY": api_key,
-            }
+
             # TODO add exceptions
             s = requests.Session()
             retries = Retry(total=100, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
             s.mount('http://', HTTPAdapter(max_retries=retries))
             s.mount('https://', HTTPAdapter(max_retries=retries))
-            response = s.post(route_url, files=files, headers=headers, timeout=(500, 500))
+            response = s.post(getenv("API_URL") + "/process-piv",
+                              files=files,
+                              headers={"X-API-KEY": getenv("API_KEY")},
+                              timeout=(500, 500))
             if response.status_code == 401:
                 raise ValueError("The API key is not correct")
             print("PROCESS PIV DURATION: ", response.text)
@@ -1238,7 +1237,6 @@ class SavingProjectData:
 
         Parameters
         ----------
-
         - `projects_dir` (`str`): The path to the directory containing RiverApp projects.
         - `project_name` (`str`): The name for the new RiverApp project.
 
@@ -1278,7 +1276,8 @@ class SavingProjectData:
 
         mkdir(project_directory)
 
-        with open(path.join(project_directory, f"{project_name}.json"), "w", encoding='utf-8') as json_file:
+        with (open(path.join(project_directory, f"{project_name}.json"), "w", encoding='utf-8')
+              as json_file):
             data = PROJECT_DEFAULT_STRUCT
             data["project_name"] = project_name
             json_file.write(dumps(data, indent=4))

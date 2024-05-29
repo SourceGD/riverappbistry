@@ -21,4 +21,5 @@ Since the application does not contain a mobile version yet, the documentation a
    installation
    dev_guide/index.rst
    user_guide/index.rst
+   code_autodoc/index.rst
 
