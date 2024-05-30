@@ -6,15 +6,14 @@
 
     Functions
     ---------
-
     - `apply_mask(ds)`: Applies a series of masking techniques to a velocimetry dataset (`ds`) to
-    identify and remove potentially erroneous data points.
+      identify and remove potentially erroneous data points.
 
     - `plot_result(da_rgb_proj, mask)`: Visualizes the masked velocimetry data overlaid on the first
-    RGB frame of a projected dataset.
+      RGB frame of a projected dataset.
 
     - `mask_and_plot(directory, ds, video)`: Iteratively masks and visualizes velocimetry data,
-    allowing user interaction to refine masking and save results.
+      allowing user interaction to refine masking and save results.
 """
 
 import copy
@@ -35,14 +34,14 @@ def apply_mask(ds):
         values across time (e.g., variance, count).
 
         Parameters:
-        ----------
-        ds : xarray.Dataset
+        -----------
+        xarray.Dataset ds :
             The velocimetry dataset to be masked. It's assumed to contain a 'velocimetry' data
             variable with appropriate dimensions (e.g., time, space).
 
         Returns:
-        -------
-        xarray.Dataset
+        --------
+        xarray.Dataset:
             A new dataset (`ds_mask`) with the same structure as the input dataset, where erroneous
             data points have been masked out (replaced with NaNs).
 
@@ -54,10 +53,11 @@ def apply_mask(ds):
         Notes:
         -------
         * The masking techniques employed within this function are primarily focused on identifying
-        outliers and inconsistencies in velocimetry data.
+          outliers and inconsistencies in velocimetry data.
+
         * Consider customizing the mask parameters
-        (e.g., correlation threshold, window size for rolling mean) based on your specific dataset
-        and data quality requirements.
+          (e.g., correlation threshold, window size for rolling mean) based on your specific dataset
+          and data quality requirements.
 
         Examples
         --------
@@ -87,46 +87,58 @@ def plot_result(da_rgb_proj, mask):
         masked out due to potential errors. It takes two xarray DataArrays as input:
 
         - `da_rgb_proj`: An xarray DataArray representing the first RGB frame from a projected
-        dataset. It's assumed to have dimensions (frames, height, width, channels) and contain RGB
-        color information.
+          dataset. It's assumed to have dimensions (frames, height, width, channels) and contain RGB
+          color information.
+
         - `mask`: An xarray DataArray representing the masked velocimetry data. It's assumed to have
-        dimensions compatible with the velocimetry data in `da_rgb_proj`,
-        with values indicating masked (NaN) and unmasked regions.
+          dimensions compatible with the velocimetry data in `da_rgb_proj`,
+          with values indicating masked (NaN) and unmasked regions.
 
         The function performs the following steps:
 
         1. Plots the first RGB frame from `da_rgb_proj`.
+
         2. Calculates the mean of the `mask` DataArray along the temporal dimension (`"time"`),
         preserving attributes using `keep_attrs=True`.
+
         3. Overlays the masked velocimetry data from `mask.velocimetry` on top of the existing plot
         using the `pyorc.velocimetry.plot` method. This method offers various customization options
         for the visualization.
+
             - `ax=p.axes`: Specifies the existing axes from the RGB frame plot for overlaying.
+
             - `alpha=0.4`: Sets the transparency of the masked velocimetry layer
-            (0.0 fully transparent, 1.0 fully opaque).
+              (0.0 fully transparent, 1.0 fully opaque).
+
             - `cmap="rainbow"`: Selects the colormap for visualizing the masked regions
-            (customizable).
+              (customizable).
+
             - `scale=20`: Scales the magnitude of the velocity vectors (adjust based on your data).
+
             - `width=0.0015`: Sets the width of the velocity vectors
-            (adjust based on desired visibility).
+              (adjust based on desired visibility).
+
             - `norm=Normalize(vmax=0.6, clip=False)`: Normalizes the colormap values
-            (adjust `vmax` as needed).
+              (adjust `vmax` as needed).
+
             - `add_colorbar=True`: Adds a colorbar to the plot for interpreting masked region
-            intensities.
+              intensities.
+
         4. **(Optional)** Displays the plot using `plt.show()` (uncomment only during development).
+
         Parameters:
-        ----------
-        da_rgb_proj : xarray.DataArray
+        -----------
+        da_rgb_proj : `xarray.DataArray`
             An xarray DataArray representing the first RGB frame from a projected dataset.
             It's assumed to have dimensions (frames, height, width, channels) and contain RGB color
             information.
-        mask : xarray.DataArray
+        mask : `xarray.DataArray`
             An xarray DataArray representing the masked velocimetry data.
             It's assumed to have dimensions compatible with the velocimetry data in `da_rgb_proj`,
             with values indicating masked (NaN) and unmasked regions.
 
         Returns:
-        -------
+        --------
         None
 
         Notes:
@@ -134,7 +146,8 @@ def plot_result(da_rgb_proj, mask):
         * This function relies on the `pyorc` library for velocimetry plotting functionalities.
         * Ensure `da_rgb_proj` and `mask` have compatible spatial dimensions for overlaying.
         * Experiment with the `pyorc.velocimetry.plot` method's arguments to customize the
-        visualization as needed for your specific data.
+          visualization as needed for your specific data.
+
     """
 
     # first rgb frame
@@ -171,8 +184,7 @@ def mask_and_plot(directory, ds, video):
 
         - `directory`: (str) The directory path where the masked data will be saved.
         - `ds`: (xarray.Dataset) The velocimetry dataset containing the data to be masked.
-        - `video`: (pyorc Video) A video object representing the data source for
-        visualization.
+        - `video`: (pyorc Video) A video object representing the data source for visualization.
 
         The function performs the following steps:
 
