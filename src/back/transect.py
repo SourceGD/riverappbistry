@@ -82,32 +82,24 @@ def delimiter_points_bathy(cam_config, local_points):
     Parameters
     ----------
 
-    - `cam_config` (`CameraConfig`): An object containing the camera configuration
-      information. This object is expected to have attributes named `gcps` which is a
-      dictionary containing source and destination Ground Control Points (GCPs) used
-      for camera calibration. The dictionary structure is expected to be:
+    - cam_config `CameraConfig`:
+        An object containing the camera configuration
+        information. This object is expected to have attributes named `gcps` which is a
+        dictionary containing source and destination Ground Control Points (GCPs) used
+        for camera calibration.
 
-        ```python
-        {
-            'src': [[x1, y1], [x2, y2], ...],
-            'dst': [[X1, Y1], [X2, Y2], ...]
-        }
-        ```
-
-        where `src` is a list of local points (2D coordinates) in the image plane
-        and `dst` is the corresponding list of world points (2D coordinates) after
-        rectification.
-
-    - `local_points` (`list` of `list`): A list containing two local points (2D
-      coordinates) in the image plane that define the desired transect boundaries.
-      These points are assumed to be provided in pixel coordinates.
+    - list `local_points`:
+        A list containing two local points (2D coordinates) in the image plane
+        that define the desired transect boundaries.
+        These points are assumed to be provided in pixel coordinates.
 
     Returns
     -------
 
-    - `list` of `list`: A list containing two elements, each being a list of length
-      two representing the image coordinates (in the rectified reference frame)
-      corresponding to the provided local points.
+    - `list` of `list`:
+        A list containing two elements, each being a list of length
+        two representing the image coordinates (in the rectified reference frame)
+        corresponding to the provided local points.
 
     Notes
     -----
@@ -141,27 +133,31 @@ def all_points_bathy(bathy, bathy_delimeters, ds):
     Parameters
     ----------
 
-    - `bathy` (`dict`): A dictionary containing bathymetry data. This dictionary
-      is expected to have keys named "x" and "y" corresponding to the horizontal
-      coordinates (assumed to be in meters) of each bathymetry point.
+    - dict `bathy`:
+        A dictionary containing bathymetry data. This dictionary
+        is expected to have keys named "x" and "y" corresponding to the horizontal
+        coordinates (assumed to be in meters) of each bathymetry point.
 
-    - `bathy_delimeters` (`tuple` of `list`): A tuple containing two lists, each
-      representing a delimiter point in the rectified reference frame. The first
-      element defines the starting point and the second element defines the ending
-      point of the transect. Each list is expected to have a length of two,
-      representing the x and y coordinates of the point.
+    - tuple of `list `bathy_delimeters`:
+        A tuple containing two lists, each
+        representing a delimiter point in the rectified reference frame. The first
+        element defines the starting point and the second element defines the ending
+        point of the transect. Each list is expected to have a length of two,
+        representing the x and y coordinates of the point.
 
-    - `ds` (`xarray.Dataset`): An xarray dataset containing the velocimetry data.
-      It's assumed that the dataset has a variable named `velocimetry` that provides
-      the velocity information.
+    - xarray.Dataset `ds`:
+        An xarray dataset containing the velocimetry data.
+        It's assumed that the dataset has a variable named `velocimetry` that provides
+        the velocity information.
 
     Returns
     -------
 
-    - `xarray.DataArray`: An xarray DataArray containing the calculated transect
-      velocities along the specified transect line. The DataArray will have the same
-      dimensions as the original `velocimetry` variable in the provided `ds` but
-      with potentially different values along the transect line.
+    - `xarray.DataArray`:
+        An xarray DataArray containing the calculated transect
+        velocities along the specified transect line. The DataArray will have the same
+        dimensions as the original `velocimetry` variable in the provided `ds` but
+        with potentially different values along the transect line.
 
     Notes
     -----
@@ -202,23 +198,29 @@ def transect_plot(ds_points, video, ds, directory, v_corr):
     Parameters
     ----------
 
-    - `ds_points` (`xarray.Dataset`): An xarray dataset containing the transect points.
+    - xarray.Dataset `ds_points`:
+        An xarray dataset containing the transect points.
 
-    - `video` (`pyorc.Video`): An object representing the video data. It's assumed
-      this object has methods to access video frames.
+    - pyorc.Video `video`:
+        An object representing the video data. It's assumed
+        this object has methods to access video frames.
 
-    - `ds` (`xarray.Dataset`): An xarray dataset containing the velocimetry data.
+    - xarray.Dataset `ds`:
+        An xarray dataset containing the velocimetry data.
 
-    - `directory` (`str`): The directory path where the generated plot image
-      will be saved.
+    - str `directory` :
+        The directory path where the generated plot image
+        will be saved.
 
-    - `v_corr` (`float`, optional): A velocity correction factor (default is 0.9).
+    - float, optional `v_corr`:
+        A velocity correction factor (default is 0.9).
 
     Returns
     -------
 
-    - `xarray.DataArray` (`ds_points_q`): The original `ds_points` dataset with
-      additional information such as river discharge.
+    - `xarray.DataArray`:
+        The original `ds_points` dataset with
+        additional information such as river discharge.
 
     Notes
     -----
@@ -329,27 +331,33 @@ def transect(ds, video, directory, bathy_file, local_points):
     Parameters
     ----------
 
-    - `ds` (`xarray.Dataset`): An xarray dataset containing the velocimetry data.
+    - xarray.Dataset `ds`:
+        An xarray dataset containing the velocimetry data.
 
-    - `video` (`pyorc.Video`): An object representing the video data. It's assumed
-      this object has a `camera_config` attribute containing camera configuration
-      information.
+    - pyorc.Video `video`:
+        An object representing the video data. It's assumed
+        this object has a `camera_config` attribute containing camera configuration
+        information.
 
-    - `directory` (`str`): The directory path where the generated transect plot
-      image will be saved.
+    - str `directory`:
+        The directory path where the generated transect plot
+        image will be saved.
 
-    - `bathy_file` (`dict`): A dictionary containing bathymetry data (assumed
-      to have a structure similar to the output of `all_points_bathy`).
+    - dict `bathy_file`:
+        A dictionary containing bathymetry data (assumed
+        to have a structure similar to the output of `all_points_bathy`).
 
-    - `local_points` (`list` of `list`): A list containing two local points
-      (2D coordinates) in the image plane that define the desired transect
-      boundaries.
+    - list of list `local_points`:
+        A list containing two local points
+        (2D coordinates) in the image plane that define the desired transect
+        boundaries.
 
     Returns
     -------
 
-    - `list`: The calculated river flow value for the specified transect in the form of a
-      list of 5 quantiles.
+    - `list`:
+        The calculated river flow value for the specified transect in the form of a
+        list of 5 quantiles.
 
     Notes
     -----

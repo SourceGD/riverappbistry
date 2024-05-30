@@ -950,9 +950,10 @@ class SavingProjectData:
           - **API Method (if internet available):**
             - Leverages an external API service (requires internet connection).
             - Uploads the project video file and configuration data (including FPS,
-              start/end frames, frequency, water level, camera configuration, and
-              project name) to the API.
+            start/end frames, frequency, water level, camera configuration, and
+            project name) to the API.
             - The API service processes the PIV analysis on the video.
+
           - **Local Processing Method (if no internet):**
             - Uses the PyOrc library to process the video locally.
             - Performs normalization, projection, and PIV analysis on the video frames.
@@ -1313,7 +1314,9 @@ class SavingProjectData:
 
         - `TypeError`: If `project_dir` is not a string type.
         - `FileNotFoundError`:
+
             - If the provided `project_dir` does not exist.
+
             - If the directory does not contain the expected project configuration file.
 
         Notes
