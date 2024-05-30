@@ -7,6 +7,53 @@ from src.utils import video_to_image
 
 
 def beacons_detection(video_path: str, time: int) -> tuple:
+    """
+    Detects beacons in a video frame at a specified time
+
+    This function takes a video path and a time step (in seconds) as input and aims to
+    perform beacon detection. It performs the following steps:
+
+    1. **Input Validation:**
+
+       - Checks if the provided `video_path` is a string. Raises a `ValueError` if not.
+
+       - Checks if the video file exists at the specified path. Raises a
+         `FileNotFoundError` if not found.
+    2. **Beacon Detection :**
+
+       - The function uses an unspecified function `GCP_detect` on the video path. The output is
+         stored in `gcp`. The details of `GCP_detect` are not provided in this function.
+
+       - Sorts the output from `GCP_detect` using the `sort_src` function.
+    3. **Extracting Image Frame:**
+
+       - Extracts an image frame from the video at the specified `time` (in seconds).
+
+       - The function uses the `video_to_image` function (assumed to be defined elsewhere)
+         to perform this task.
+
+    Parameters
+    ----------
+
+    - str video_path :
+        The path to the video file.
+
+    - int time :
+        The time step (in seconds) at which the image frame is to be extracted.
+
+    Returns
+    -------
+
+    tuple :
+        A tuple containing the extracted image frame and the sorted beacon data.
+
+
+    Raises
+    ------
+    - `ValueError`: If the provided `video_path` is not a string.
+    - `FileNotFoundError`: If the video file at the specified path is not found.
+
+    """
     if not isinstance(video_path, str):
         raise ValueError(f"video_path must be a string: {video_path}")
 
@@ -21,7 +68,108 @@ def beacons_detection(video_path: str, time: int) -> tuple:
 
 def GCP_detect(video_path: str) -> list:
     """
-        return 4 GCP detected as most probable ones
+    Detects GCPs (Ground Control Points) in the first frame of a video
+
+    This function takes a video path as input and aims to detect GCPs (assumed to be
+    predefined reference points) in the first frame of the video. It performs
+    the following steps:
+
+    1. **Input Validation:**
+
+       - Checks if the provided `video_path` is a string. Raises a `ValueError` if not.
+
+       - Checks if the video file exists at the specified path. Raises a
+         `FileNotFoundError` if not found.
+    2. **Open Video and Read First Frame:**
+
+       - Opens the video using OpenCV's `cv2.VideoCapture`.
+
+       - Sets the frame position to the first frame (frame number 0) using
+         `cap.set(cv2.CAP_PROP_POS_FRAMES, 0)`.
+
+       - Reads the first frame using `cap.read()` and stores success and frame data
+         in separate variables.
+
+       - Raises an `IOError` if reading the frame fails.
+    3. **Convert Frame to Grayscale and Flip:**
+
+       - Converts the read frame from BGR (OpenCV's default color format) to
+         grayscale using `cv2.cvtColor`.
+
+       - Flips the frame vertically using `cv2.flip`.
+    4. **Load Reference GCP Image:**
+
+       - Loads a reference image containing the known GCP patterns using
+         `cv2.imread`. The reference image path is constructed by joining the
+         directory of the current script with "gcp_reference.png".
+
+    5. **Thresholding:**
+
+       - Applies thresholding to both the frame and the reference image to convert
+         them to binary images. Uses OpenCV's `cv2.threshold` function. Specific
+         threshold values (128 for reference image, 235 for frame) are used to
+         separate foreground (GCPs) from background.
+
+    6. **Morphological Operations:**
+
+       - Performs morphological operations on the thresholded frame image to improve
+         GCP detection:
+
+         - Opening: Removes small objects and noise using `cv2.morphologyEx` with
+           kernel `kernel1`.
+
+         - Dilation: Expands the remaining objects (potential GCPs) using
+           `cv2.morphologyEx` with kernel `kernel2` and multiple iterations (12).
+    7. **Object Detection and Scoring:**
+
+       - Uses `ndimage.label` to identify connected objects (potential GCPs) in the
+         processed frame image.
+
+       - Iterates through each labeled object:
+
+         - Extracts a window containing the object using `ndimage.find_objects`.
+
+         - Calculates a score using `cv2.matchShapes` to compare the object's shape
+           with the reference GCP image. The score indicates how well the shapes match.
+
+    8. **Selecting Top GCP Candidates:**
+
+       - Sorts the dictionary of object labels and their corresponding scores.
+       - Takes the top 4 entries (objects with the highest matching scores) from the
+         sorted dictionary.
+       - Flips the y and x coordinates of the detected GCPs (likely due to the
+         earlier image flipping).
+       - Converts the NumPy array of GCP coordinates to a list.
+
+    9. **Return GCPs:**
+       - Returns a list containing the top 4 detected GCPs as (y, x) coordinates.
+
+    Parameters
+    ----------
+
+    - str `video_path` :
+        The path to the video file.
+
+    Returns
+    -------
+    list :
+        A list containing the top 4 detected GCPs as (y, x) coordinates.
+
+    Raises
+    ------
+
+    - `ValueError`: If the provided `video_path` is not a string.
+
+    - `FileNotFoundError`: If the video file at the specified path is not found.
+
+    - `IOError`: If there's an error reading the video frame.
+
+    Notes
+    -----
+
+    - This function assumes the presence of a reference GCP image named
+      "gcp_reference.png" in the same directory as the script.
+
     """
     if not isinstance(video_path, str):
         raise ValueError(f"video_path must be a string: {video_path}")
@@ -68,10 +216,47 @@ def GCP_detect(video_path: str) -> list:
     return GCPs.tolist()
 
 
-# Function to get the polar angle
-# with respect to the firts point
-# Note that since the y-axis is reverted, the y-coord are multiplied by -1
 def get_polar_angle_wrt_first_pt(x, y, x_cent, y_cent, x_first, y_first):
+    """
+    Calculates the polar angle of a point relative to a first point and centroid
+
+    This function takes the coordinates of a point, the centroid of a set of points,
+    and the coordinates of a designated "first point" as input. It calculates the
+    polar angle of the given point with respect to the centroid, considering the
+    "first point" as a reference for angle orientation.
+
+    Parameters
+    ----------
+
+    - float `x`:
+        X-coordinate of the point of interest.
+    - float `y`:
+        Y-coordinate of the point of interest.
+    - float `x_cent` :
+        X-coordinate of the centroid.
+    - float `y_cent` :
+        Y-coordinate of the centroid.
+    - float `x_first` :
+        X-coordinate of the designated "first point".
+    - float `y_first` :
+        Y-coordinate of the designated "first point".
+
+    Returns
+    -------
+
+    float
+        The polar angle (in radians) of the point (x, y) relative to the centroid and with
+        orientation based on the "first point".
+
+    Notes
+    -----
+
+    - The Y-axis is assumed to be flipped (origin at top), so Y values are
+      negated during calculations.
+
+    - The function ensures the returned angle is positive and within the range [0, 2*pi].
+
+    """
     # Calculate the polar angle of the point (x, y) with respect to the centroid (x_cent, y_cent)
     angle = math.atan2(-1 * (y - y_cent), x - x_cent)
     # Calculate the polar angle of the point (x_first, y_first) with respect to the centroid (x_cent, y_cent)
@@ -86,19 +271,56 @@ def get_polar_angle_wrt_first_pt(x, y, x_cent, y_cent, x_first, y_first):
 
 def sort_src(src):
     """
-        Function to sort the GCP found automatically.
+    Sorts a list of GCPs (Ground Control Points) based on their polar angles
 
-        The function first find the top left point to be the first one,
-            then sort the remaining in clockwise order
+    This function takes a list of GCP coordinates (represented as a 2D NumPy
+    array where each row contains [x, y] coordinates) as input. It sorts the GCPs
+    in a clockwise order, treating the "top-left" GCP as the reference point.
 
-        The finding of the first point follow these rules based on the quadrant
-            around the centroid of the polygon delimited by the four points
-        1. If one point in the top left quadrant it is P1
-        2. If two points in the first left quadrant
-            a. If they are vertically aligned, P1 is the uppermost
-            b. Otherwise P1 is the most left
-        3. If no point in top left quadrant then P1 is the uppermost of the
-            bottom left quadrant.
+    The logic for finding the top-left GCP prioritizes points in the following
+    quadrants:
+
+    1. **Top-left quadrant (X < centroid_X, Y < centroid_Y):** If there's exactly
+       one point here, it's chosen as the top-left GCP.
+    2. **Top-left quadrant (X < centroid_X, Y < centroid_Y):** If there are two
+       points, the one that's:
+
+         - Uppermost (lowest Y value) if they are close vertically.
+
+         - Leftmost (lowest X value) otherwise.
+
+    3. **Bottom-left quadrant (X < centroid_X, Y > centroid_Y):** If no points
+       are found in the top-left quadrant, the uppermost point (lowest Y value)
+       here becomes the top-left GCP.
+
+    After identifying the top-left GCP, the function:
+
+    - Calculates the polar angle of each remaining GCP relative to the top-left
+      GCP and the centroid.
+    - Sorts the GCPs in descending order based on their polar angles (clockwise
+      order).
+
+    Parameters
+    ----------
+
+    - `src` (`list`): A list of GCP coordinates, likely represented as
+      [[x1, y1], [x2, y2], ...] where each sub-list represents a GCP's (X, Y)
+      coordinates.
+
+    Returns
+    -------
+
+    - `list`: A new list containing the sorted GCP coordinates. The sorting
+      ensures a clockwise order starting from the designated "top-left" GCP.
+
+    Notes
+    -----
+
+    - The function assumes the `get_polar_angle_wrt_first_pt` function is defined
+      elsewhere to calculate polar angles.
+    - Note that in order for the PIV to work correctly, the top-left beacon is the P4,
+      top-right is P1, bottom-right is P2 and bottom-left is P3.
+
     """
 
     src = np.array(src)

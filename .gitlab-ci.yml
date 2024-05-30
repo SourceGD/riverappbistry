@@ -12,9 +12,8 @@ before_script:
 
 code-analysis:
     stage: code-check
-    script :
-        - pylint --recursive=y src --disable=E0611 --fail-under=6 --class-attribute-naming-style=snake_case
-
+    script:
+        - pylint --recursive=y src --disable=E0611,E1101  --fail-under=9.5 --class-attribute-naming-style=snake_case
 
 testing:
     stage: testing
