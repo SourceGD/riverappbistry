@@ -44,23 +44,25 @@ def download_project(project_dir: str, output_zip_path: str):
         The function performs the following steps:
 
         1. Validates the project directory using `get_project_save_file(project_dir)`. This function
-         likely checks if the directory exists and is accessible (implementation details depend on
-          your specific `get_project_save_file` function).
+            likely checks if the directory exists and is accessible (implementation details depend
+            on your specific `get_project_save_file` function).
 
         2. Validates the output ZIP path using `is_directory_valid(output_zip_path)`.
-        This function likely checks if the target directory exists and has write permissions
-        (implementation details depend on your specific `is_directory_valid` function).
+            This function likely checks if the target directory exists and has write permissions
+            (implementation details depend on your specific `is_directory_valid` function).
 
         3. Creates a ZIP archive using `ZipFile` with the specified output path and compression
-        method (ZIP_DEFLATED). The archive filename is constructed by combining the project
-        directory's base name with '.zip' and placed within the `output_zip_path`.
+            method (ZIP_DEFLATED). The archive filename is constructed by combining the project
+            directory's base name with '.zip' and placed within the `output_zip_path`.
 
         4. Iterates through the project directory structure using `os.walk(project_dir)`.
             - For each file encountered:
                 - Constructs the full file path (`file_path`).
+
                 - Calculates the relative path within the project directory (`arcname`) using
                   `path.relpath`. This ensures the files are stored within the archive structure
-                   reflecting their original location in the project directory.
+                  reflecting their original location in the project directory.
+
                 - Adds the file to the ZIP archive using `zipfile.write(file_path, arcname)`.
 
         Returns
@@ -71,16 +73,14 @@ def download_project(project_dir: str, output_zip_path: str):
         Raises
         ------
 
-        - Exceptions potentially raised by `get_project_save_file` and `is_directory_valid`
-        functions (depends on their implementations).
-        - `OSError` or related exceptions in case of file system errors during ZIP creation or
-        file access.
+        `OSError` :
+            or related exceptions in case of file system errors during ZIP creation or file access.
 
         Notes
         -----
 
         - This function relies on the `os` module for file system operations and
-        path manipulation.
+          path manipulation.
 
         Examples
         --------
@@ -119,19 +119,22 @@ def is_directory_valid(directory: str) -> bool:
         Parameters
         ----------
 
-        - `directory` (str): The path to the directory to be validated.
+        - str `directory` :
+            The path to the directory to be validated.
 
         Returns
         -------
 
-        - `bool`: True if the directory path is valid and exists, False otherwise
-        (though the function always raises an exception on invalidity).
+        - `bool`:
+            True if the directory path is valid and exists, False otherwise
+            (though the function always raises an exception on invalidity).
 
         Raises
         ------
 
-        - `ValueError`: Raised with an informative message if the directory path is invalid
-        (due to character restrictions or non-existence).
+        - `ValueError`:
+            Raised with an informative message if the directory path is invalid
+            (due to character restrictions or non-existence).
 
         Notes
         -----
@@ -160,15 +163,15 @@ def get_project_save_file(project_dir: str) -> str:
          the following actions:
 
         1. **Validates Directory Path:** It calls `is_directory_valid(project_dir)` to ensure the
-        provided path points to a valid and accessible directory.
+            provided path points to a valid and accessible directory.
 
         2. **Constructs Save File Path:** The function constructs a potential save file path by
-        joining the `project_dir` with the base name of the directory appended with '.json'.
-        This suggests the function might be looking for a JSON file associated with the project.
+            joining the `project_dir` with the base name of the directory appended with '.json'.
+            This suggests the function might be looking for a JSON file associated with the project.
 
         3. **Checks Save File Existence:** It uses `path.exists` to verify if the constructed save
-        file path actually exists. If not, it raises a `FileNotFoundError` indicating the file could
-         not be found.
+            file path actually exists. If not, it raises a `FileNotFoundError` indicating the file could
+            not be found.
 
         Parameters
         ----------
@@ -183,15 +186,17 @@ def get_project_save_file(project_dir: str) -> str:
         Raises
         ------
 
-        - `ValueError`: Potentially raised by `is_directory_valid` if the project directory path
-        is invalid.
-        - `FileNotFoundError`: Raised if the constructed save file path does not exist.
+        - `ValueError`:
+            Potentially raised by `is_directory_valid` if the project directory path
+            is invalid.
+        - `FileNotFoundError`:
+            Raised if the constructed save file path does not exist.
 
         Notes
         -----
 
         - The specific behavior and purpose of this function might require clarification based on
-        its actual implementation.
+          its actual implementation.
         - This function relies on the `os.path` module for path manipulation and existence checks.
 
         Examples
