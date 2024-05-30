@@ -14,3 +14,4 @@ This section of the documentation contains all the autodoc generated from code d
    gcp_detection
    video_filters
    project_data_management
+   utils

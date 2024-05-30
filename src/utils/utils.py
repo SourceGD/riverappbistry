@@ -43,14 +43,16 @@ def check_internet():
     Returns
     -------
 
-    - `bool`: True if a successful connection is established within the timeout
-      period, False otherwise.
+    - `bool`:
+        True if a successful connection is established within the timeout
+        period, False otherwise.
 
     Raises
     ------
 
-    - `requests.exceptions.RequestException`: Raised if there are any exceptions
-      during the request (potentially including errors beyond connection issues).
+    - `requests.exceptions.RequestException`:
+        Raised if there are any exceptions
+        during the request (potentially including errors beyond connection issues).
 
     Notes
     -----
