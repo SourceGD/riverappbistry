@@ -1,0 +1,85 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+#:import DefaultTextInput src.front.components.widget.DefaultTextInput
+
+<BeaconsMobileView>:
+    name: "beacons_mobile_view"
+
+<BeaconsTabletView>:
+    name: "beacons_tablet_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Beacons - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("beacons").go_back()]]
+
+        MDBoxLayout:
+            id: beacons_selection
+            size_hint_y: 0.6
+
+        MDGridLayout:
+            cols: 3
+            padding: dp(10), 25, dp(10), 0
+            spacing: dp(10)
+            size_hint_y: 0.4
+            
+            DefaultTextInput:
+                id: p1_to_p2
+                hint_text: "P1 - P2 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p1_to_p2", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p2_to_p3
+                hint_text: "P2 - P3 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p2_to_p3", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p3_to_p4
+                hint_text: "P3 - P4 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p3_to_p4", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p4_to_p1
+                hint_text: "P4 - P1 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p4_to_p1", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p1_to_p3
+                hint_text: "P1 - P3 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p1_to_p3", self.text) if not self.focus else None
+
+            DefaultTextInput:
+                id: p2_to_p4
+                hint_text: "P2 - P4 [m]"
+                input_filter: "float"
+                helper_text_mode: "on_error"
+                on_focus: app.root.ids.screen_manager.get_screen("beacons").is_input_valid("p2_to_p4", self.text) if not self.focus else None
+
+
+        MDBoxLayout:
+            id: control_button
+            padding: dp(10)
+            spacing: dp(10)
+            adaptive_size: True
+            pos_hint: {"center_y": 0.5, "right": 1}
+
+            MDFillRoundFlatButton:
+                text: "Validate"
+                font_style: "Button"
+                on_release: app.root.ids.screen_manager.get_screen("beacons").validate_beacons()
+                
+<BeaconsDesktopView>:
+    name: "beacons_desktop_view"

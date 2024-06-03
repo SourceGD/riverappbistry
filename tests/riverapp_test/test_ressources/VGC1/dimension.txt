@@ -1,0 +1,3 @@
+# Distances between the fours points of reference ABCD (A top left corner then clockwise order)
+#  in the following order [L_AB, L_BC, L_CD, L_DA, L_AC, L_DB]
+6.65, 7.60, 6.69, 7.82, 10.29, 10.10

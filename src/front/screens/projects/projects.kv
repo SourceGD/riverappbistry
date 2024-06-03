@@ -1,0 +1,56 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+
+<ProjectsMobileView>:
+
+<ProjectsTabletView>:
+    name: "projects_mobile_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Your Projects"
+            use_overflow: True
+            right_action_items:
+                [
+                ["upload", lambda x: x, "Upload Project", "Upload Project"], 
+                ["plus", lambda x: app.root.ids.screen_manager.get_screen("projects").open_new_project_dialogs(), "New Project", "New Project"],
+                ]
+                
+        MDBoxLayout:
+            orientation: 'vertical'
+            spacing: dp(10)
+            padding: dp(20)
+
+            MDBoxLayout:
+                adaptive_height: True
+
+                MDIconButton:
+                    icon: 'magnify'
+
+                MDTextField:
+                    id: search_field
+                    hint_text: 'Search Project'
+                    on_text: app.root.ids.screen_manager.get_screen("projects").set_list_projects(self.text, True)
+            
+            MDBoxLayout:
+                id: no_results
+                adaptive_size: True
+                pos_hint: {"center_x": 0.5}
+
+            RecycleView:
+                id: project_recycle_view
+                key_viewclass: 'viewclass'
+                key_size: 'height'
+
+                MDRecycleGridLayout:
+                    cols: 3
+                    padding: dp(10)
+                    spacing: dp(10)
+                    default_size: None, dp(100)
+                    default_size_hint: 1, None
+                    adaptive_height: True 
+
+<ProjectsDesktopView>:

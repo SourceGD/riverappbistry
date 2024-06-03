@@ -1,0 +1,87 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+#:import ReverseLollipopProgressBar src.front.components.widget
+
+<ProjectDetailsTabletView>:
+    name: "project_details_mobile_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Your Projects - Details"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("project_details").go_back()]]
+
+        MDBoxLayout:
+            size_hint_x: None
+            width: dp(550)
+            pos_hint: {"x": 0.1}
+
+            MDBoxLayout:
+                id: rl_project_details_box
+                size_hint_x: None
+                width: dp(80)
+                padding: dp(25), dp(10)  
+                
+                ReverseLollipopProgressBar:
+                    id: rl_progress_bar
+                    progress_bar_size: 7
+                    progress_bar_color: app.theme_cls.primary_color
+                    size_hint: None,None
+                    size: rl_project_details_box.height * 0.06, rl_project_details_box.height * 0.13
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: dp(25), dp(10)
+                
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Capture a video of the river"
+
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Set up the bathimetry of the river"
+
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Configure the beacons"
+
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Filter the video"
+
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Process the PIV analysis"
+                
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Post-process the results"
+
+                LollipopLabel:
+                    height: rl_project_details_box.height * 0.13
+                    text: "Obtain the discharge along a transect"
+
+        MDBoxLayout:
+            padding: dp(10)
+            spacing: dp(10)
+            adaptive_size: True
+            pos_hint: {"center_y": 0.5, "right": 1}
+
+            MDFillRoundFlatButton:
+                text: "Continue"
+                font_style: "Button"
+                on_release: app.root.ids.screen_manager.get_screen("project_details").continue_project()
+                
+<LollipopLabel@MDBoxLayout>:
+    size_hint: 1, None
+    text: ""
+
+    MDLabel:
+        text_size: self.size
+        text: root.text
+        valign: "bottom"
+        font_style: "H5"
+        color: app.theme_cls.text_color
+                

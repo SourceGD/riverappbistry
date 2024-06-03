@@ -1,21 +1,31 @@
-# This file may be used to create an environment using:
-# conda create --name <envName> python=3.8 --file <this file> -c conda-forge
-# conda  version: 4.12.0
-# python version: 3.8
+descartes==1.1.0
+geojson==3.0.1
+geopandas==0.13.2
+jupyter==1.0.0
+matplotlib==3.7.2
+netCDF4==1.6.4
+numpy==1.25.1
+opencv-python==4.7.0.68
+rasterio==1.3.8
+scipy==1.11.1
+tqdm==4.66.1
+xarray==2023.7.0
+typeguard==4.0.0
+ffpyplayer==4.5.0
+openpiv==0.25.0
+kivy==2.2.0
+kivymd==1.1.1
+dask==2023.8.1
+pytest==8.1.1
+python-dotenv==1.0.1
+waitress==3.0.0
 
-# Edited on 14/03/22
-# 	- openpiv is forced to be an old version
-# 	- all other will install the latest available version on conda-forge channel
-
-
-imutils==0.5.4
-kivy==2.1.0
-kivy-garden== 0.1.4
-matplotlib==3.7.1
-numpy==1.24.2
-py-opencv==4.7.0
-openpiv==0.23.4
-
-# If you're installing on Linux OS, you should comment this following line with a '#'
-
-pywin32==304
+Flask~=3.0.2
+Werkzeug~=3.0.1
+pandas~=2.2.1
+requests~=2.31.0
+pyproj~=3.6.1
+shapely~=2.0.3
+click~=8.1.7
+PyYAML~=6.0.1
+Cartopy~=0.22.0

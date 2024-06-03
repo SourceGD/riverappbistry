@@ -1,0 +1,116 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+#:import SelectChip src.front.components.widget.SelectChip
+#:import DefaultTextInput src.front.components.widget.DefaultTextInput
+
+<FilterVideoTabletView>:
+    name: "filter_video_tablet_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Beacons - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("filter_video").go_back()]]
+
+        MDBoxLayout:
+            id: preview
+            size_hint_y: 0.6
+
+        MDBoxLayout:
+            size_hint_y: 0.4
+            orientation: "vertical"
+
+            MDScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+
+                MDGridLayout:
+                    cols: 3
+                    spacing: 0
+                    size_hint: 1, 2
+
+                    MDRelativeLayout:
+                        SelectChip:
+                            pos_hint: {"center_x": 0.5, "top": 0.8}
+                            text: "Black & White Filter"
+                    
+                    MDRelativeLayout:
+
+                        SelectChip:
+                            id: gamma_chip
+                            pos_hint: {"center_x": 0.5, "top": 0.8}
+                            text: "Gamma Filter"
+
+                        DefaultTextInput:
+                            hint_text: "Gamma"
+                            input_filter: "float"
+                            size_hint: 0.5, 0.4
+                            pos_hint: {"center_x": 0.5, "top": 0.4}
+                            disabled: False if gamma_chip.active else True
+
+                    MDRelativeLayout:
+
+                        SelectChip:
+                            id: normalize_chip
+                            pos_hint: {"center_x": 0.5, "top": 0.8}
+                            text: "Normalize Filter"
+
+                        DefaultTextInput:
+                            hint_text: "Samples"
+                            input_filter: "int"
+                            size_hint: 0.5, 0.4
+                            pos_hint: {"center_x": 0.5, "top": 0.4}
+                            disabled: False if normalize_chip.active else True
+                    
+                    MDRelativeLayout:
+                    
+                        SelectChip:
+                            id: time_diff_chip
+                            pos_hint: {"center_x": 0.5, "top": 0.8}
+                            text: "Time difference Filter"
+
+                        DefaultTextInput:
+                            hint_text: "Threshold"
+                            input_filter: "float"
+                            size_hint: 0.5, 0.4
+                            pos_hint: {"center_x": 0.5, "top": 0.4}
+                            disabled: False if time_diff_chip.active else True
+                    
+                    MDRelativeLayout:
+                    
+                        SelectChip:
+                            id: edge_detect_chip
+                            pos_hint: {"center_x": 0.5, "top": 0.8}
+                            text: "Edge Detect Filter"
+
+                        DefaultTextInput:
+                            hint_text: "wdw 1"
+                            input_filter: "float"
+                            size_hint: 0.45, 0.4
+                            pos_hint: {"center_x": 0.2, "top": 0.4}
+                            disabled: False if edge_detect_chip.active else True
+                        
+                        DefaultTextInput:
+                            hint_text: "wdw 2"
+                            input_filter: "float"
+                            size_hint: 0.45, 0.4
+                            pos_hint: {"center_x": 0.8, "top": 0.4}
+                            disabled: False if edge_detect_chip.active else True
+                    
+            MDBoxLayout:
+                id: control_button
+                padding: dp(10)
+                spacing: dp(10)
+                adaptive_size: True
+                pos_hint: {"center_y": 0.5, "right": 1}
+            
+                MDFillRoundFlatButton:
+                    text: "Preview Filter"
+                    font_style: "Button"
+                
+                MDFillRoundFlatButton:
+                    text: "Launch Piv"
+                    font_style: "Button"     
+                    on_release: app.root.ids.screen_manager.get_screen("filter_video").to_piv()

@@ -1,0 +1,36 @@
+#:kivy 2.2.0
+
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+
+<PivMobileView>:
+
+<PivTabletView>:
+    name: "piv_tablet_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "PIV - Calculation"
+        
+        MDProgressBar:
+            id: progress
+            type: "indeterminate"
+            size_hint_y: None
+            height: dp(12)
+            back_color: app.theme_cls.opposite_text_color
+
+        MDLabel:
+            text: "PIV analysis of the video in progress ! \n It can take a long time. Please wait ..."
+            halign: "center"
+            font_style: "H6"
+
+        MDRelativeLayout:
+
+            MDFillRoundFlatButton:
+                pos_hint: {"top" : 0.85, "center_x" : 0.5}
+                text: "Cancel PIV"
+                font_style: "Button"
+                md_bg_color: app.theme_cls.error_color
+
+<PivDesktopView>:

@@ -1,0 +1,25 @@
+#:kivy 2.2.0
+
+<NoResults>:
+    pos_hint: {"center_x": 0.5}
+    size_hint: None, None
+    size: dp(350), dp(125)
+    md_bg_color: app.theme_cls.primary_light
+
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: dp(10)
+        spacing: dp(10)
+
+        MDLabel:
+            text: root.title
+            font_style: "H5"
+            halign: "center"
+            color: app.theme_cls.opposite_text_color
+            
+        MDLabel:
+            text: root.text
+            font_style: "H6"
+            halign: "center"
+            color: app.theme_cls.opposite_text_color
+        

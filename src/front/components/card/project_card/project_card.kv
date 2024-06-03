@@ -1,0 +1,46 @@
+#:kivy 2.2.0
+
+<ProjectCard>:
+    style: "outlined"
+    padding: dp(5)
+    md_bg_color: app.theme_cls.primary_color
+    size_hint: None, None
+    size: dp(200), dp(100)
+    focus_behavior: True
+    focus_color: app.theme_cls.primary_light
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: dp(10)
+
+        MDRelativeLayout:
+
+            MDBoxLayout:
+                pos_hint: {"top": 1, "left": 0.8}
+                size_hint_y: 0.5
+
+                MDLabel:
+                    text: root.title
+                    adaptive_height: True
+                    font_style: "H6"
+                    color: app.theme_cls.opposite_text_color
+    
+            MDBoxLayout:
+                spacing: dp(10)
+                adaptive_size: True
+                pos_hint: {"bottom": 1, "right": 1}
+                size_hint_y: 0.5
+
+                MDIconButton:
+                    icon: "delete"
+                    theme_icon_color: "Custom"
+                    icon_color: app.theme_cls.opposite_text_color
+                    icon_size: "20sp"
+                    on_release: root.delete_callback() if root.delete_callback else None
+
+                MDIconButton:
+                    icon: "download"
+                    theme_icon_color: "Custom"
+                    icon_color: app.theme_cls.opposite_text_color
+                    icon_size: "20sp"
+                    on_release: root.download_callback() if root.download_callback else None

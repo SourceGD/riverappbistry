@@ -1,0 +1,157 @@
+#:kivy 2.2.0
+
+#:import TextUnderIconButton src.front.components.widget.TextUnderIconButton
+#:import DefaultScreenTopBar src.front.components.app_bar.DefaultScreenTopBar
+#:import DefaultTextInput src.front.components.widget.DefaultTextInput
+
+<BathymetryMobileView>:
+    name: "bathymetry_mobile_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Bathymetry - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("bathymetry").go_back()]]
+            
+        MDBoxLayout:
+            id: content
+            size_hint_y: 0.75
+            
+            UploadBathy:
+                id: upload_button
+                type: "mobile" 
+
+        MDBoxLayout:
+            size_hint: 0.6, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
+
+        BathymetryBottomButtons:
+            id: control_button
+
+<BathymetryTabletView>:
+    name: "bathymetry_tablet_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Bathymetry - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("bathymetry").go_back()]]
+            
+        MDBoxLayout:
+            id: content
+            size_hint_y: 0.75
+
+            UploadBathy:
+                id: upload_button
+                type: "tablet"
+
+        MDBoxLayout:
+            size_hint: 0.5, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
+
+        BathymetryBottomButtons:
+            id: control_button
+
+<BathymetryDesktopView>:
+    name: "bathymetry_desktop_view"
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        DefaultScreenTopBar:
+            title: "Bathymetry - Configuration"
+            left_action_items: [["arrow-left", lambda x: app.root.ids.screen_manager.get_screen("bathymetry").go_back()]]
+            
+        MDBoxLayout:
+            id: content
+            size_hint_y: 0.75
+
+            UploadBathy:
+                id: upload_button
+                type: "desktop"
+
+        MDBoxLayout:
+            size_hint: 0.55, 0.25
+            pos_hint: {"center_x" : 0.5}
+
+            WaterLevelInput:
+                id: water_level
+            SurfaceCoefficient:
+                id: surface_coefficient
+
+        BathymetryBottomButtons:
+            id: control_button
+
+<UploadBathy@MDBoxLayout>:
+    id: id.__self__
+    type: "desktop"
+
+    # Empty FloatLayout because if button is alone in a Layout the width strech to maximum
+    MDFloatLayout:
+        size_hint: 
+            (0.9, 1) if root.type == "desktop" else \
+            (0.7, 1) if root.type == "tablet" else \
+            (0.2, 1) if root.type == "mobile" else \
+            (None, None)
+
+    TextUnderIconButton:
+        size_hint: 1, 0.5
+        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+        icon: "upload"
+        icon_size: "64sp"
+        text: "Upload Bathymetry"
+        on_release: app.root.ids.screen_manager.get_screen("bathymetry").open_file_manager()
+        
+    # Empty FloatLayout because if button is alone in a Layout the width stech to maximum
+    MDFloatLayout:
+        size_hint: 
+            (0.9, 1) if root.type == "desktop" else \
+            (0.7, 1) if root.type == "tablet" else \
+            (0.2, 1) if root.type == "mobile" else \
+            (None, None)
+
+<BathymetryBottomButtons@MDBoxLayout>:
+    padding: dp(10)
+    spacing: dp(10)
+    adaptive_size: True
+    pos_hint: {"center_y": 0.5, "right": 1}
+    disabled: True
+    opacity: 0 if self.disabled else 1
+
+    MDFillRoundFlatButton:
+        text: "Change Bathymetry"
+        font_style: "Button"
+        disabled: root.disabled
+        md_bg_color: app.theme_cls.error_color
+        on_release: app.root.ids.screen_manager.get_screen("bathymetry").remove_graph()
+
+    MDFillRoundFlatButton:
+
+        text: "Validate"
+        font_style: "Button"
+        disabled: root.disabled
+        on_release: app.root.ids.screen_manager.get_screen("bathymetry").validate_bathymetry()
+
+<WaterLevelInput@DefaultTextInput>:
+    hint_text: "mean water level [m]"
+    input_filter: "float"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_water_level(self.text) if not self.focus else None
+
+<SurfaceCoefficient@DefaultTextInput>:
+    hint_text: "Surface coefficient"
+    input_filter: "float"
+    helper_text_mode: "on_error"
+    on_focus: app.root.ids.screen_manager.get_screen("bathymetry").set_surface_coefficient(self.text) if not self.focus else None

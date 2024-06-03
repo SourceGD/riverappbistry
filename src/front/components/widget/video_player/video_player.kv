@@ -1,0 +1,72 @@
+#:kivy 2.2.0
+
+<RiverAppVideoPlayer>:
+    id: video_player
+    md_bg_color: app.theme_cls.bg_normal
+
+    Videos:
+        id: video
+        source: root.source
+        state: "play"
+
+    MDRelativeLayout:
+        id: controls
+        size_hint: 0.85, None
+        height: video.height / 4
+        pos_hint: {"bottom":1, "center_x": 0.5}
+        md_bg_color: 0, 0, 0, 0.3
+
+        MDProgressBar:
+            id: slider
+            value: 0
+            size_hint: 0.9, 0.1
+            pos_hint: {"center_x": 0.5, "top": 1}
+            on_touch_move: 
+                if self.collide_point(args[1].pos[0], args[1].pos[1]):\
+                self.value = round(((args[1].pos[0] - self.height * 5) / self.width) * 100);\
+                video.seek(self.value / 100)
+
+            color: self.theme_cls.opposite_text_color
+
+            MDWidget:
+                canvas.before:
+                    Ellipse:
+                        pos: self.x, self.y
+                        size: self.size
+
+                size_hint: None, None
+                size: slider.height * 2.5, slider.height * 2.5
+                pos: (slider.value * slider.width) / 100 + slider.height * 5 , slider.center_y - self.height / 2 
+        
+        MDLabel:
+            id: timer
+            text: "-- / --"
+            font_size: "12sp"
+            bold: True
+            pos_hint: {"center_y": 0.4}
+            padding: "20sp", 0
+            color: self.theme_cls.opposite_text_color
+
+        MDIconButton:
+            id: play_pause_button
+            icon: "pause"
+            pos_hint: {"center_x": 0.5, "center_y": 0.4}
+            theme_icon_color: "Custom"  
+            icon_color: app.theme_cls.opposite_text_color
+            icon_size: controls.height * 0.4
+            size_hint: None, None
+            size: controls.height * 0.5, controls.height * 0.5
+            on_release: root.play_pause(self)
+
+        MDIconButton:
+            id: on_off_volume_button
+            icon: "volume-high"
+            pos_hint: {"right": 1, "center_y": 0.4}
+            padding: "20sp", 0
+            theme_icon_color: "Custom"  
+            icon_color: app.theme_cls.opposite_text_color
+            icon_size: controls.height * 0.4
+            size_hint: None, None
+            size: controls.height * 0.5, controls.height * 0.5
+            on_release: root.on_off_volume(self)
+            

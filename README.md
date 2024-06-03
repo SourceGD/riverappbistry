@@ -1,90 +1,90 @@
-# RiverApp
+RiverApp
+========
 
-RiverApp is a python app dedicated to estimating the debit of a river based on a video. Take a movie of your river from the top, give it some insight of the bathymetry, and here you go !
+Installation
+------------
 
-## Installation procedure (recommended with Windows OS)
+**RiverApp** uses Python 3.10. No help is provided if you are using another version.
 
-Install the packages in a dedicated environment. To to do, there are multiple possibilities:
+### Installation from latest code base (Windows 64 bits)
 
-### With the conda `environment.yml` file:
+To install **RiverApp** from the code base with Windows 64 bits , go through these steps.
 
-```
-conda env create -f environment_14-03-22_windows.yml
-conda activate riverApp
-garden install matplotlib
-garden install graph
-```
-
-### With the `requirements.txt` file:
+First, clone the code with `git` and move into the cloned folder.
 
 ```
-conda create --name riverApp python=3.8 --file requirements.txt -c conda-forge
-conda activate riverApp 
-garden install matplotlib
-garden install graph
+git clone https://forge.uclouvain.be/hydraulics-simulations/riverapp.git
+cd riverapp
 ```
 
-### With pip using `requirementsPip.txt` file:
-You can also install all packages using pip, with the file `requirementsPip.txt` (beta). 
-Note that this method is obsolete for this project and is therefore not recommended
-
-## Installation procedure (recommended with Linux OS)
-
-Install the packages in a dedicated environment. To to do, there are multiple possibilities:
-
-### With the conda `environment.yml` file:
+Setup the environment with all dependencies as follows : 
 
 ```
-conda env create -f environment_14-03-22_linux.yml
-conda activate riverApp
-garden install matplotlib
-garden install graph
+pip install libs/pyproj-3.3.1-cp310-cp310-win_amd64.whl 
+pip install libs/Shapely-1.8.2-cp310-cp310-win_amd64.whl
+pip install -r requirements.txt
+pip install libs/Cartopy-0.20.2-cp310-cp310-win_amd64.whl
 ```
 
-The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
-```
-chmod u=rwx garden
-garden install matplotlib
-garden install graph
-```
+> **_note :_** the Windows binaries files for pyproj, shapely and cartopy are provided by Christoph Gohlke on this [page](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
-### With the `requirements.txt` file:
+> **_note 2 :_** this environments do not have the dependencies needed for testing and documenting
 
-In the file `requirements.txt` , comment the line `pywin32==304`
+### Installation from latest code base (Windows 32 bites)
 
-```
-conda create --name riverApp python=3.8 --file requirements.txt -c conda-forge
-conda activate riverApp 
-garden install matplotlib
-garden install graph
-```
+To install **RiverApp** from the code base with Windows 32 bits , go through these steps.
 
-The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
-```
-chmod u=rwx garden
-garden install matplotlib
-garden install graph
-```
-
-### With pip using `requirementsPip.txt` file:
-You can also install all packages using pip, with the file `requirementsPip.txt` (beta). 
-Note that this method is not robust since it doesn't deal with dependencies. It is therefore not recommended.
+First, clone the code with `git` and move into the cloned folder.
 
 ```
-conda create --name riverApp python=3.8 
-conda activate riverApp  
-pip install -r requirementsPip.txt
-garden install matplotlib
-garden install graph
+git clone https://forge.uclouvain.be/hydraulics-simulations/riverapp.git
+cd riverapp
 ```
 
-The garden installation might get you an error of type `Permission denied`. In that case, go to the directory hosting your environment (should look like `*/anaconda3/envs/riverApp/bin`)
+Setup the environment with all dependencies as follows : 
+
 ```
-chmod u=rwx garden
-garden install matplotlib
-garden install graph
+pip install libs/pyproj-3.3.1-cp310-cp310-win32.whl
+pip install libs/Shapely-1.8.2-cp310-cp310-win32.whl
+pip install -r requirements.txt
+pip install libs/Cartopy-0.20.2-cp310-cp310-win32.whl
 ```
 
+> **_note :_** the Windows binaries files for pyproj, shapely and cartopy are provided by Christoph Gohlke on this [page](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
 
-## Installation procedure (recommended with Mas OS) [V]
-No specific procedure, use a Virtual Machine to use a Linux OS.
+> **_note 2 :_** this environments do not have the dependencies needed for testing and documenting
+
+Project organisation
+--------------------
+    .
+    ├── README.md
+    ├── environment.txt         <- TXT-file for setting up the project dependencies
+    ├── main.py                 <- main file which launches RiverApp
+    ├── definitions.py          <- set of constants useful for RiverApp
+    ├── .gitlab-ci.yml          <- RiverApp CI/CD configuration file
+    ├── assets                  <- RiverApp assets such as images, data, logos, etc.
+        ├── ...
+    ├── config                  <- RiverApp configurations
+        ├── ...
+    ├── docs                    <- Sphinx documentation source code
+        ├── ...
+    ├── examples                <- Sets of examples on how to use the project
+        ├── pyorc_examples      <- Jupyter notebooks with examples how to use the PyOrc API
+            ├── ...             
+        ├── riverapp_examples   <- images, files & data on the results you can expect from RiverApp
+            ├── ...
+    ├── libs                    <- libraries within the project
+        ├── pyorc               <- pyorc library
+            ├── ...  
+        ├── ...  
+    ├── src                     <- RiverApp source code
+        ├── back                <- calculation & data management source code
+            ├── ...
+        ├── front               <- interface source code
+            ├── ...
+        ├── utils               <- useful functions for the whole project
+            ├── ...        
+    ├── tests                   <- pytest suite
+        ├── pyorc_tests         <- pytest functions on PyOrc source code
+            ├── ...     
+        ├── riverapp_tests      <- pytest functions on RiverApp source code

@@ -1,0 +1,33 @@
+
+{
+    "Red": {
+        "200": "af140c",
+        "500": "af140c",
+        "700": "af140c",
+        "A700": "af140c"
+    },
+    "Teal": {
+        "200": "3a565e",
+        "500": "26474E",
+        "700": "26474E"
+    },
+    "Orange": {
+        "200": "F27438",
+        "500": "F27438",
+        "700": "F27438"
+    },
+    "Light": {
+        "StatusBar": "E0E0E0",
+        "AppBar": "FFFFFF",
+        "Background": "FFFFFF",
+        "CardsDialogs": "26474E",
+        "FlatButtonDown": "cccccc"
+    },
+    "Dark": {
+        "StatusBar": "000000",
+        "AppBar": "1f1f1f",
+        "Background": "121212",
+        "CardsDialogs": "212121",
+        "FlatButtonDown": "999999"
+    }
+}
